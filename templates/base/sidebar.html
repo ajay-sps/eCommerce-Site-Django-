@@ -1,0 +1,81 @@
+{% extends 'base/base.html' %}
+
+{% block style %}
+
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800,900');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1.7;
+      color: #c4c3ca;
+      overflow-x: hidden;
+    }
+
+    .sidebar {
+      left: 0;
+      height: 100%;
+      width: auto;
+      background-color: #f8f9fa;
+      transition: all 0.3s ease;
+    }
+
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    .sidebar-item {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .sidebar-item a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    .sidebar-item:hover {
+      background-color: #eee;
+    }
+
+</style>
+
+  
+{% endblock %}
+
+{% block sidebar %}
+
+{% if user.is_authenticated %}
+
+
+<div class="row">
+  <div class="col-sm-2" style="background-color: cornflowerblue;">
+      <div class="sidebar" style="background-color:cornflowerblue;">
+        <div class="sidebar-item">
+          <a href="/products/brands" style="color: white;">Brands</a>
+        </div>
+        <div class="sidebar-item">
+          <a href="/products/categories" style="color: white;">Categories</a>
+        </div>
+        <div class="sidebar-item">
+          <a href="/products" style="color: white;">Products</a>
+        </div>
+        <div class="sidebar-item">
+          <a href="#" style="color: white;">Wishlist</a>
+        </div>
+      </div>
+  </div>
+  <div class="col m-3">
+        {% block content %}
+
+        {% endblock %}
+  </div>
+</div>
+
+
+{% endif %}
+
+{% endblock %}

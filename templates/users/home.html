@@ -1,0 +1,483 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+
+{% block search %}
+<form class="d-flex" style="margin: auto;" role="search">
+<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" >
+<button class="btn btn-outline-success" type="submit" style="color: white;">Search</button>
+</form>
+{% endblock %}
+
+{% block body %}
+
+{% if user.is_authenticated %}
+
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800,900');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1.7;
+      color: #c4c3ca;
+      overflow-x: hidden;
+    }
+
+    .sidebar {
+      left: 0;
+      height: 100%;
+      width: auto;
+      background-color: #f8f9fa;
+      transition: all 0.3s ease;
+    }
+
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    .sidebar-item {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .sidebar-item a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    .sidebar-item:hover {
+      background-color: #eee;
+    }
+    .homepage{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        margin: 1%;
+        border-radius: 20px;
+    }
+    .carousel-caption {
+    background-color: #0000007d;
+    border-radius: 10px;
+  }
+
+</style>
+
+<div class="row">
+    {% if buyer %}
+    <div class="col-sm-2" style="background-color: cornflowerblue;">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="sidebar" style="background-color:cornflowerblue;">
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Cart</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Orders</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Wishlist</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif seller %}
+    <div class="col-sm-2" style="background-color: cornflowerblue;">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="sidebar" style="background-color:cornflowerblue;">
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Inventory</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Orders</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Profile</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Profit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-sm-2" style="background-color: cornflowerblue;">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="sidebar" style="background-color:cornflowerblue;">
+                    <div class="sidebar-item">
+                        <a href="/products/brands" style="color: white;">Brands</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="/products/categories" style="color: white;">Categories</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="/products" style="color: white;">Products</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Wishlist</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="col-sm-10">
+
+        <div class="row" style="padding-top: 2%; padding-bottom: 2%; margin-right: 2%;">
+            <div class="col-sm-12">
+                <div class="row" style="padding-top: 2%; padding-bottom: 2%;">
+                    <div class="col-sm-12">
+                        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                            <ul class="carousel-indicators">
+                                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                <li data-target="#myCarousel" data-slide-to="1"></li>
+                                <li data-target="#myCarousel" data-slide-to="2"></li>
+                            </ul>
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active" style="text-align: center;">
+                                        <img src="{% static 'images/TV.jpeg' %}" alt="Image 1" style="height: 300px;">
+                                        <div class="carousel-caption">
+                                            <h3>Image 1</h3>
+                                            <p>Description of image 1</p>
+                                        </div>
+                                    </div>
+                                    {% for product in products %}
+                                    <div class="carousel-item" style="text-align: center;">
+                                        <img src="{{ product.image.url }}" height="30%" style="height: 300px;">
+                                        <div class="carousel-caption">
+                                            <h3>Image 3</h3>
+                                            <p>Description of image 3</p>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
+                                <span class="carousel-control-prev-icon" style="filter: invert();"></span>
+                            </a>
+                            <a class="carousel-control-next" href="#myCarousel" data-slide="next">
+                                <span class="carousel-control-next-icon" style="filter: invert();"></span>
+                            </a>
+                        </div>
+                        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+                        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-4 offset-sm-4">
+                <div class="row homepage" style="margin-top: 3%; padding-top: 1%; background-color: cornflowerblue; color: white;">
+                    <div class="col" style="text-align: center;">
+                        <h3>Categories</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row" style="margin-top: 2%; margin-left: 5%; margin-right: 5%;">
+            <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+                <div class="row homepage">
+                    <div class="col-sm-12">
+                        <img src="{% static 'images/smartphone.png' %}" style="height: 150px;">
+                    </div>
+                </div> 
+                <div class="row" style="padding-top: 2%;">
+                    <div class="col-sm-12">
+                        <a href="#" style="text-decoration: none;"><h4>Smartphone</h4></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+                <div class="row homepage">
+                    <div class="col-sm-12">
+                        <img src="{% static 'images/laptops.jpeg' %}" style="height: 150px;">
+                    </div>
+                </div> 
+                <div class="row" style="padding-top: 2%;">
+                    <div class="col-sm-12">
+                        <a href="#" style="text-decoration: none;"><h4>Laptops</h4></a>
+                    </div>
+                </div> 
+            </div>
+            <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+                <div class="row homepage">
+                    <div class="col-sm-12">
+                        <img src="{% static 'images/TV.jpeg' %}" style="height: 150px;">
+                    </div>
+                </div> 
+                <div class="row" style="padding-top: 2%;">
+                    <div class="col-sm-12">
+                        <a href="#" style="text-decoration: none;"><h4>TV</h4></a>
+                    </div>
+                </div> 
+            </div>
+            <div class="col-sm-3" style="padding-top: 2%; text-align: center;"> 
+                <div class="row homepage">
+                    <div class="col-sm-12">
+                        <img src="{% static 'images/tablet.jpg' %}" style="height: 150px;">
+                    </div>
+                </div> 
+                <div class="row" style="padding-top: 2%;">
+                    <div class="col-sm-12">
+                        <a href="#" style="text-decoration: none;"><h4>Tablet</h4></a>
+                    </div>
+                </div>
+            </div>
+        </div><br>
+
+        <div class="row">
+            <div class="col-sm-4 offset-sm-4">
+                <div class="row homepage" style="margin-top: 3%; padding-top: 1%; background-color: cornflowerblue; color: white;">
+                    <div class="col" style="text-align: center;">
+                        <h3>Trending Products</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row" style="margin-top: 2%; margin-left: 5%; margin-right: 5%;">
+            <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+                <div class="row homepage">
+                    <div class="col-sm-12">
+                        <img src="{% static 'images/smartphone.png' %}" style="height: 150px;">
+                    </div>
+                </div> 
+                <div class="row" style="padding-top: 2%;">
+                    <div class="col-sm-12">
+                        <a href="#" style="text-decoration: none;"><h4>Smartphone</h4></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+                <div class="row homepage">
+                    <div class="col-sm-12">
+                        <img src="{% static 'images/laptops.jpeg' %}" style="height: 150px;">
+                    </div>
+                </div> 
+                <div class="row" style="padding-top: 2%;">
+                    <div class="col-sm-12">
+                        <a href="#" style="text-decoration: none;"><h4>Laptops</h4></a>
+                    </div>
+                </div> 
+            </div>
+            <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+                <div class="row homepage">
+                    <div class="col-sm-12">
+                        <img src="{% static 'images/TV.jpeg' %}" style="height: 150px;">
+                    </div>
+                </div> 
+                <div class="row" style="padding-top: 2%;">
+                    <div class="col-sm-12">
+                        <a href="#" style="text-decoration: none;"><h4>TV</h4></a>
+                    </div>
+                </div> 
+            </div>
+            <div class="col-sm-3" style="padding-top: 2%; text-align: center;"> 
+                <div class="row homepage">
+                    <div class="col-sm-12">
+                        <img src="{% static 'images/tablet.jpg' %}" style="height: 150px;">
+                    </div>
+                </div> 
+                <div class="row" style="padding-top: 2%;">
+                    <div class="col-sm-12">
+                        <a href="#" style="text-decoration: none;"><h4>Tablet</h4></a>
+                    </div>
+                </div>
+            </div>
+        </div><br>
+
+
+    </div>
+</div>
+
+{% else %}
+
+<style>
+    .homepage{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        margin: 1%;
+        border-radius: 20px;
+
+    }
+
+    .carousel-caption {
+    background-color: #0000007d;
+    border-radius: 10px;
+  }
+</style>
+
+<div class="row" style="padding-top: 2%; padding-bottom: 2%; margin-left: 5%; margin-right: 5%; margin-top: 2%;">
+    <div class="col-sm-12">
+
+        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+        <ul class="carousel-indicators">
+            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#myCarousel" data-slide-to="1"></li>
+            <li data-target="#myCarousel" data-slide-to="2"></li>
+        </ul>
+        <div class="carousel-inner">
+            <div class="carousel-item active" style="text-align: center;">
+            <img src="{% static 'images/TV.jpeg' %}" alt="Image 1" style="height: 400px;">
+            <div class="carousel-caption">
+                <h3>Image 1</h3>
+                <p>Description of image 1</p>
+            </div>
+            </div>
+            {% for product in products %}
+            <div class="carousel-item" style="text-align: center;">
+                    <img src="{{ product.image.url }}" height="30%" style="height: 400px;">
+                    <div class="carousel-caption">
+                        <h3>Image 3</h3>
+                        <p>Description of image 3</p>
+                    </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
+            <span class="carousel-control-prev-icon" style="filter: invert();"></span>
+        </a>
+        <a class="carousel-control-next" href="#myCarousel" data-slide="next">
+            <span class="carousel-control-next-icon" style="filter: invert();"></span>
+        </a>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    </div>
+</div><br>
+
+<div class="row">
+    <div class="col-sm-4 offset-sm-4">
+        <div class="row homepage" style="margin-top: 3%; padding-top: 1%; background-color: cornflowerblue; color: white;">
+            <div class="col" style="text-align: center;">
+                <h3>Categories</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row " style="margin-top: 2%; margin-left: 5%; margin-right: 5%;">
+    <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+        <div class="row homepage">
+            <div class="col-sm-12">
+                <img src="{% static 'images/smartphone.png' %}" style="height: 150px;">
+            </div>
+        </div> 
+        <div class="row" style="padding-top: 2%;">
+            <div class="col-sm-12">
+                <a href="#" style="text-decoration: none;"><h4>Smartphone</h4></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+        <div class="row homepage">
+            <div class="col-sm-12">
+                <img src="{% static 'images/laptops.jpeg' %}" style="height: 150px;">
+            </div>
+        </div> 
+        <div class="row" style="padding-top: 2%;">
+            <div class="col-sm-12">
+                <a href="#" style="text-decoration: none;"><h4>Laptops</h4></a>
+            </div>
+        </div> 
+    </div>
+    <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+        <div class="row homepage">
+            <div class="col-sm-12">
+                <img src="{% static 'images/TV.jpeg' %}" style="height: 150px;">
+            </div>
+        </div> 
+        <div class="row" style="padding-top: 2%;">
+            <div class="col-sm-12">
+                <a href="#" style="text-decoration: none;"><h4>TV</h4></a>
+            </div>
+        </div> 
+    </div>
+    <div class="col-sm-3" style="padding-top: 2%; text-align: center;"> 
+        <div class="row homepage">
+            <div class="col-sm-12">
+                <img src="{% static 'images/tablet.jpg' %}" style="height: 150px;">
+            </div>
+        </div> 
+        <div class="row" style="padding-top: 2%;">
+            <div class="col-sm-12">
+                <a href="#" style="text-decoration: none;"><h4>Tablet</h4></a>
+            </div>
+        </div>
+    </div>
+</div><br>
+
+<div class="row">
+    <div class="col-sm-4 offset-sm-4">
+        <div class="row homepage" style="margin-top: 3%; padding-top: 1%; background-color: cornflowerblue; color: white;">
+            <div class="col" style="text-align: center;">
+                <h3>Trending Products</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-top: 2%; margin-left: 5%; margin-right: 5%;">
+    <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+        <div class="row homepage">
+            <div class="col-sm-12">
+                <img src="{% static 'images/smartphone.png' %}" style="height: 150px;">
+            </div>
+        </div> 
+        <div class="row" style="padding-top: 2%;">
+            <div class="col-sm-12">
+                <a href="#" style="text-decoration: none;"><h4>Smartphone</h4></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+        <div class="row homepage">
+            <div class="col-sm-12">
+                <img src="{% static 'images/laptops.jpeg' %}" style="height: 150px;">
+            </div>
+        </div> 
+        <div class="row" style="padding-top: 2%;">
+            <div class="col-sm-12">
+                <a href="#" style="text-decoration: none;"><h4>Laptops</h4></a>
+            </div>
+        </div> 
+    </div>
+    <div class="col-sm-3" style="padding-top: 2%; text-align: center;">
+        <div class="row homepage">
+            <div class="col-sm-12">
+                <img src="{% static 'images/TV.jpeg' %}" style="height: 150px;">
+            </div>
+        </div> 
+        <div class="row" style="padding-top: 2%;">
+            <div class="col-sm-12">
+                <a href="#" style="text-decoration: none;"><h4>TV</h4></a>
+            </div>
+        </div> 
+    </div>
+    <div class="col-sm-3" style="padding-top: 2%; text-align: center;"> 
+        <div class="row homepage">
+            <div class="col-sm-12">
+                <img src="{% static 'images/tablet.jpg' %}" style="height: 150px;">
+            </div>
+        </div> 
+        <div class="row" style="padding-top: 2%;">
+            <div class="col-sm-12">
+                <a href="#" style="text-decoration: none;"><h4>Tablet</h4></a>
+            </div>
+        </div>
+    </div>
+</div><br>
+{% endif %}
+
+{% endblock %}

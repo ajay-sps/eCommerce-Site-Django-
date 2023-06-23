@@ -1,0 +1,50 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+<style>
+.box-shadow{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+</style>
+
+
+<div class="row p-3 box-shadow" >
+    <div class="col-sm-4">
+        <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+    </div>
+    <div class="col-sm-2 offset-sm-6">
+        <button type="button" class="btn btn-primary">Add Category</button>
+    </div>
+</div>
+
+<div class="row p-3 box-shadow mt-3" >
+    <table class="table table-success table-striped" >
+        <thead class="thead-light" >
+          <tr >
+            <th scope="col" >S.No.</th>
+            <th scope="col">Name</th>
+            <th scope="col">Image</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ category.name }}</td>
+            <td><img src="{{ category.image.url }}" style="height: 60px; width: 100px;"></td>
+            <td>
+            <a href="#"><button type="button" class="btn btn-primary">Update</button>
+            </a> <button type="button" class="btn btn-danger">Delete</button>
+            </td>
+          </tr>
+            {% endfor%}
+        </tbody>
+    </table>   
+</div>
+
+{% endblock %}
