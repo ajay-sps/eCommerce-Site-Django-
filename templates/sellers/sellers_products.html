@@ -1,0 +1,67 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+<style>
+  .box-shadow{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 12px;
+    background-color: aliceblue;
+    margin: 1% 2% 1% 1%;
+}
+</style>
+
+<div class="row p-3 box-shadow" style="margin: 3% 4% 3% 4%;">
+  <div class="col-sm-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
+        <a href="/sellers/inventory/{{ id }}" style="text-decoration: none;">
+          <li class="breadcrumb-item active" aria-current="page">Products</li>
+        </a>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="row p-3 box-shadow" style="margin: 3% 4% 3% 4%;" >
+<div class="col">
+  <table class="table table-success table-striped" >
+      <thead class="thead-light" >
+        <tr >
+          <th scope="col" >S.No.</th>
+          <th scope="col">Name</th>
+          <th scope="col">Image</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for item in page_obj %}
+        <tr>
+          <td>{{ item.serial_no }}</td>
+          <td>{{ item.product.name }}</td>
+          <td><img src="{{ item.product.image.url }}" style="height: 60px; width: 100px;"></td>
+          <td>
+          <a href="/sellers/{{ id }}/add/variants/{{ item.product.id }}"><button type="button" class="btn btn-primary">Add to Inventory</button>
+          </td>
+        </tr>
+          {% endfor%}
+      </tbody>
+  </table>
+</div>   
+</div>
+
+<div class="row" style="margin-top: 3%;">
+<div class="col-sm-4 offset-sm-5" style="text-align: center;">
+  <nav aria-label="Page navigation example">
+    <ul class="pagination" style="margin: 0%; font-weight: 500;">
+      {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+      {% endif %}
+      <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+      {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+</div>
+{% endblock %}

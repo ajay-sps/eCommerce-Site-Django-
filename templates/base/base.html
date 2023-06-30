@@ -7,16 +7,19 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %} eCommerce {% endblock %}</title>
-  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"> -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 {% block link %}
 {% endblock %}
 
 {% block style %}
 {% endblock %}
+
    <style>
     @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800,900');
+
     body {
       font-family: 'Poppins', sans-serif;
       font-weight: 300;
@@ -25,18 +28,47 @@
       color: #c4c3ca;
       overflow-x: hidden;
     }
+
+    .sidebar {
+      left: 0;
+      height: 100%;
+      width: auto;
+      background-color: #f8f9fa;
+      transition: all 0.3s ease;
+      padding-left: 5%;
+    }
+
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    .sidebar-item {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .sidebar-item a {
+      text-decoration: none;
+      color: white;
+    }
+
+    .sidebar-item:hover {
+      background-color: #eee;
+      color: rgb(41, 205, 41);
+    }
+
    </style>
 
 </head>
 
 <body>
 
-                                     <!-- THIS IS NAVBAR -->
   <div class="row">
     <div class="col-sm-12">
       <nav class="navbar navbar-expand-lg bg-body-tertiary" style="z-index: 1; padding: 0;">
-        <div class="container-fluid" style="background-color:cornflowerblue; height: 4.5rem;">
-          <a class="navbar-brand" href="#" style="color: white;">eCommerce</a>
+        <div class="container-fluid" style="background-color:#2e69d3; height: 4.5rem;">
+          <a class="navbar-brand" href="#" style="color: white;">expressShop</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -46,14 +78,24 @@
             {% endblock %}
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
               {% if user.is_authenticated %}
+              {% if user.role.name == 'admin' %}
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/" style="color: white;">Home</a>
+                <a class="nav-link active" aria-current="page" href="#" style="color: #55ff55">Admin</a>
               </li>
+              {% elif user.role.name == 'seller' %}
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#" style="color: #55ff55">Seller</a>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#" style="color: #55ff55">Buyer</a>
+              </li>
+              {% endif %}
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/logout" style="color: white;">LogOut</a>
               </li>
               <li style="padding-left: 2%;">
-                <a href="#"><img class="rounded-circle" src="https://cdn.quasar.dev/img/boy-avatar.png" width="40px" alt="">
+                <a href="#"><img class="rounded-circle" src="{{ user.profile.profile_image}}" width="40px" alt="">
                 </a>
               </li>
               {% else %}
@@ -73,9 +115,6 @@
       </nav>
     </div>
   </div>
-
-{% block sidebar %}
-{% endblock %}
 
 {% block body %}
 {% endblock %}

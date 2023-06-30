@@ -48,9 +48,10 @@ class ProductVariants(BaseModel):
     image = models.ImageField(upload_to='products/product_variants')
     code = models.CharField(max_length=30,unique=True,default='123')
     price = models.DecimalField(max_digits=12, decimal_places=2)
+    is_master = models.BooleanField(default=False)
 
     def __str__(self) -> str:
-        return self.product.name
+        return self.code
 
 
 class ProductVariantProperties(BaseModel):
@@ -60,4 +61,4 @@ class ProductVariantProperties(BaseModel):
     value = models.CharField(max_length=30,default='red')
 
     def __str__(self) -> str:
-        return self.product_variant.product.name
+        return self.product_variant.code

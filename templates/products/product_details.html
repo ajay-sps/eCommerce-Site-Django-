@@ -1,0 +1,88 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+
+{% for variant in product_variants %}
+{% if variant.is_master %}
+<div class="row" style="color: black;">
+    <div class="col-sm-12">
+        <section class="py-5">
+            <div class="container">
+              <div class="row gx-5">
+                <aside class="col-lg-6">
+                  <div class="border rounded-4 mb-3 d-flex justify-content-center">
+                    <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big.webp">
+                      <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="{{ variant.image.url }}" />
+                    </a>
+                  </div>
+                </aside>
+                <main class="col-lg-6">
+                  <div class="ps-lg-3">
+                    <h4 class="title text-dark">{{ variant.product.name }}
+                    </h4>
+                    <div class="d-flex flex-row my-3">
+                      <div class="text-warning mb-1 me-2">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span class="ms-1">
+                          4.5
+                        </span>
+                      </div>
+                      <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
+                      <span class="text-success ms-2">In stock</span>
+                    </div>
+          
+                    <div class="mb-3">
+                      <span class="h5">Rs . {{ variant.price }}</span>
+                    </div>
+          
+                    <p>
+                      Modern look and quality demo item is a streetwear-inspired collection that continues to break away from the conventions of mainstream fashion. Made in Italy, these black and brown clothing low-top shirts for
+                      men.
+                    </p>
+          
+                    <div class="row">
+                        {% for properties in product_variants_properties %}
+                        {% if properties.product_variant.id == variant.id %}
+                        <dt class="col-3">{{ properties.property.name }}</dt>
+                        <dd class="col-9">{{ properties.value }}</dd>
+                        {% endif %}
+                        {% endfor%}
+                    </div>
+          
+                    <hr />
+                    <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
+                    <a href="#" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
+                    <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                  </div>
+                </main>
+              </div>
+            </div>
+          </section>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+<div class="row" style="margin-bottom: 4%; color: black;">
+        <div class="row py-3 " >
+            <div class="col" style="text-align: center;">
+                <h4>Other Variants</h4>
+            </div>
+        </div>
+        <div class="row">
+            {% for variant in product_variants %}
+            {% if not variant.is_master %}
+            <div class="col-sm-3">
+                <a href="/products/{{ id }}/details/{{ variant.id }}"><img src="{{ variant.image.url }}" style="width: 150px; height: 150px;"></a>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+</div>
+
+
+{% endblock %}

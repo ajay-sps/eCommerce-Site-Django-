@@ -1,60 +1,41 @@
 from django.shortcuts import render,redirect
 from rest_framework.views import APIView
-from users.models import User,UserProfile
+from users.models import User,UserProfile,SellerInventory
 from django.http import HttpResponse
-from users.serializer import UserSerializer
+from users.serializer import UserSerializer,SellerInvenotrySerializer
 from base.email import verification_mail
 from django.contrib.auth import authenticate,login,logout
-from products.models import Products
+from products.models import Products,ProductVariants,Categories,ProductVariantProperties,Properties
+from django.core.paginator import Paginator
+
 
 class HomeView(APIView):
 
     def get(self,request):
         products = Products.objects.all()
-
-        return render(request,'users/home.html',{'products':products})
+        categories = Categories.objects.all()[:4]
+        return render(request,'users/home.html',{'products':products ,'categories' : categories})
     
 
 class LoginView(APIView):
 
     def get(self,request):
-
         return render(request,'users/login.html')
     
     def post(self,request):
-
         data = request.data
         username = data.get('email')
         password = data.get('password')
 
         user = authenticate(username = username,password = password)
-
         if user is not None:
-            
             if user.is_verified == True:
-                print(user.role.name)
-                
-                if user.role.name == 'admin':
-                    login(request,user)
-                    print('admin here')
-                    return render(request,'users/home.html')
-                elif user.role.name == 'buyer':
-                    login(request,user)
-                    print('buyer here')
-                    return render(request,'users/home.html',{'buyer':'buyer'})
-                else:
-                    login(request,user)
-                    print('seller here')
-                    return render(request,'users/home.html',{'seller':'seller'})
-                
+                login(request,user)
+                return redirect('/')
             else:
-                context = {"message" : "Email is not verified"}
-                return render(request,'users/login.html',context)
-                
-        
+                return render(request,'users/login.html',{"message" : "Email is not verified"})
         else :
-            context = {"message" : "invalid email or password"}
-            return render(request,'users/login.html',context)
+            return render(request,'users/login.html',{"message" : "invalid email or password"})
     
 
 class SignupView(APIView):
@@ -123,3 +104,117 @@ class LogOutView(APIView):
     def get(self,request):
         logout(request)
         return redirect('/')
+    
+
+class SellersView(APIView):
+
+    def get(self,request):
+        sellers = User.objects.filter(role__name = "seller")
+        item_per_page = 5
+        i = 1
+        lst = []
+        for seller in sellers :
+            lst.append({'seller': seller,'serial_no' : i})
+            i += 1
+        paginator = Paginator(lst,item_per_page)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request,'sellers/sellers.html',{"page_obj":page_obj})
+    
+
+class SellersInvetoryView(APIView):
+
+    def get(self,request,id):
+        seller_inventory = SellerInventory.objects.filter(seller = id)
+        item_per_page = 5
+        i = 1
+        lst = []
+        for seller in seller_inventory :
+            lst.append({'seller': seller,'serial_no' : i})
+            i += 1
+        paginator = Paginator(lst,item_per_page)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request,'sellers/sellers_inventory.html',{'page_obj': page_obj,'id':id})
+
+
+class UpdateInventoryItemsView(APIView):
+
+    def get(self,request,id,inventory_id):
+        inventory = SellerInventory.objects.get(id = inventory_id)
+        return render(request,'sellers/sellers_update_inventory.html',{'inventory_obj' : inventory,"id": id, "inventory_id" : inventory_id})
+    
+    def post(self,request,id,inventory_id):
+        try:
+            data = request.data
+            inventory_instance = SellerInventory.objects.get(id = inventory_id)
+            serializer = SellerInvenotrySerializer(inventory_instance,data = data)
+            if serializer.is_valid():
+                serializer.save()
+                return redirect(f'/sellers/{id}/inventory')
+            else:
+                return HttpResponse(serializer.errors)
+        except Exception as e:
+            return HttpResponse(str(e))
+        
+
+class SellerProductsView(APIView):
+
+    def get(self,request,id):
+        products = Products.objects.all()
+        item_per_page = 5
+        i = 1
+        lst = []
+        for product in products:
+            lst.append({"product" : product,"serial_no" : i})
+            i += 1
+        paginator = Paginator(lst,item_per_page)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request,'sellers/sellers_products.html',{"page_obj":page_obj,'id':id})
+    
+
+class SellerAddVariantsView(APIView):
+
+    def get(self,request,id,product_id):
+        product = Products.objects.get(id = product_id)
+        product_variants = ProductVariants.objects.filter(product = product.id)
+        variants_id = [variant.id for variant in product_variants]
+        variant_properties = ProductVariantProperties.objects.filter(product_variant__id__in = variants_id )
+
+        context = {
+            "seller_id" : id,
+            "name" : product.name,
+            "id" : product.id,
+            "brand_name" : product.brand.name,
+            "category_name" : product.category.name,
+            "description" : product.description,
+            'product_variants': product_variants,
+            "variant_properties" : variant_properties,
+        }
+
+        if product.is_active:
+            context["is_active"] = 'true'
+
+        return render(request,'sellers/sellers_add_product.html',context)
+    
+    def post(self,request,id,product_id):
+        try:
+            data = request.data
+            if SellerInventory.objects.filter(product_variant = data['product_variant']):
+                obj = SellerInventory.objects.get(product_variant = data['product_variant'])
+                obj.quantity += int(data['quantity'])
+                obj.save()
+                print(id)
+                return redirect(f'/sellers/{id}/inventory')
+            else:
+                for item in data:
+                    print(item)
+                serializer = SellerInvenotrySerializer(data = data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return redirect(f'/sellers/{id}/inventory')
+                else:
+                    return HttpResponse(serializer.errors)
+        except Exception as e:
+            return HttpResponse(str(e))

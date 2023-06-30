@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User,UserProfile
+from users.models import User,UserProfile,SellerInventory
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -25,3 +25,10 @@ class UserSerializer(serializers.ModelSerializer):
         UserProfile.objects.create(user = user,**profile_data)
 
         return user
+    
+
+class SellerInvenotrySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SellerInventory
+        fields = "__all__"
