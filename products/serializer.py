@@ -27,11 +27,11 @@ class BrandsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Brands
-        fields = '__all__'
+        fields = ['name','image']
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Categories
-        fields = '__all__'
+        fields = ['name','image']

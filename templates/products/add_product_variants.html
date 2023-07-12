@@ -9,6 +9,9 @@
 .form-control{
     padding: 2px;
 }
+.edit:hover{
+    cursor: pointer;
+}
 </style>
 
 <div class="row box-shadow" style="margin: 2% 7% 4% 7%; padding: 1%; background-color: aliceblue;">
@@ -80,7 +83,7 @@
                     <label>Add Property</label>
                 </div>
                 <div class="col-sm-1">
-                    <button type="button" onclick="AddFields()">+</button>
+                    <i class='bx bx-plus edit' style="color: #4f4ff3;font-size: 30px;" title="Add Property" onclick="AddFields()"></i>
                 </div>
                 <div class="col-sm-3 " style="text-align: center;" >
                     <div id="selectField"></div>

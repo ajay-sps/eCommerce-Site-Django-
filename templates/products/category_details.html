@@ -1,90 +1,227 @@
 {% extends 'base/sidebar.html' %}
 
 {% block content %}
+
 <style>
     @media (max-width: 767.98px) { .border-sm-start-none { border-left: none !important; } }
+
+    .product-card:hover{
+      cursor: pointer;
+      background-color: rgb(245, 240, 240);
+    }
 </style>
 
-<div class="row">
-    <div class="col-sm-12">
-        <section style="background-color: #eee;">
-            <div class="container py-3">
-                <div class="row py-2">
-                    <div class="col" style="text-align: center;">
-                        <h4>Products</h4>
-                    </div>
-                </div>
-                {% for product in products %}
-                <div class="row justify-content-center mb-3">
-                <div class="col-md-12 col-xl-10">
-                  <div class="card shadow-0 border rounded-3">
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
-                          <div class="bg-image hover-zoom ripple rounded ripple-surface">
-                            <img src="{{ product.image.url }}"
-                              class="w-100" height="150px" style="object-fit: contain;"/>
-                            <a href="hi">
-                              <div class="hover-overlay">
-                                <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
-                              </div>
-                            </a>
-                          </div>
-                        </div>
-                        <div class="col-md-6 col-lg-6 col-xl-6">
-                          <h5>{{ product.name }}</h5>
-                          <div class="d-flex flex-row">
-                            <div class="text-danger mb-1 me-2">
-                              <i class="fa fa-star"></i>
-                              <i class="fa fa-star"></i>
-                              <i class="fa fa-star"></i>
-                              <i class="fa fa-star"></i>
-                            </div>
-                            <span>310</span>
-                          </div>
-                          <div class="mt-1 mb-0 text-muted small">
-                            <span>100% cotton</span>
-                            <span class="text-primary"> • </span>
-                            <span>Light weight</span>
-                            <span class="text-primary"> • </span>
-                            <span>Best finish<br /></span>
-                          </div>
-                          <div class="mb-2 text-muted small">
-                            <span>Unique design</span>
-                            <span class="text-primary"> • </span>
-                            <span>For men</span>
-                            <span class="text-primary"> • </span>
-                            <span>Casual<br /></span>
-                          </div>
-                          <p class="text-truncate mb-4 mb-md-0">
-                            There are many variations of passages of Lorem Ipsum available, but the
-                            majority have suffered alteration in some form, by injected humour, or
-                            randomised words which don't look even slightly believable.
-                          </p>
-                        </div>
-                        <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
-                          <div class="d-flex flex-row align-items-center mb-1">
-                            <h4 class="mb-1 me-1">$13.99</h4>
-                            <span class="text-danger"><s>$20.99</s></span>
-                          </div>
-                          <h6 class="text-success">Free shipping</h6>
-                          <div class="d-flex flex-column mt-4">
-                            <a href="/products/{{ product.id }}/details"><button class="btn btn-primary btn-sm" type="button" style="widt">Details</button></a>
-                            <button class="btn btn-outline-primary btn-sm mt-2" type="button">
-                              Add to wishlist
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                </div>
-                {% endfor %}
-            </div>
-        </section>
+<div class="row" style="margin-top: 2%; margin-left: 5%; margin-right: 5%;">
+  <div class="col-sm-12">
+      <section style="background-color: #eee; border-radius: 15px;">
+          <div class="text-center container ">
+            <p class="py-3" style="color:#59786e; font-size: 30px; font-weight: 400;"><strong>{{ category_name }}</strong></p>
         
-    </div>
-</div>
+            <div class="row">
 
+              {% for product in products %}
+              {% for variant in product_variant %}
+              {% if variant.product.id == product.product.id %}
+              <div class="col-lg-3 col-md-12 mb-4">
+                <div class="card product-card" >
+                  <div class="row">
+                      <div class="col-sm-12" style="text-align: right;">
+                        {% if product.status %}
+                        <a href="#" style="text-decoration: none; padding-right: 4%;">
+                          <i class="bi bi-heart-fill wishlist" style="font-size: 20px; color:#f30909" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                        </a>
+                        {% else %}
+                        <a href="#" style="text-decoration: none; padding-right: 4%;">
+                          <i class="bi bi-heart wishlist" style="font-size: 20px; color:#f30909" title="Add to WishList" onclick="addToWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                        </a>
+                        {% endif %}
+                      </div>
+                  </div>
+                  <a href="/products/{{ product.product.id }}/details?user_id={{ user.id }}" class="text-reset anchortag">
+                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                      data-mdb-ripple-color="light">
+                      <img src="{{ variant.image.url }}"
+                        class="w-100" height="150px" style="object-fit: contain;"/>
+                    </div>
+                    <div class="card-body" style="color: #837a7a;">
+                        <h5 class="card-title mb-3" style="color:#3e3b3b">{{ product.product.name }}</h5>
+                        <p>Rs. {{ variant.price }}</p>
+                        <div style="color:#3e3b3b">4.6/5 (223)</div>
+                        <div class="stars">
+                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                          <i class="bi bi-star-half" style="color: rgb(21, 194, 21)"></i>
+                        </div>
+                        
+                    </div>
+                  </a>
+                </div>
+              </div>
+              {% endif %}
+              {% endfor %}
+              {% endfor %}
+
+            </div>
+          </div>
+      </section>
+  </div>
+</div><br>
+<p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
+
+
+<script>
+
+function addToWishList(user_id,variant_id){
+
+      console.log(user_id,variant_id)
+
+      csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+      const url = `http://127.0.0.1:8000/cart/users/${user_id}/wishlist/add`;
+      const data = {
+        "user" : user_id,
+        "product_variant" : variant_id,
+      }
+
+      fetch(url, {
+        method : 'POST',
+        headers : {
+            'Content-Type' : 'application/json',
+            "X-CSRFToken": csrf_element
+            },
+        body : JSON.stringify(data)
+      }).then(response => {
+        console.log(response)
+        if(response.ok){
+          Swal.fire('Added to wishList :)', '', 'success').then( () => {
+            location.reload()
+          })
+        }
+        else{
+          console.log('errors')
+        }
+      }).catch(error => {
+        console.log(error)
+      }) 
+
+  }
+
+function removeFromWishList(user_id,variant_id){
+    console.log(user_id,variant_id)
+
+    csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+    const url = `http://127.0.0.1:8000/cart/users/${user_id}/wishlist/delete`;
+    const data = {
+      "user" : user_id,
+      "product_variant" : variant_id,
+    }
+
+    fetch(url, {
+      method : 'POST',
+      headers : {
+          'Content-Type' : 'application/json',
+          "X-CSRFToken": csrf_element
+          },
+      body : JSON.stringify(data)
+    }).then(response => {
+      console.log(response)
+      if(response.ok){
+        Swal.fire('Removed from Wishlist :(', '', 'success').then( () => {
+          location.reload()
+        })
+      }
+      else{
+        console.log('errors')
+      }
+    }).catch(error => {
+      console.log(error)
+    }) 
+}
+
+
+
+</script>
+
+{% endblock %}
+
+
+{% block non_auth_content %}
+{% if not user.is_authenticated %}
+
+<style>
+  @media (max-width: 767.98px) { .border-sm-start-none { border-left: none !important; } }
+
+  .product-card:hover{
+    cursor: pointer;
+    background-color: rgb(245, 240, 240);
+  }
+</style>
+
+<div class="row" style="margin-top: 2%; margin-left: 5%; margin-right: 5%;">
+<div class="col-sm-12">
+    <section style="background-color: #eee; border-radius: 15px;">
+        <div class="text-center container ">
+          <p class="py-3" style="color:#59786e; font-size: 30px; font-weight: 400;"><strong>{{ category_name }}</strong></p>
+      
+          <div class="row">
+
+            {% for product in products %}
+            {% for variant in product_variant %}
+            {% if variant.product.id == product.product.id %}
+            <div class="col-lg-3 col-md-12 mb-4">
+              <div class="card product-card" >
+                <div class="row">
+                    <div class="col-sm-12" style="text-align: right;">
+                      {% if product.status %}
+                      <a href="#" style="text-decoration: none; padding-right: 4%;">
+                        <i class="bi bi-heart-fill wishlist" style="font-size: 20px; color:#f30909" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                      </a>
+                      {% else %}
+                      <a href="#" style="text-decoration: none; padding-right: 4%;">
+                        <i class="bi bi-heart wishlist" style="font-size: 20px; color:#f30909" title="Add to WishList" onclick="login()" ></i>
+                      </a>
+                      {% endif %}
+                    </div>
+                </div>
+                <a href="/products/{{ product.product.id }}/details?user_id={{ user.id }}" class="text-reset anchortag">
+                  <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                    data-mdb-ripple-color="light">
+                    <img src="{{ variant.image.url }}"
+                      class="w-100" height="150px" style="object-fit: contain;"/>
+                  </div>
+                  <div class="card-body" style="color: #837a7a;">
+                      <h5 class="card-title mb-3" style="color:#3e3b3b">{{ product.product.name }}</h5>
+                      <p>Rs. {{ variant.price }}</p>
+                      <div style="color:#3e3b3b">4.6/5 (223)</div>
+                      <div class="stars">
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-half" style="color: rgb(21, 194, 21)"></i>
+                      </div>
+                      
+                  </div>
+                </a>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+
+          </div>
+        </div>
+    </section>
+</div>
+</div><br>
+
+
+<script>
+function login(){
+  Swal.fire('Please login or SignUp')
+}
+</script>
+
+{% endif %}
 {% endblock %}

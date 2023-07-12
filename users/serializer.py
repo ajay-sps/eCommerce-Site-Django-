@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User,UserProfile,SellerInventory
+from users.models import User,UserProfile,SellerInventory,UserAddresses
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -7,6 +7,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ('address_line_1','state','city','contact','pincode')
+
+
+class UpdateUserProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserProfile
+        fields = ('state','city','contact','profile_image')
+
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -27,8 +35,24 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
 
+class UpdateUserSerializer(serializers.ModelSerializer):
+
+    profile = UpdateUserProfileSerializer()
+
+    class Meta:
+        model = User
+        fields = ['first_name','last_name','profile']
+    
+
 class SellerInvenotrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SellerInventory
+        fields = "__all__"
+
+
+class UserAddressesSerialiazer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserAddresses
         fields = "__all__"

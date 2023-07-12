@@ -1,20 +1,23 @@
 from django.shortcuts import render,redirect
 from rest_framework.views import APIView
-from users.models import User,UserProfile,SellerInventory
+from users.models import User,UserProfile,SellerInventory,UserAddresses
 from django.http import HttpResponse
-from users.serializer import UserSerializer,SellerInvenotrySerializer
+from users.serializer import UserSerializer,SellerInvenotrySerializer,UserAddressesSerialiazer
 from base.email import verification_mail
 from django.contrib.auth import authenticate,login,logout
-from products.models import Products,ProductVariants,Categories,ProductVariantProperties,Properties
+from products.models import Products,ProductVariants,Categories,ProductVariantProperties,Properties,Brands
 from django.core.paginator import Paginator
+from rest_framework.response import Response
 
 
 class HomeView(APIView):
 
     def get(self,request):
-        products = Products.objects.all()
-        categories = Categories.objects.all()[:4]
-        return render(request,'users/home.html',{'products':products ,'categories' : categories})
+        first_product = Products.objects.first()
+        products = Products.objects.all()[1:9]
+        product_variants = ProductVariants.objects.filter(is_master = True)
+        categories = Categories.objects.all()
+        return render(request,'users/home.html',{'products':products ,'categories' : categories,'first_product':first_product,'product_variants':product_variants})
     
 
 class LoginView(APIView):
@@ -111,12 +114,7 @@ class SellersView(APIView):
     def get(self,request):
         sellers = User.objects.filter(role__name = "seller")
         item_per_page = 5
-        i = 1
-        lst = []
-        for seller in sellers :
-            lst.append({'seller': seller,'serial_no' : i})
-            i += 1
-        paginator = Paginator(lst,item_per_page)
+        paginator = Paginator(sellers,item_per_page)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request,'sellers/sellers.html',{"page_obj":page_obj})
@@ -218,3 +216,82 @@ class SellerAddVariantsView(APIView):
                     return HttpResponse(serializer.errors)
         except Exception as e:
             return HttpResponse(str(e))
+        
+
+class UserProfileView(APIView):
+
+    def get(self,request):
+        try:
+            addresses = UserAddresses.objects.filter(user = request.GET['user_id'])
+            return render(request,'users/profile.html',{'addresses':addresses})
+        except Exception as e:
+            return Response(str(e))
+    
+
+class AdminDashboardView(APIView):
+
+    def get(self,request):
+        products = Products.objects.count()
+        categories = Categories.objects.count()
+        brands = Brands.objects.count()
+        sellers = User.objects.filter(role__name = 'seller').count()
+        print(products,categories,brands,sellers)
+        return render(request,'users/dashboard.html',{"products":products,"categories":categories,'brands':brands,"sellers":sellers})
+    
+
+class UserProfileUpdateView(APIView):
+
+    def get(self,request):
+        return render(request,'users/update_profile.html')
+    
+
+class AddUserAddressView(APIView):
+
+    def get(self,request):
+        return render(request,'users/add_address.html')
+    
+    def post(self,request):
+        try:
+            data = request.data
+            serialiazer = UserAddressesSerialiazer(data = data)
+            if serialiazer.is_valid():
+                serialiazer.save()
+                return redirect(f'/users/profile?user_id={data["user"]}')
+            else:
+                return Response(serialiazer.errors)
+        except Exception as e:
+            return Response(str(e))
+        
+
+class UpdateUserAddressView(APIView):
+
+    def get(self,request):
+        try:
+            address = UserAddresses.objects.get(id = request.GET['address_id']) 
+            return render(request,'users/update_address.html',{'address':address})
+        except Exception as e:
+            return Response(str(e))
+        
+    def post(self,request):
+        try:
+            data = request.data
+            address_instance = UserAddresses.objects.get(id = data['address_id'])
+            serializer = UserAddressesSerialiazer(address_instance,data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return redirect(f'/users/profile?user_id={data["user"]}')
+            else :
+                return Response(serializer.errors)
+        except Exception as e :
+            return Response(str(e))
+
+
+class DeleteUserAddressView(APIView):
+
+    def delete(self,request,address_id):
+        try:
+            address = UserAddresses.objects.get(id = address_id)
+            address.delete()
+            return Response('Deleted Successfully')
+        except Exception as e:
+            return Response(str(e))

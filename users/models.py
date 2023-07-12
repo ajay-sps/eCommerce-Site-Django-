@@ -48,3 +48,9 @@ class SellerInventory(BaseModel):
 
     def __str__(self) -> str:
         return self.product_variant.code
+    
+
+class UserAddresses(BaseModel):
+
+    user = models.ForeignKey(User,on_delete=models.PROTECT,related_name='address')
+    address = models.CharField(max_length=250)

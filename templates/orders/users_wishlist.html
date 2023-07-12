@@ -1,0 +1,138 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+
+<style>
+    .box-shadow{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        border-radius: 12px;
+        background-color: aliceblue;
+        margin: 1% 2% 1% 1%;
+    }
+    .rowclass{
+      margin-left: 5%;
+      margin-right: 5%;
+    }
+    .properties{
+        margin-bottom: 0;
+    }
+    .icons:hover{
+        cursor: pointer;
+    }
+</style>
+
+
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
+    <div class="col-sm-4">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
+          <a href="#" style="text-decoration: none; " >
+            <li class="breadcrumb-item active" aria-current="page" style="color: #ed4646;">My Wishlist <i class="bi bi-bookmark-fill"></i></li>
+          </a>
+        </ol>
+      </nav>
+    </div>
+</div>
+
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
+    <section class="h-100" style="background-color: #eee;">
+        <div class="container h-100 py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-10">
+    
+            <div class="row" style="text-align: center;">
+                <h4 style="color: #e56565;">Wishlist</h4>
+            </div>
+            
+            {% for item in wishlist %}
+            <div class="card rounded-3 mb-4">
+                <div class="card-body p-4">
+                <div class="row d-flex justify-content-between align-items-center">
+                    <div class="col-md-3 col-lg-3 col-xl-3">
+                        <img
+                            src="{{ item.product_variant.image.url }}" height="120px" width="120px" style="object-fit: contain;" alt="Cotton T-shirt" >
+                    </div>
+                    <div class="col-md-5 col-lg-5 col-xl-5">
+                        <p class="lead fw-normal mb-2 properties">
+                            {{ item.product_variant.product.name }}
+                        </p>
+                        {% for property in properties  %}
+                        {% if property.product_variant.id == item.product_variant.id %}
+                        <p class="properties">
+                            <span class="text-muted">{{ property.property.name }} </span>{{ property.value}}
+                        </p>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-xl-2 ">
+                        <h6 class="mb-0">Rs. {{ item.product_variant.price }}</h6>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-xl-2 text-end">
+                        <p>
+                            <i class="bi bi-cart icons" style="font-size: 18px; color: rgb(95, 95, 231);" title="Add to Cart"></i>
+                        </p>
+                        <p>
+                            <i class="bi bi-bag icons" style="font-size: 18px; color:rgb(95, 95, 231);" title="Buy Now"></i>
+                        </p>
+                        <p onclick="removeItem('{{ user.id }}','{{ item.product_variant.id }}')">
+                            <i class="bi bi-trash icons" style="font-size: 18px; color: rgb(95, 95, 231);" title="Remove From Wishlist"></i>
+                        </p>
+                    </div>
+                </div>
+                </div>
+            </div>
+            {% endfor %}
+    
+            </div>
+        </div>
+        </div>
+    </section>
+</div>
+<p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
+
+<script>
+
+    function removeItem(user_id,item_id){
+        console.log(user_id,item_id)
+        Swal.fire({
+            title: 'Do you want to remove this item from wishlist ?',
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: 'Yes',
+        }).then((result) => {
+                if (result.isConfirmed) {
+
+                    csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+                    const url = `http://127.0.0.1:8000/cart/users/${user_id}/wishlist/delete`;
+                    const data = {
+                    "user" : user_id,
+                    "product_variant" : item_id,
+                    }
+
+                    fetch(url, {
+                    method : 'POST',
+                    headers : {
+                        'Content-Type' : 'application/json',
+                        "X-CSRFToken": csrf_element
+                        },
+                    body : JSON.stringify(data)
+                    }).then(response => {
+                    console.log(response)
+                    if(response.ok){
+                        Swal.fire('Removed from Wishlist :(', '', 'success').then( () => {
+                        location.reload()
+                        })
+                    }
+                    else{
+                        console.log('errors')
+                    }
+                    }).catch(error => {
+                    console.log(error)
+                    })
+                } 
+                })
+    }
+
+</script>
+
+{% endblock %}
