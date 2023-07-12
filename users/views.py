@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from rest_framework.views import APIView
 from users.models import User,UserProfile,SellerInventory,UserAddresses
 from django.http import HttpResponse
-from users.serializer import UserSerializer,SellerInvenotrySerializer,UserAddressesSerialiazer
+from users.serializer import UserSerializer,SellerInvenotrySerializer,UserAddressesSerialiazer,UpdateUserSerializer
 from base.email import verification_mail
 from django.contrib.auth import authenticate,login,logout
 from products.models import Products,ProductVariants,Categories,ProductVariantProperties,Properties,Brands
@@ -239,10 +239,35 @@ class AdminDashboardView(APIView):
         return render(request,'users/dashboard.html',{"products":products,"categories":categories,'brands':brands,"sellers":sellers})
     
 
-class UserProfileUpdateView(APIView):
+class UpdateUserProfileView(APIView):
 
     def get(self,request):
         return render(request,'users/update_profile.html')
+    
+    def post(self,request):
+        try:
+            data = request.data
+            print(data)
+            arranged_data = {
+                    'first_name' : data.get('first_name'),
+                    'last_name' : data.get('last_name'),
+                    'profile' : {
+                        'state' : data.get('state'),
+                        'city' : data.get('city'),
+                        'contact' : data.get('contact'),
+                        'profile_image' : data.get('image'),
+                    }
+                }
+            user_instance = User.objects.get(id = data['user_id'])
+            serializer = UpdateUserSerializer(user_instance,data = arranged_data)
+            if serializer.is_valid():
+                serializer.save()
+                return redirect(f"/users/profile?user_id={data['user_id']}")
+            else:
+                return Response(serializer.errors)
+        except Exception as e:
+            return Response(str(e))
+        
     
 
 class AddUserAddressView(APIView):

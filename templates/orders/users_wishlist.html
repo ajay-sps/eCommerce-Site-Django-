@@ -19,6 +19,9 @@
     .icons:hover{
         cursor: pointer;
     }
+    a:hover{
+        cursor: pointer;
+    }
 </style>
 
 
@@ -49,8 +52,10 @@
                 <div class="card-body p-4">
                 <div class="row d-flex justify-content-between align-items-center">
                     <div class="col-md-3 col-lg-3 col-xl-3">
+                        <a href="/products/{{ item.product_variant.product.id }}/details/{{ item.product_variant.id }}?user_id={{ user.id }}">
                         <img
                             src="{{ item.product_variant.image.url }}" height="120px" width="120px" style="object-fit: contain;" alt="Cotton T-shirt" >
+                        </a>
                     </div>
                     <div class="col-md-5 col-lg-5 col-xl-5">
                         <p class="lead fw-normal mb-2 properties">
