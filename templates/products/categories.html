@@ -4,24 +4,51 @@
 <style>
 .box-shadow{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 12px;
+    background-color: aliceblue;
+    margin: 1% 2% 1% 1%;
+}
+.swal2-cancel{
+  margin-right: 4%;
+}
+.table-success {
+    --bs-table-bg: #ffffff;
+    --bs-table-striped-bg: #ededed;
+}
+.rowclass{
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+td{
+  vertical-align: middle;
 }
 
 </style>
 
-
-<div class="row p-3 box-shadow" >
-    <div class="col-sm-4">
-        <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-    </div>
-    <div class="col-sm-2 offset-sm-6">
-        <button type="button" class="btn btn-primary">Add Category</button>
-    </div>
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;">
+  <div class="col-sm-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
+        <a href="/products/categories" style="text-decoration: none;">
+          <li class="breadcrumb-item active" aria-current="page">Categories</li>
+        </a>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-sm-4" style="text-align: center;">
+      <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
+      </form>
+  </div>
+  <div class="col-sm-4" style="text-align: right;">
+      <a href="/products/categories/add"><button type="button" class="btn btn-primary">Add Category</button></a>
+  </div>
 </div>
 
-<div class="row p-3 box-shadow mt-3" >
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
+  <div class="col">
     <table class="table table-success table-striped" >
         <thead class="thead-light" >
           <tr >
@@ -32,19 +59,172 @@
           </tr>
         </thead>
         <tbody>
-            {% for category in categories %}
+            {% for category in page_obj %}
           <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
             <td>{{ category.name }}</td>
-            <td><img src="{{ category.image.url }}" style="height: 60px; width: 100px;"></td>
+            <td><img src="{{ category.image.url }}" style="height: 60px; width: 60px; object-fit: contain;"></td>
             <td>
-            <a href="#"><button type="button" class="btn btn-primary">Update</button>
-            </a> <button type="button" class="btn btn-danger">Delete</button>
+              <div class="form-check form-switch">
+                <a href="/products/categories/update/{{ category.id }}" >
+                  <i class='bx bx-edit-alt' title="Update"></i>
+                </a>
+                {% if category.is_active %}
+                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onclick="is_active('{{ category.id }}','{{ category.is_active }}')" title="Active/Deactive" style="cursor: pointer;" checked>
+                {% else %}
+                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onclick="is_active('{{ category.id }}','{{ category.is_active }}')" title="Active/Deactive" style="cursor: pointer;" >
+                {% endif %}
+              </div>
             </td>
           </tr>
             {% endfor%}
         </tbody>
-    </table>   
+    </table>
+  </div>   
 </div>
+
+<div class="row" style="margin-top: 3%; margin-bottom: 3%;">
+  <div class="col-sm-4 offset-sm-5" style="text-align: center;">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination" style="margin: 0%; font-weight: 500;">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+        {% endif %}
+        <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>
+<p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
+
+<script>
+
+  function is_active(id,status){
+
+        const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+              confirmButton: 'btn btn-success',
+              cancelButton: 'btn btn-danger'
+                },
+        buttonsStyling: false
+          })
+  
+        if ( status == 'True'){
+  
+              swalWithBootstrapButtons.fire({
+              title: 'Are you sure?',
+              text: "You want to deactivate it",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Yes, deactivate it!',
+              cancelButtonText: 'No, cancel!',
+              reverseButtons: true
+              }).then((result) => {
+              if (result.isConfirmed) {
+              
+              csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+              const url = `http://127.0.0.1:8000/products/categories/delete/${id}`;
+              console.log(csrf_element)
+    
+              fetch(url , {
+                  method : 'GET',
+                  headers : {
+                      'Content-Type' : 'application/json',
+                      "X-CSRFToken": csrf_element
+                  }
+              }).then(response=>{
+                  console.log(response)
+                  if(response.ok){
+                      swalWithBootstrapButtons.fire(
+                          'Deactivated',
+                          'success'
+                          ).then(() => {
+                              location.reload()
+                          })
+              
+                  }else{
+                    console.log('erros',csrf_element)
+                  } 
+              
+              }).catch(error=>{
+                  console.log(error)
+              })
+  
+  
+              } else if (
+              result.dismiss === Swal.DismissReason.cancel
+              ) {
+              swalWithBootstrapButtons.fire(
+                'Cancelled',
+                'Your item is not deactivated',
+                'error'
+              ).then(()  =>{
+                location.reload()
+              } )
+              }
+              })
+                    }
+
+      else{
+                    swalWithBootstrapButtons.fire({
+              title: 'Are you sure?',
+              text: "You want to activate it",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Yes, activate it!',
+              cancelButtonText: 'No, cancel!',
+              reverseButtons: true
+              }).then((result) => {
+              if (result.isConfirmed) {
+  
+                csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+                const url = `http://127.0.0.1:8000/products/categories/delete/${id}`;
+                console.log(csrf_element)
+                  
+                  fetch(url , {
+                      method : 'GET',
+                      headers : {
+                          'Content-Type' : 'application/json',
+                          "X-CSRFToken": csrf_element
+                      }
+                  }).then(response=>{
+                      console.log(response)
+                      if(response.ok){
+                          swalWithBootstrapButtons.fire(
+                              'Activated',
+                              'success'
+                              ).then(() => {
+                                  location.reload()
+                              })
+                  
+                      }else{
+                        console.log('erros',csrf_element)
+                      } 
+                  
+                  }).catch(error=>{
+                      console.log(error)
+                  })
+                
+                
+                } else if (
+                result.dismiss === Swal.DismissReason.cancel
+                ) {
+                swalWithBootstrapButtons.fire(
+                  'Cancelled',
+                  'Your item is not Activated',
+                  'error'
+                ).then(()  =>{
+                  location.reload()
+                } )
+                
+                }
+                })
+                    }
+                
+                }
+  </script>
 
 {% endblock %}

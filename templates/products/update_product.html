@@ -1,0 +1,181 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+
+<style>
+.box-shadow{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 12px;
+}
+.form-control{
+    padding: 1%;
+}
+</style>
+
+<div class="row " style="margin-bottom: 35px; margin-top: 2%; margin-bottom: 4%;">
+    <div class="col-sm-10 offset-sm-1">
+        <div class="row box-shadow" style="background-color: aliceblue; padding: 1%;">
+            <div class="col-sm-6" style="text-align: left;">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb" style="margin: 0; padding-top: 1%;">
+                      <li class="breadcrumb-item"><a href="/products" style="text-decoration: none;">Products</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">ProductUpdate</li>
+                    </ol>
+                  </nav>
+            </div>
+            <div class="col-sm-6" style="text-align: right;">
+                <a href="/products/{{ id }}/add/variants"><button type="button" class="btn btn-primary">Add Variant</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if updated %}
+<div class="row">
+    <div class="col" style="text-align: center; color: green;">
+        <h4>Updated Succefully!</h4>
+    </div>
+</div>
+{% endif %}
+
+<div class="row " style="margin-top: 2%; color: black;">
+    <div class="col-sm-10 offset-sm-1 box-shadow" style="border-radius: 12px; background-color: aliceblue;">
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%; margin-bottom: 2%;">
+                <div class="col" style="text-align: center;">
+                    <h4 style="color: green;">Update Product</h4>
+                </div>
+            </div>
+            <div class="row" style=" padding-left: 2%; padding-right: 2%;">
+                <div class="col-sm-4">
+                    <div><label for="name">Name</label></div>
+                    <div><input type="text" class="form-control" name="name" id="name" value="{{ name }}" required></div>
+                </div>
+                <div class="col-sm-4">
+                    <div><label for="brand">Brand</label></div>
+                    <div>
+                    <select  name="brand" class="form-control" id="brand" style="width: 100%;">
+                        {% for brand in brands %}
+                        {% if brand.name == brand_name %}
+                        <option value="{{ brand.id }}" selected>{{ brand.name }}</option>
+                        {% else %}
+                        <option value="{{ brand.id }}">{{ brand.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    </div>
+                </div>
+                <div class="col-sm-4" >
+                    <div><label for="category">Category</label></div>
+                    <div>
+                    <select  name="category" class="form-control" id="category" style="width: 100%;">
+                        {% for category in categories %}
+                        {% if category.name == category_name %}
+                        <option value="{{ category.id }}" selected>{{ category.name }}</option>
+                        {% else %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
+                <div class="col-sm-4">
+                    <div><label for="description">Description</label></div>
+                    <div><textarea class="form-control" name="description" id="description" rows="3" required>{{ description }}</textarea></div>
+                </div>
+                <div class="col-sm-4" style="margin-top: 3%;">
+                    <div class="row">
+                        <div class="col">
+                            <label for="image" style="color: black;">Image</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <input type="file" class="form-control" name="image" id="image" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 offset-sm-1" style="padding-top: 2%; margin-top: 4%;">
+                    {% if is_active %}
+                    <input type="checkbox" class="form-check-input" name="is_active" id="is_active" checked>
+                    {% else %}
+                    <input type="checkbox" class="form-check-input" name="is_active" id="is_active">
+                    {% endif %}
+                    <label class="form-check-label" for="is_active" style="color: black; padding-left: 1%;">Is Active</label>
+                </div>
+            </div>
+            <div class="row" style="margin-top:2%; margin-bottom: 2%;">
+                <div class="col" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary">Update Product</button>
+                </div>
+            </div>
+        </form> 
+    </div>
+</div>
+
+
+<div class="row" style="margin-top: 2%;">
+    <div class="col-sm-10 offset-sm-1">
+        <div class="row" style="color: black;">
+            <div class="col" style="text-align: center;">
+                <h4 style="color: green;">Variants</h4>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 2%;">
+            {% for variant in product_variants %}
+            <div class="col-sm-4" style="padding: 1px; color: black; font-size: 15px; margin-top: 2%;">
+                <div class="row">
+                    <form method="post" action="" enctype="multipart/form-data" style="padding: 0px;">
+                        {% csrf_token %}
+                        <div class="col-sm-10 offset-sm-1 box-shadow" style="padding: 2px 8px 2px 8px; background-color: aliceblue;" >
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-sm-6">
+                                    <input type="hidden" name="variant_id" value="{{ variant.id }}"> 
+                                    <div><label for="code">Code</label></div>
+                                    <div><input type="text" class="form-control" name="code" id="code" value="{{ variant.code }}" required></div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div><label for="price">Price</label></div>
+                                    <div><input type="text" class="form-control" name="price" id="price" value="{{ variant.price }}" required></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 4%;">
+                                <div class="col-sm-3">
+                                    <div><label>Image</label></div>
+                                </div>
+                                <div class="col-sm-9" style="margin-top: 1%;">
+                                    <input type="file" class="form-control" name="image" id="image" required>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 4%;">
+                                {% for property in variant_properties %}
+                                {% if property.product_variant.id == variant.id %}
+                                <div class="col-sm-5" style="margin-top: 4px;">
+                                    <input type="hidden" name="property" value="{{ property.property.name }}">
+                                    <input type="hidden" name="property_id" value="{{ property.id }}">
+                                    {{ property.property.name }}
+                                </div>
+                                <div class="col-sm-7" style="margin-top: 4px;">
+                                    <input type="text" name="value" value="{{ property.value }}" class="form-control">
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="row" style="margin-top: 4%; margin-bottom: 4%;">
+                                <div class="col" style="text-align: center;">
+                                    <button type="submit" class="btn btn-primary" style="padding: 2px;">update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

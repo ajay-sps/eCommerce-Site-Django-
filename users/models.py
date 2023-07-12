@@ -1,6 +1,7 @@
 from django.db import models
 from base.models import BaseModel
 from django.contrib.auth.models import AbstractUser
+from products.models import ProductVariants
 import secrets
 
 
@@ -37,3 +38,19 @@ class UserProfile(BaseModel):
     def generate_token(self):
         self.token = secrets.token_hex(8) 
         self.save()
+
+
+class SellerInventory(BaseModel):
+
+    seller = models.ForeignKey(User,on_delete=models.PROTECT,related_name='seller_inventory')
+    product_variant = models.ForeignKey(ProductVariants,on_delete= models.PROTECT,related_name='seller_inventory')
+    quantity = models.IntegerField()
+
+    def __str__(self) -> str:
+        return self.product_variant.code
+    
+
+class UserAddresses(BaseModel):
+
+    user = models.ForeignKey(User,on_delete=models.PROTECT,related_name='address')
+    address = models.CharField(max_length=250)

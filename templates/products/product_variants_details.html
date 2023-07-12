@@ -1,0 +1,411 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+
+<style>
+  .quantity{
+    padding: 1%;
+    padding-left: 4%;
+    border-color: black;
+  }
+  .quantity:hover{
+    cursor: pointer;
+  }
+  .wishlist:hover{
+    cursor : pointer;
+  }
+  .image-container:hover{
+    border: 2px solid rgb(182, 166, 166);
+    cursor: pointer;
+  }
+</style>
+
+{% for variant in product_variants %}
+{% if variant.id == variant_id %}
+<div class="row" style="color: black;">
+    <div class="col-sm-12">
+        <section class="py-5">
+            <div class="container">
+              <div class="row gx-5">
+                <aside class="col-lg-6">
+                  <div class="border rounded-4 mb-3 d-flex justify-content-center image-container">
+                      <img style="height: 27rem; object-fit: contain; padding: 5%;"  class="rounded-4 fit" src="{{ variant.image.url }}" />
+                  </div>
+                </aside>
+                <main class="col-lg-6">
+                  <div class="ps-lg-3">
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <h4 class="title text-dark">{{ variant.product.name }}
+                        </h4>
+                      </div>
+                      <div class="col-sm-5" style="text-align: right;">
+
+                        {% if user_wishlist %}
+                        <i class="bi bi-heart-fill wishlist" style="font-size: 30px; color: red;" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                        {% else %}
+                        <i class="bi bi-heart wishlist" style="font-size: 30px; color: red;" title="Add to WishList" onclick="addToWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                        {% endif %}
+                        
+                      </div>
+                    </div>
+                    <div class="d-flex flex-row my-3">
+                      <div class="text-warning mb-1 me-2">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span class="ms-1">
+                          4.5
+                        </span>
+                      </div>
+                      <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
+                      <span class="text-success ms-2">In stock</span>
+                    </div>
+          
+                    <div class="mb-3">
+                      <span class="h5">Rs . {{ variant.price }}</span>
+                    </div>
+          
+                    <p>
+                      {{ variant.product.description }}
+                    </p>
+          
+                    <div class="row">
+                        {% for properties in product_variants_properties %}
+                        {% if properties.product_variant.id == variant.id %}
+                        <dt class="col-3">{{ properties.property.name }}</dt>
+                        <dd class="col-9">{{ properties.value }}</dd>
+                        {% endif %}
+                        {% endfor%}
+                    </div>
+                    {% if user.role.name == 'buyer' %}
+
+                    <div class="row">
+                      <div class="col-3">
+                        <dt>Quantity</dt>
+                      </div>
+                      <div class="col-5">
+                        <select class="form-control quantity" id="quantity">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                      </div>
+                    </div>
+          
+                    <hr />
+                    <a onclick="checkout('{{ user.id }}','{{ variant.id }}')" class="btn btn-warning shadow-0"> Buy now </a>
+
+                    {% if user_cart %}
+                    <a href="/cart/users/{{ user.id }}/cart"><button  class="btn btn-primary shadow-0" > <i class="me-1 fa fa-shopping-basket"></i> Item in cart </button></a>
+                    {% else %}
+                    <button  class="btn btn-primary shadow-0" onclick="addToCart('{{ user.id }}','{{ variant.id }}')"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </button>
+                    {% endif %}
+
+                    <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                    {% endif %}
+                  </div>
+                </main>
+              </div>
+            </div>
+          </section>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+<div class="row" style="margin-bottom: 4%; color: black;">
+        <div class="row py-3 " >
+            <div class="col" style="text-align: center;">
+                <h4>Other Variants</h4>
+            </div>
+        </div>
+        <div class="row">
+            {% for variant in product_variants %}
+            {% if not variant.id == variant_id %}
+            <div class="col-sm-3">
+                <a href="/products/{{ id }}/details/{{ variant.id }}?user_id={{ user.id }}"><img src="{{ variant.image.url }}" style="width: 150px;height: 150px; object-fit: contain;"></a>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+</div>
+<p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
+
+<script>
+
+  function addToCart(user_id,variant_id){
+
+    let quantity = document.getElementById('quantity').value
+    console.log(user_id,variant_id,quantity)
+
+    Swal.fire({
+      title: 'Do you want to add item to the cart',
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: 'Add',
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+        const url = `http://127.0.0.1:8000/cart/users/${user_id}/cart/add`;
+        const data = {
+          "user" : user_id,
+          "product_variant" : variant_id,
+          "quantity" : quantity
+        }
+
+        fetch(url, {
+          method : 'POST',
+          headers : {
+              'Content-Type' : 'application/json',
+              "X-CSRFToken": csrf_element
+              },
+          body : JSON.stringify(data)
+        }).then(response => {
+          console.log(response)
+          if(response.ok){
+            Swal.fire('Item Added :)', '', 'success').then(() =>
+            {
+              location.reload()
+            })
+          }
+          else{
+            console.log('errors')
+          }
+        }).catch(error => {
+          console.log(error)
+        })   
+      }
+    })
+  }
+
+  function addToWishList(user_id,variant_id){
+
+console.log(user_id,variant_id)
+
+csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+const url = `http://127.0.0.1:8000/cart/users/${user_id}/wishlist/add`;
+const data = {
+  "user" : user_id,
+  "product_variant" : variant_id,
+}
+
+fetch(url, {
+  method : 'POST',
+  headers : {
+      'Content-Type' : 'application/json',
+      "X-CSRFToken": csrf_element
+      },
+  body : JSON.stringify(data)
+}).then(response => {
+  console.log(response)
+  if(response.ok){
+    Swal.fire('Added to wishList :)', '', 'success').then( () => {
+      location.reload()
+    })
+  }
+  else{
+    console.log('errors')
+  }
+}).catch(error => {
+  console.log(error)
+}) 
+
+}
+
+function removeFromWishList(user_id,variant_id){
+console.log(user_id,variant_id)
+
+csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+const url = `http://127.0.0.1:8000/cart/users/${user_id}/wishlist/delete`;
+const data = {
+  "user" : user_id,
+  "product_variant" : variant_id,
+}
+
+fetch(url, {
+  method : 'POST',
+  headers : {
+      'Content-Type' : 'application/json',
+      "X-CSRFToken": csrf_element
+      },
+  body : JSON.stringify(data)
+}).then(response => {
+  console.log(response)
+  if(response.ok){
+    Swal.fire('Removed from Wishlist :(', '', 'success').then( () => {
+      location.reload()
+    })
+  }
+  else{
+    console.log('errors')
+  }
+}).catch(error => {
+  console.log(error)
+}) 
+}
+
+function checkout(user_id,variant_id){
+      csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+      let quantity = document.getElementById('quantity').value
+      window.location.href = `/cart/users/${user_id}/product/checkout?quantity=${quantity}&variant_id=${variant_id}`
+
+}
+
+</script>
+
+{% endblock %}
+
+
+{% block non_auth_content %}
+{% if not user.is_authenticated %}
+
+<style>
+  .quantity{
+    padding: 1%;
+    padding-left: 4%;
+    border-color: black;
+  }
+  .quantity:hover{
+    cursor: pointer;
+  }
+  .wishlist:hover{
+    cursor : pointer;
+  }
+  .image-container:hover{
+    border: 2px solid rgb(182, 166, 166);
+    cursor: pointer;
+  }
+</style>
+
+{% for variant in product_variants %}
+{% if variant.id == variant_id %}
+<div class="row" style="color: black;">
+    <div class="col-sm-12">
+        <section class="py-5">
+            <div class="container">
+              <div class="row gx-5">
+                <aside class="col-lg-6">
+                  <div class="border rounded-4 mb-3 d-flex justify-content-center image-container">
+                      <img style="height: 27rem; object-fit: contain; padding: 5%;"  class="rounded-4 fit" src="{{ variant.image.url }}" />
+                  </div>
+                </aside>
+                <main class="col-lg-6">
+                  <div class="ps-lg-3">
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <h4 class="title text-dark">{{ variant.product.name }}
+                        </h4>
+                      </div>
+                      <div class="col-sm-5" style="text-align: right;">
+
+                        {% if user_wishlist %}
+                        <i class="bi bi-heart-fill wishlist" style="font-size: 30px; color: red;" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                        {% else %}
+                        <i class="bi bi-heart wishlist" style="font-size: 30px; color: red;" title="Add to WishList" onclick="login()" ></i>
+                        {% endif %}
+                        
+                      </div>
+                    </div>
+                    <div class="d-flex flex-row my-3">
+                      <div class="text-warning mb-1 me-2">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span class="ms-1">
+                          4.5
+                        </span>
+                      </div>
+                      <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
+                      <span class="text-success ms-2">In stock</span>
+                    </div>
+          
+                    <div class="mb-3">
+                      <span class="h5">Rs . {{ variant.price }}</span>
+                    </div>
+          
+                    <p>
+                      {{ variant.product.description }}
+                    </p>
+          
+                    <div class="row">
+                        {% for properties in product_variants_properties %}
+                        {% if properties.product_variant.id == variant.id %}
+                        <dt class="col-3">{{ properties.property.name }}</dt>
+                        <dd class="col-9">{{ properties.value }}</dd>
+                        {% endif %}
+                        {% endfor%}
+                    </div>
+                    {% if user.role.name == 'buyer' %}
+
+                    <div class="row">
+                      <div class="col-3">
+                        <dt>Quantity</dt>
+                      </div>
+                      <div class="col-5">
+                        <select class="form-control quantity" id="quantity">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                      </div>
+                    </div>
+          
+                    <hr />
+                    <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
+
+                    {% if user_cart %}
+                    <a href="/cart/users/{{ user.id }}/cart"><button  class="btn btn-primary shadow-0" > <i class="me-1 fa fa-shopping-basket"></i> Item in cart </button></a>
+                    {% else %}
+                    <button  class="btn btn-primary shadow-0" onclick="addToCart('{{ user.id }}','{{ variant.id }}')"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </button>
+                    {% endif %}
+
+                    <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                    {% endif %}
+                  </div>
+                </main>
+              </div>
+            </div>
+          </section>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+<div class="row" style="margin-bottom: 4%; color: black;">
+        <div class="row py-3 " >
+            <div class="col" style="text-align: center;">
+                <h4>Other Variants</h4>
+            </div>
+        </div>
+        <div class="row">
+            {% for variant in product_variants %}
+            {% if not variant.id == variant_id %}
+            <div class="col-sm-3">
+                <a href="/products/{{ id }}/details/{{ variant.id }}?user_id={{ user.id }}"><img src="{{ variant.image.url }}" style="width: 150px;height: 150px; object-fit: contain;"></a>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+</div>
+<p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
+
+<script>
+
+function login(){
+  Swal.fire('Please login or SignUp')
+}
+
+</script>
+
+{% endif %}
+{% endblock %}

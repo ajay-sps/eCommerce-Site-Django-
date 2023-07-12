@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'products',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -149,3 +150,11 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+MYTEST=2
+
+
+
+# Razor Pay Details
+
+RAZOR_KEY_ID = config('RAZOR_KEY_ID')
+RAZOR_KEY_SECRET = config('RAZOR_KEY_SECRET') 

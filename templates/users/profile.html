@@ -1,0 +1,151 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+
+<style>
+    .box-shadow{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        border-radius: 12px;
+        background-color: aliceblue;
+        margin: 1% 2% 1% 1%;
+    }
+    .rowclass{
+      margin-left: 5%;
+      margin-right: 5%;
+    }
+    .properties{
+        margin-bottom: 0;
+    }
+    .removeItem:hover{
+        cursor: pointer;
+    }
+    .edit:hover{
+        cursor: pointer;
+    }
+
+</style>
+
+
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
+    <div class="col-sm-11" style="text-align: center;">
+        <h4 style="margin: 0; padding-left: 8%;">My Profile</h4>
+    </div>
+    <div class="col-sm-1">
+        <a href="/users/profile/update?user_id={{ user.id }}">
+            <i class='bx bx-edit-alt edit' style="padding-left: 50%; color: rgb(101, 101, 235); font-size: 25px;" title="Update Profile"></i>
+        </a>
+    </div>
+</div>
+
+<div class="row p-3 mt-5 box-shadow rowclass">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12" style="text-align: center;">
+                <img class="rounded-circle shadow-4-strong" alt="avatar2" src="{{ user.profile.profile_image.url }}" height="150px" width="150px" style="object-fit: cover" />
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Info</h4>
+                        <p>First Name : {{ user.first_name }}</p>
+                        <p>Last Name : {{ user.last_name }}</p>
+                        <p>Contact : {{ user.profile.contact }}</p>
+                        <p>State : {{ user.profile.state }}</p>
+                        <p>City : {{ user.profile.city }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row" style="margin-bottom: 4%;">
+                                    <div class="col-sm-6">
+                                        <h4>Addresses</h4>
+                                    </div>
+                                    <div class="col-sm-6" style="text-align: right;">
+                                        <a href="/users/add/address">
+                                            <i class='bx bx-plus edit' style="color: #4f4ff3;
+                                        font-size: 30px;" title="Add Address"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    {% for address in addresses %}
+                                    <div class="col-sm-12" style="margin-bottom: 2%;">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-sm-9">
+                                                        <p style="margin: 0;">{{ address.address }}</p>
+                                                    </div>
+                                                    <div class="col-sm-3" style="text-align: right;">
+                                                        <div>
+                                                            <a href="/users/address/update?address_id={{ address.id }}">
+                                                                <i class='bx bx-pencil edit' style="color: rgb(58, 235, 58);" title="Update Address"></i>
+                                                            </a>
+                                                            <i class='bx bx-trash-alt edit' style="color: rgb(58, 235, 58);" title="Delete Address" onclick="deleteAddress('{{ address.id }}')"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
+
+
+<script>
+
+function deleteAddress(address_id){
+        Swal.fire({
+            title: 'Do you want to remove this Address ?',
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: 'Yes',
+        }).then((result) => {
+                if (result.isConfirmed) {
+                    csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+                    const url = `http://127.0.0.1:8000/users/address/delete/${address_id}`;
+
+                    fetch(url, {
+                        method : 'DELETE',
+                        headers : {
+                            'Content-Type' : 'application/json',
+                            "X-CSRFToken": csrf_element
+                            },
+                        }).then(response => {
+                        console.log(response)
+                        if(response.ok){
+                            Swal.fire('Address Deleted :)', '', 'success').then(() => {
+                                location.reload()
+                            })
+                        }
+                        else{
+                            console.log('errors')
+                        }
+                        }).catch(error => {
+                        console.log(error)
+                        })
+                } 
+                })
+    }
+
+</script>
+
+{% endblock %}

@@ -6,129 +6,146 @@
 .box-shadow{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+.form-control{
+    padding: 2px;
+}
+.edit:hover{
+    cursor: pointer;
+}
 </style>
 
-<div class="row">
-    <div class="col-sm-8 offset-sm-2">
-        <div class="row p-3 box-shadow mt-3" >
-            <div class = "col-sm-12">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h2 style="text-align: center; color: green;">Product added Succefully !</h2>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <form method="POST" action="" enctype="multipart/form-data" style="color: black;">
-                            {% csrf_token %}
-                            <div class="row">
-                                    <div class="col-sm-6">
-                                        <label for="brands" class="form-label">Brand</label>
-                                        <select class="form-select" name="brand" id="brands">
-                                            <option value="selected">{{ brand }}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <label for="categories" class="form-label">Category</label>
-                                        <select class="form-select" name="category" id="categories">
-                                            <option value="selected">{{ category }}</option>
-                                        </select>
-                                    </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="name" id="name" value="{{ name }}" required>
-                                </div>
-                                
-                                <div class="col-sm-6">
-                                    <label for="image" class="form-label">Image</label>
-                                    <input type="file" class="form-control" name="image" id="image" value="{{ image }}" required>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row"> 
-                                <div class="col-sm-6">
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea class="form-control" name="description" id="description" rows="3" placeholder="{{ description }}" required></textarea>
-                                </div>
-                                <div class="col-sm-2 offset-sm-1 form-check" style="padding-top: 5%;">
-                                    <input type="checkbox" class="form-check-input" name="is_active" id="is_active">
-                                    <label class="form-check-label" for="is_active">Is Active</label>
-                                </div>
-                            </div>
-                            <br>
-                            <br>
-                            <div class="row">
-                                <div class="col-sm-12">   
-                                    <div style="text-align: center;">
-                                        <button type="submit" class="btn btn-primary">Edit Product</button>
-                                    </div>
-                                </div>  
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+<div class="row box-shadow" style="margin: 2% 7% 4% 7%; padding: 1%; background-color: aliceblue;">
+    <div class="col">
+        <nav aria-label="breadcrumb" >
+            <ol class="breadcrumb" style="margin: 0px;">
+                <li class="breadcrumb-item"><a href="/products" style="text-decoration: none;">Products</a></li>
+                <li class="breadcrumb-item"><a href="/products/add" style="text-decoration: none;">AddProducts</a></li>
+                <li class="breadcrumb-item active" aria-current="page">AddProductVariants</li>
+            </ol>
+        </nav>
     </div>
 </div>
 
-
-<br><br>
-
-<div class="row">
-    <div class="col-sm-8 offset-sm-2">
-    <div class="row p-3 box-shadow mt-3" >
-        <div class = "col-sm-12">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h2 style="text-align: center; color: green;">Add Variant</h2>
+<div class="row " style="margin-top: 2%; color: black;">
+    <div class="col-sm-10 offset-sm-1 box-shadow" style="border-radius: 12px; background-color: aliceblue;">
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
+                <div class="col" style="text-align: center;">
+                    <h5 style="color: green;">Product Details</h5>
                 </div>
             </div>
-            <br>
-            <div class="row">
-                <div class="col-sm-12">
-                    <form method="POST" action="" enctype="multipart/form-data" style="color: black;">
-                        {% csrf_token %}
-                        <div class="row">
-                                <div class="col-sm-6">
-                                    <label for="name" class="form-label">Product</label>
-                                    <input type="text" class="form-control" name="product" id="name" value="{{ name }}" required>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="image" class="form-label">Image</label>
-                                    <input type="file" class="form-control" name="image" id="image" required>
-                                </div>
-                        </div>
-                        <br>        
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label for="name" class="form-label">Code</label>
-                                <input type="text" class="form-control" name="code" id="name" required>
-                            </div>
-                            
-                            <div class="col-sm-6">
-                                <label for="name" class="form-label">Price</label>
-                                <input type="text" class="form-control" name="price" id="name" required>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-sm-12">   
-                                <div style="text-align: center;">
-                                    <button type="submit" class="btn btn-primary">Add Product Variant</button>
-                                </div>
-                            </div>  
-                        </div>
-                    </form>
+            <div class="row" style=" padding-left: 2%; padding-right: 2%; margin-bottom: 2%;">
+                <div class="col-sm-4">
+                    <div><label for="name">Name</label></div>
+                    <div><input type="text" class="form-control" name="name" id="name" value="{{ name }}" required></div>
+                </div>
+                <div class="col-sm-4">
+                    <div><label for="brand">Brand</label></div>
+                    <div><input type="text" class="form-control" name="brand" id="name" value="{{ brand_name }}" required></div>
+                </div>
+                <div class="col-sm-4" >
+                    <div><label for="category">Category</label></div>
+                    <div><input type="text" class="form-control" name="category" id="name" value="{{ category_name }}" required></div>
                 </div>
             </div>
-        </div>
-    </div>
+        </form>
     </div>
 </div>
+
+<div class="row" style="margin-top: 3%; color: black;">
+    <div class="col-sm-10 offset-sm-1 box-shadow" style="border-radius: 12px; background-color: aliceblue;">
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
+                <div class="col" style="text-align: center;">
+                    <h5 style="color: green;">Add Product Variant</h5>
+                </div>
+            </div>
+            <div class="row" style=" padding-left: 2%; padding-right: 2%;">
+                <div class="col-sm-3">
+                    <div><label for="code">Code</label></div>
+                    <input type="text" class="form-control" name="code" id="code" required>
+                </div>
+                <div class="col-sm-3" >
+                    <div><label for="code">Price</label></div>
+                    <input type="number" class="form-control" name="price" id="price" required>
+                </div>
+                <div class="col-sm-2" style="text-align: center; margin-top: 3%;">
+                    <label for="image" style="color: black;">Image</label>
+                </div>
+                <div class="col-sm-4" style="margin-top: 3%;">
+                    <input type="file" class="form-control" name="image" id="image" required>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 2%;">
+                <div class="col-sm-3" style="text-align: center; color: black;">
+                    <label>Add Property</label>
+                </div>
+                <div class="col-sm-1">
+                    <i class='bx bx-plus edit' style="color: #4f4ff3;font-size: 30px;" title="Add Property" onclick="AddFields()"></i>
+                </div>
+                <div class="col-sm-3 " style="text-align: center;" >
+                    <div id="selectField"></div>
+                </div>
+                <div class="col-sm-3">
+                    <div id="valueField" style="width: 100%;"></div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:2%; margin-bottom: 2%;">
+                <div class="col" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary">Add Variant</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    function AddFields(){
+        var selectContainer = document.getElementById("selectField")
+        var valueContainer = document.getElementById("valueField")
+        
+        
+        var select = document.createElement('select')
+        select.className = "form-control"
+        select.name = "property"
+        select.style.display = 'block'
+        select.style.width = '100%'
+        select.style.marginBottom = '3%'
+        select.style.marginTop = '1%'
+        select.style.padding = '2px'
+
+        var properties = JSON.parse("{{ properties|escapejs }}")
+        console.log(properties)
+
+        var option = document.createElement('option')
+        option.selected = 'property'
+        option.text = "-----------"
+        select.append(option)
+       
+        for(var i = 0;i< properties.length;i++){
+            var option = document.createElement('option')
+            option.text = properties[i]
+            option.value = properties[i]
+            select.appendChild(option)
+        }
+
+        var input = document.createElement('input')
+        input.className = "form-control"
+        input.type = 'text'
+        input.name = 'value'
+        input.placeholder = 'Value'
+        input.style.padding = "2px"
+        input.style.marginTop = '1%'
+        input.style.marginBottom = '3%'
+        input.style.textAlign = 'center'
+
+        selectContainer.appendChild(select)
+        valueContainer.appendChild(input)
+    }
+</script>
+
+
 {% endblock %}

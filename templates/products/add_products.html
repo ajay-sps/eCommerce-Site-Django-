@@ -5,85 +5,91 @@
 <style>
 .box-shadow{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 12px;
+}
+.form-control{
+    padding: 1%;
 }
 </style>
 
-<div class="row">
-    <div class="col-sm-8 offset-sm-2">
-        <div class="row p-3 box-shadow mt-3" >
-            <div class = "col-sm-12">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h2 style="text-align: center; color: green;">Add Product</h2>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <form method="POST" action="" enctype="multipart/form-data" style="color: black;">
-                            {% csrf_token %}
-                            <div class="row">
-                                    <div class="col-sm-6">
-                                        <label for="brands" class="form-label">Brand</label>
-                                        <select class="form-select" name="brand" id="brands">
-                                            <option value="selected">-------</option>
-                                            {% for brand in brands %}
-                                            <option value="{{ brand.id }}">{{ brand.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <label for="categories" class="form-label">Category</label>
-                                        <select class="form-select" name="category" id="categories">
-                                            <option value="selected">-------</option>
-                                            {% for category in categories %}
-                                            <option value="{{ category.id }}">{{ category.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                            </div>
-                            <br>      
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="name" id="name" required>
-                                </div>
-                                
-                                <div class="col-sm-6">
-                                    <label for="image" class="form-label">Image</label>
-                                    <input type="file" class="form-control" name="image" id="image" required>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row"> 
-                                <div class="col-sm-6">
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea class="form-control" name="description" id="description" rows="3" required></textarea>
-                                </div>
-                                <div class="col-sm-2 offset-sm-1 form-check" style="padding-top: 5%;">
-                                    <input type="checkbox" class="form-check-input" name="is_active" id="is_active">
-                                    <label class="form-check-label" for="is_active">Is Active</label>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-sm-12">   
-                                    <div style="text-align: center;">
-                                        <button type="submit" class="btn btn-primary">Add Product</button>
-                                    </div>
-                                </div>  
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+<div class="row box-shadow" style="margin: 2% 7% 4% 7%; padding: 1%; background-color: aliceblue;">
+    <div class="col">
+        <nav aria-label="breadcrumb" >
+            <ol class="breadcrumb" style="margin: 0px;">
+                <li class="breadcrumb-item"><a href="/products" style="text-decoration: none;">Products</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add Products</li>
+            </ol>
+        </nav>
     </div>
 </div>
 
 
-<br><br>
-
+<div class="row " style="margin-top: 2%; color: black;">
+    <div class="col-sm-10 offset-sm-1 box-shadow" style="border-radius: 12px; background-color: aliceblue;">
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
+                <div class="col" style="text-align: center;">
+                    <h4 style="color: green;">Add Product</h4>
+                </div>
+            </div>
+            <div class="row" style=" padding-left: 2%; padding-right: 2%;">
+                <div class="col-sm-4">
+                    <div><label for="name">Name</label></div>
+                    <div><input type="text" class="form-control" name="name" id="name" required></div>
+                </div>
+                <div class="col-sm-4">
+                    <div><label for="brand">Brand</label></div>
+                    <div>
+                    <select  name="brand" class="form-control" id="brand" style="width: 100%;">
+                        <option disabled selected>----------</option>
+                        {% for brand in brands %}
+                        <option value="{{ brand.id }}">{{ brand.name }}</option>
+                        {% endfor %}
+                    </select>
+                    </div>
+                </div>
+                <div class="col-sm-4" >
+                    <div><label for="category">Category</label></div>
+                    <div>
+                    <select  name="category" class="form-control" id="category" style="width: 100%;">
+                        <option disabled selected>----------</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
+                <div class="col-sm-4">
+                    <div><label for="description">Description</label></div>
+                    <div><textarea class="form-control" name="description" id="description" rows="3" required>{{ description }}</textarea></div>
+                </div>
+                <div class="col-sm-4" style="margin-top: 3%;">
+                    <div class="row">
+                        <div class="col">
+                            <label for="image" style="color: black;">Image</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <input type="file" class="form-control" name="image" id="image" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 offset-sm-1" style="padding-top: 2%; margin-top: 4%;">
+                    <input type="checkbox" class="form-check-input" name="is_active" id="is_active">
+                    <label class="form-check-label" for="is_active" style="color: black; padding-left: 1%;">Is Active</label>
+                </div>
+            </div>
+            <div class="row" style="margin-top:2%; margin-bottom: 2%;">
+                <div class="col" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 {% endblock %}

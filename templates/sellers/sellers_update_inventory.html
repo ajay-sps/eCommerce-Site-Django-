@@ -1,0 +1,130 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+
+<style>
+  .box-shadow{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 12px;
+    background-color: aliceblue;
+    margin: 1% 2% 1% 1%;
+}
+</style>
+
+<div class="row p-3 box-shadow" style="margin: 3% 4% 3% 4%;">
+    <div class="col">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
+            <li class="breadcrumb-item"><a href="/sellers/{{ id }}/inventory" style="text-decoration: none;">Inventory</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Update Inventory Items</li>
+        </ol>
+      </nav>
+    </div>
+</div>
+
+<div class="row p-3 " style="margin: 3% 4% 3% 4%;" >
+    <div class="col-sm-8 offset-sm-2 box-shadow" style="border-radius: 12px; background-color: aliceblue; margin-left: 16.66%;">
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
+                <div class="col" style="text-align: center;">
+                    <h4 style="color: green;">Update Item</h4>
+                </div>
+            </div>
+            <div class="row" style=" padding-left: 2%; padding-right: 2%;">
+                <div class="col-sm-6">
+                    <div><label for="variant">Variants</label>
+                    </div>
+                    <div>
+                        <select  name="product_variant" class="form-control" id="variant" style="width: 100%;">
+                            <option value="{{ inventory_obj.product_variant.id }}">{{ inventory_obj.product_variant.code }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6" >
+                    <div><label for="quantity">Quantity</label>
+                    </div>
+                    <input type="number" class="form-control" name="quantity" value="{{ inventory_obj.quantity }}" id="quantity" required>
+                    <input type="hidden" name="seller" value="{{ id }}">
+                </div>
+            </div>
+            <div class="row" style="margin-top:2%; margin-bottom: 2%;">
+                <div class="col" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>  
+</div>
+{% endblock %}
+<!-- 
+<div class="row">
+    <div class="col-sm-2" style="background-color: cornflowerblue;">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="sidebar" style="background-color:cornflowerblue;">
+                    <div class="sidebar-item">
+                        <a href="/sellers/inventory/{{ id }}" style="color: white;">Inventory</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Orders</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Profile</a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="#" style="color: white;">Profit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <div class="row p-3 box-shadow" style="margin: 3% 4% 3% 4%;">
+            <div class="col">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
+                    <li class="breadcrumb-item"><a href="/sellers/inventory/{{ id }}" style="text-decoration: none;">Inventory</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Update Inventory Items</li>
+                </ol>
+              </nav>
+            </div>
+        </div>
+        
+        <div class="row p-3 " style="margin: 3% 4% 3% 4%;" >
+            <div class="col-sm-8 offset-sm-2 box-shadow" style="border-radius: 12px; background-color: aliceblue; margin-left: 16.66%;">
+                <form method="post" action="" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
+                        <div class="col" style="text-align: center;">
+                            <h4 style="color: green;">Update Item</h4>
+                        </div>
+                    </div>
+                    <div class="row" style=" padding-left: 2%; padding-right: 2%;">
+                        <div class="col-sm-6">
+                            <div><label for="variant">Variants</label>
+                            </div>
+                            <div>
+                                <select  name="product_variant" class="form-control" id="variant" style="width: 100%;">
+                                    <option value="{{ inventory_obj.product_variant.id }}">{{ inventory_obj.product_variant.code }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6" >
+                            <div><label for="quantity">Quantity</label>
+                            </div>
+                            <input type="number" class="form-control" name="quantity" value="{{ inventory_obj.quantity }}" id="quantity" required>
+                            <input type="hidden" name="seller" value="{{ id }}">
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:2%; margin-bottom: 2%;">
+                        <div class="col" style="text-align: center;">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>  
+        </div>
+
+    </div>
+</div> -->
