@@ -42,6 +42,18 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['first_name','last_name','profile']
+
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile')
+        profile_serializer = self.fields['profile']
+        profile_instance = instance.profile
+
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.save()
+
+        profile_serializer.update(profile_instance, profile_data)
+        return instance
     
 
 class SellerInvenotrySerializer(serializers.ModelSerializer):

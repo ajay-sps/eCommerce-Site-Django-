@@ -8,9 +8,11 @@ import json
 from django.core.paginator import Paginator
 from django.db.models import Q
 from orders.models import UserCart,UserWishlist
+from users.permissions import AdminUser
 
 
 class BrandsView(APIView):
+    permission_classes = [AdminUser,]
 
     def get(self,request):
         brands = Brands.objects.order_by('-is_active')
@@ -23,6 +25,7 @@ class BrandsView(APIView):
     
 
 class AddBrandsView(APIView):
+    permission_classes = [AdminUser,]
     
     def get(self,request):
         return render(request,'products/add_brands.html')
@@ -42,6 +45,7 @@ class AddBrandsView(APIView):
         
 
 class UpdateBrandView(APIView):
+    permission_classes = [AdminUser,]
 
     def get(self,request,id):
         brand = Brands.objects.get(id = id)
@@ -62,6 +66,7 @@ class UpdateBrandView(APIView):
     
 
 class DeleteBrandView(APIView):
+    permission_classes = [AdminUser,]
     
     def get(self,request,id):
         brand_obj = Brands.objects.get(id = id)
@@ -74,6 +79,7 @@ class DeleteBrandView(APIView):
 
 
 class CategoriesView(APIView):
+    permission_classes = [AdminUser,]
 
     def get(self,request):
         categories = Categories.objects.order_by('-is_active')
@@ -85,6 +91,7 @@ class CategoriesView(APIView):
     
 
 class AddCategoriesView(APIView):
+    permission_classes = [AdminUser,]
     
     def get(self,request):
         return render(request,'products/add_categories.html')
@@ -103,6 +110,7 @@ class AddCategoriesView(APIView):
         
 
 class UpdateCategoryView(APIView):
+    permission_classes = [AdminUser,]
 
     def get(self,request,id):
         category = Categories.objects.get(id = id)
@@ -123,6 +131,7 @@ class UpdateCategoryView(APIView):
 
 
 class DeleteCategoryView(APIView):
+    permission_classes = [AdminUser,]
     
     def get(self,request,id):
         category_obj = Categories.objects.get(id = id)
@@ -135,6 +144,7 @@ class DeleteCategoryView(APIView):
     
 
 class ProductsView(APIView):
+    permission_classes = [AdminUser,]
 
     def get(self,request):
         products = Products.objects.order_by('-is_active')
@@ -146,6 +156,7 @@ class ProductsView(APIView):
     
 
 class AddProductsView(APIView):
+    permission_classes = [AdminUser,]
 
     def get(self,request):
         try:
@@ -174,6 +185,7 @@ class AddProductsView(APIView):
 
 
 class AddProductVariantsView(APIView):
+    permission_classes = [AdminUser,]
 
     def get(self,request,id):
         product = Products.objects.get(id = id)
@@ -255,6 +267,7 @@ class SpecificCategoryView(APIView):
     
 
 class UpdateProductView(APIView):
+    permission_classes = [AdminUser,]
 
     def get(self,request,id):
         brands = Brands.objects.all()
@@ -325,6 +338,7 @@ class UpdateProductView(APIView):
 
 
 class DeleteProductView(APIView):
+    permission_classes = [AdminUser,]
     
     def get(self,request,id):
         product_obj = Products.objects.get(id = id)
