@@ -62,7 +62,7 @@
                     <option selected>---------------</option>
 
                     {% for address in addresses %}
-                    <option value="{{ address.id }}">{{ address.address }}</option>
+                    <option value="{{ address.id }}">{{ address.detail_address }}</option>
                     {% endfor %}
                     
                   </select>
@@ -161,9 +161,10 @@ var options = {
           timer: 1500
         }).then(() =>{
                     console.log('hellohello')
+                    address_id = document.getElementById('address').value
 
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-                    const url = `http://127.0.0.1:8000/cart/users/{{ user.id }}/orderplaced?quantity={{ quantity }}&variant_id={{ variant.id }}`;
+                    const url = `http://127.0.0.1:8000/cart/users/{{ user.id }}/orderplaced?quantity={{ quantity }}&variant_id={{ variant.id }}&address=${address_id}`;
 
                     fetch(url, {
                         method : 'GET',

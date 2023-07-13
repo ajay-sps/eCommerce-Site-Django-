@@ -7,7 +7,8 @@ from products.models import ProductVariantProperties,Products,ProductVariants
 from django.http import HttpResponse
 from django.conf import settings
 import razorpay
-from users.models import UserAddresses
+from users.models import UserAddress,User
+from users.tasks import order_mail
 
 
 class UserCartView(APIView):
@@ -101,7 +102,7 @@ class UserCartCheckOutView(APIView):
 
     def get(self,request,id):
         try:
-            addresses = UserAddresses.objects.filter(user = id)
+            addresses = UserAddress.objects.filter(user = id)
             cart_items = UserCart.objects.filter(user = id )
             count  = cart_items.count()
             lst = []
@@ -124,7 +125,7 @@ class UserCartCheckOutView(APIView):
 class UserProductCheckoutView(APIView):
 
     def get(self,request,id):
-        addresses = UserAddresses.objects.filter(user = id)
+        addresses = UserAddress.objects.filter(user = id)
         quantity = request.GET.get('quantity')
         product_variant = ProductVariants.objects.get(id = request.GET['variant_id'])
         price = product_variant.price * int(quantity)
@@ -140,7 +141,8 @@ class UserOrderPlacedView(APIView):
     def get(self,request,id):
         try:
             if 'quantity' in request.GET:
-                data = {"user": id,"payment_status" : "Paid"}
+                user = User.objects.get(id = id)
+                data = {"user": id,"payment_status" : "Paid",'address':request.GET['address']}
                 serializer = UserOrdersSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
@@ -148,13 +150,17 @@ class UserOrderPlacedView(APIView):
                     user_order = UserOrders.objects.get(id = serializer.instance.id)
                     product_variant = ProductVariants.objects.get(id = request.GET['variant_id'])
                     UserOrderItems.objects.create(user_order = user_order,product_variant = product_variant,quantity = request.GET['quantity'])
+                    mail = user.username
+                    print("--------------------------------------------------",mail)
+                    order_mail.delay(mail)
                     return Response("i am here")
                 else:
                     print(serializer.errors)
                     return Response(serializer.errors)
             else:
+                user = User.objects.get(id = id)
                 cart_items = UserCart.objects.filter(user = id)
-                data = {"user": id,"payment_status" : "Paid"}
+                data = {"user": id,"payment_status" : "Paid",'address':request.GET['address']}
                 serializer = UserOrdersSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
@@ -163,6 +169,9 @@ class UserOrderPlacedView(APIView):
                     for item in cart_items:
                         UserOrderItems.objects.create(user_order = user_order,product_variant = item.product_variant,quantity = item.quantity)
                         item.delete()
+                    mail = user.username
+                    print("--------------------------------------------------",mail)
+                    order_mail.delay(mail)
                     return Response("i am here")
                 else:
                     print(serializer.errors)
@@ -183,3 +192,16 @@ class UserOrdersView(APIView):
         order_items = UserOrderItems.objects.filter(user_order__in = orders_ids)
         print(orders,order_items)
         return render(request,'orders/user_orders.html',{'orders':orders,'order_items':order_items,'wishlist_count':wishlist_count,'cart_count':cart_count,'order_count':order_count})
+    
+
+class UserOrdersDetailView(APIView):
+
+    def get(self,request,id):
+        print(request.GET['order_id'])
+        order = UserOrders.objects.get(id = request.GET['order_id'])
+        order_items = UserOrderItems.objects.filter(user_order = request.GET['order_id'])
+        total_price = 0
+        for item in order_items:
+            total_price += int(item.quantity)*int(item.product_variant.price)
+        print(order_items,total_price)
+        return render(request,'orders/user_order_details.html',{'order_items':order_items,'order':order,'total_price':total_price,'items_count':order_items.count()})

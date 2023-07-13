@@ -34,17 +34,30 @@
                 </div>
             </div>
             <div class="row" style=" padding-left: 2%; padding-right: 2%;">
-                <div class="col-sm-12">
-                    <div>
-                        <label for="address">Update Your Address :</label>
-                    </div>
-                    <div>
-                        <textarea class="form-control" name="address" id="address" rows="3" required>{{ address.address }}
-                        </textarea>
-                    </div>
+                <div class="col-sm-4">
+                    <div><label for="house_no">House No.</label></div>
+                    <div><input type="text" class="form-control" name="house_no" id="house_no" value="{{ address.house_no }}" required></div>
                 </div>
+                <div class="col-sm-4">
+                    <div><label for="street">Street</label></div>
+                    <div><input type="text" class="form-control" name="street" id="street" value="{{ address.street }}" required></div>
+                </div>
+                <div class="col-sm-4" >
+                    <div><label for="city">City</label></div>
+                    <div><input type="text" class="form-control" name="city" id="city" value="{{ address.city }}" required></div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
+                <div class="col-sm-4">
+                    <div><label for="state">State</label></div>
+                    <div><input type="text" class="form-control" name="state" id="state" value="{{ address.state }}" required></div>
+                </div>
+                <div class="col-sm-4">
+                    <div><label for="postal_code">Postal Code</label></div>
+                    <div><input type="text" class="form-control" name="postal_code" id="postal_code" value="{{ address.postal_code }}" required></div>
+                </div>
+                <input type="hidden" value="{{ address.id }}" name="address_id">
                 <input type="hidden" value="{{ user.id }}" name="user">
-                <input type="hidden" value = "{{ address.id }}" name="address_id">
             </div>
             <div class="row" style="margin-top:2%; margin-bottom: 2%;">
                 <div class="col" style="text-align: center;">

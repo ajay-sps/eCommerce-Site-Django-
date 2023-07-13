@@ -1,20 +1,20 @@
 from django.shortcuts import render,redirect
 from rest_framework.views import APIView
-from users.models import User,UserProfile,SellerInventory,UserAddresses
+from users.models import User,UserProfile,SellerInventory,UserAddress
 from django.http import HttpResponse
 from users.serializer import UserSerializer,SellerInvenotrySerializer,UserAddressesSerialiazer,UpdateUserSerializer
-from base.email import verification_mail
 from django.contrib.auth import authenticate,login,logout
 from products.models import Products,ProductVariants,Categories,ProductVariantProperties,Properties,Brands
 from django.core.paginator import Paginator
 from rest_framework.response import Response
+from users.tasks import displayNumberFunction,verification_mail
 
 
 class HomeView(APIView):
 
     def get(self,request):
         first_product = Products.objects.first()
-        products = Products.objects.all()[1:9]
+        products = Products.objects.all()[:12]
         product_variants = ProductVariants.objects.filter(is_master = True)
         categories = Categories.objects.all()
         return render(request,'users/home.html',{'products':products ,'categories' : categories,'first_product':first_product,'product_variants':product_variants})
@@ -70,7 +70,7 @@ class SignupView(APIView):
                 user = serializer.save()
                 user.profile.generate_token()
                 token = user.profile.token
-                verification_mail(token,arranged_data.get('email'))
+                verification_mail.delay(token,arranged_data.get('email'))
                 context = {'success':'User Created Successfully'}
                 return render(request,'users/signup.html',context)
             else:
@@ -222,7 +222,7 @@ class UserProfileView(APIView):
 
     def get(self,request):
         try:
-            addresses = UserAddresses.objects.filter(user = request.GET['user_id'])
+            addresses = UserAddress.objects.filter(user = request.GET['user_id'])
             return render(request,'users/profile.html',{'addresses':addresses})
         except Exception as e:
             return Response(str(e))
@@ -280,11 +280,14 @@ class AddUserAddressView(APIView):
             data = request.data
             serialiazer = UserAddressesSerialiazer(data = data)
             if serialiazer.is_valid():
+                print('hello')
                 serialiazer.save()
                 return redirect(f'/users/profile?user_id={data["user"]}')
             else:
+                print('byuee')
                 return Response(serialiazer.errors)
         except Exception as e:
+            print(str(e))
             return Response(str(e))
         
 
@@ -292,7 +295,7 @@ class UpdateUserAddressView(APIView):
 
     def get(self,request):
         try:
-            address = UserAddresses.objects.get(id = request.GET['address_id']) 
+            address = UserAddress.objects.get(id = request.GET['address_id']) 
             return render(request,'users/update_address.html',{'address':address})
         except Exception as e:
             return Response(str(e))
@@ -300,7 +303,7 @@ class UpdateUserAddressView(APIView):
     def post(self,request):
         try:
             data = request.data
-            address_instance = UserAddresses.objects.get(id = data['address_id'])
+            address_instance = UserAddress.objects.get(id = data['address_id'])
             serializer = UserAddressesSerialiazer(address_instance,data=data)
             if serializer.is_valid():
                 serializer.save()
@@ -315,7 +318,7 @@ class DeleteUserAddressView(APIView):
 
     def delete(self,request,address_id):
         try:
-            address = UserAddresses.objects.get(id = address_id)
+            address = UserAddress.objects.get(id = address_id)
             address.delete()
             return Response('Deleted Successfully')
         except Exception as e:

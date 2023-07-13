@@ -158,3 +158,13 @@ MYTEST=2
 
 RAZOR_KEY_ID = config('RAZOR_KEY_ID')
 RAZOR_KEY_SECRET = config('RAZOR_KEY_SECRET') 
+
+
+# Celery Settings
+# for reference broker_url = amqp://your_username:your_password@localhost:5672/your_virtual_host
+
+CELERY_BROKER_URL = 'amqp://ajay:ajay@localhost:5672/myhost'
+CELERY_ACCEPT_CONTENT =['json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'

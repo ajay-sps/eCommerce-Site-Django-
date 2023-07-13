@@ -1,5 +1,5 @@
 from django.urls import path
-from orders.views import AddItemsToUserCartView,UserCartView,DeleteUserCartItemView,AddItemsToUserWishlistView,DeleteFromUserWishlistView,UserWishlistView,UpdateCartItems,UserCartCheckOutView,UserOrderPlacedView,UserProductCheckoutView,UserOrdersView
+from orders.views import AddItemsToUserCartView,UserCartView,DeleteUserCartItemView,AddItemsToUserWishlistView,DeleteFromUserWishlistView,UserWishlistView,UpdateCartItems,UserCartCheckOutView,UserOrderPlacedView,UserProductCheckoutView,UserOrdersView,UserOrdersDetailView
 
 
 urlpatterns = [
@@ -14,4 +14,5 @@ urlpatterns = [
     path('users/<int:id>/product/checkout',UserProductCheckoutView.as_view(),name='user_product_checkout'),
     path('users/<int:id>/orderplaced/',UserOrderPlacedView.as_view(),name='user_order_placed'),
     path('users/<int:id>/orders',UserOrdersView.as_view(),name=('user_orders')),
+    path('users/<int:id>/order/details',UserOrdersDetailView.as_view(),name='user_order_detail_view'),
 ]

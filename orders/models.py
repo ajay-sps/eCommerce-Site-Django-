@@ -1,6 +1,6 @@
 from django.db import models
 from base.models import BaseModel
-from users.models import User
+from users.models import User,UserAddress
 from products.models import ProductVariants
 
 
@@ -20,6 +20,7 @@ class UserOrders(BaseModel):
 
     user = models.ForeignKey(User,on_delete=models.PROTECT)
     payment_status = models.CharField(max_length=50,default="Paid")
+    address = models.ForeignKey(UserAddress,on_delete=models.PROTECT,default=1)
 
 
 class UserOrderItems(BaseModel):

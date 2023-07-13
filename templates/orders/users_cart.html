@@ -51,7 +51,7 @@
                     <div class="col-md-2 col-lg-2 col-xl-2">
                         <a href="/products/{{ item.item.product_variant.product.id }}/details/{{ item.item.product_variant.id }}?user_id={{ user.id }}">
                         <img
-                            src="{{ item.item.product_variant.image.url }}" height="120px" width="120px" style="object-fit: contain;" alt="Cotton T-shirt" >
+                            src="{{ item.item.product_variant.image.url }}" style="height: 120px; width: 120px; object-fit: contain;" alt="Cotton T-shirt" >
                         </a>
                     </div>
                     <div class="col-md-3 col-lg-3 col-xl-3">
@@ -66,23 +66,23 @@
                     {% endif %}
                     {% endfor %}
                     </div>
-                    <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                    <div class="col-md-3 col-lg-3 col-xl-3 d-flex">
 
-                        <button class="btn btn-link px-2"
-                            onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                        <button class="btn btn-link px-2 change-quantity"
+                            onclick="decrease('{{ forloop.counter }}')">
                             <i class="fas fa-minus"></i>
                         </button>
         
-                        <input id="form1" min="0" name="quantity" value="{{ item.item.quantity }}" onchange="updateCartItem(this.value,'{{ item.item.id }}','{{ user.id }}')" type="number"
+                        <input id="form{{ forloop.counter }}" min="0" name="quantity" value="{{ item.item.quantity }}" onchange="updateCartItem(this.value,'{{ item.item.id }}','{{ user.id }}')" type="number"
                             class="form-control form-control-sm" />
         
-                        <button class="btn btn-link px-2"
-                            onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                        <button class="btn btn-link px-2 change-quantity"
+                            onclick="increase('{{ forloop.counter }}')">
                             <i class="fas fa-plus"></i>
                         </button>
 
                     </div>
-                    <div class="col-md-3 col-lg-3 col-xl-2 ">
+                    <div class="col-md-2 col-lg-2 col-xl-2 ">
                     <h6 class="mb-0">Rs. {{ item.total_price }}</h6>
                     </div>
                     <div class="col-md-1 col-lg-1 col-xl-1 text-end">
@@ -186,6 +186,19 @@
                     })
                 }
 
+function decrease(counter){
+
+    input = document.getElementById(`form${counter}`)
+    input.value = parseInt(input.value) - 1
+    input.onchange()
+}
+
+function increase(counter){
+
+    input = document.getElementById(`form${counter}`)
+    input.value = parseInt(input.value) + 1
+    input.onchange()
+}
 
 </script>
 
