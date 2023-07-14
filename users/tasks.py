@@ -15,11 +15,20 @@ def displayNumberFunction(self,a,b):
 
 
 @shared_task(bind = True)
-def order_mail(self,email):
+def order_mail(self,email,name,item,total,house,street,city,state,pincode):
     try:
-        print(self)
+        context = {
+            'name' : name,
+            'item' : item,
+            'total' : total,
+            'house' : house,
+            'street' : street,
+            'city' : city,
+            'state' : state,
+            'pincode' : pincode,
+        }
         template = 'orders/order_email_template.html'
-        html_content = render_to_string(template)
+        html_content = render_to_string(template,context)
         subject="Order Confirmation Mail"
 
         email = EmailMessage(subject,html_content,to=[email])

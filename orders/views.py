@@ -14,6 +14,10 @@ from users.tasks import order_mail
 class UserCartView(APIView):
     def get(self,request,user_id):
         cart_items = UserCart.objects.filter(user__id = user_id)
+        if cart_items:
+            exist = True
+        else:
+            exist = False
         variant_ids = [item.product_variant.id for item in cart_items ]
         properties = ProductVariantProperties.objects.filter(product_variant__id__in = variant_ids)
         lst = []
@@ -21,7 +25,7 @@ class UserCartView(APIView):
         for item in cart_items:
             total_price = item.quantity * item.product_variant.price
             lst.append({'item': item,'total_price': total_price})
-        return render(request,"orders/users_cart.html",{"items" : lst,'properties': properties})
+        return render(request,"orders/users_cart.html",{"items" : lst,'properties': properties,'exist': exist})
 
 
 class AddItemsToUserCartView(APIView):
@@ -64,9 +68,13 @@ class UserWishlistView(APIView):
     def get(self,request):
         user_id = request.GET.get('user_id')
         wishlist = UserWishlist.objects.filter(user = user_id)
+        if wishlist:
+            exist = True
+        else:
+            exist = False
         variant_ids = [item.product_variant.id for item in wishlist ]
         properties = ProductVariantProperties.objects.filter(product_variant__id__in = variant_ids)
-        return render(request,'orders/users_wishlist.html',{'wishlist':wishlist,'properties': properties})
+        return render(request,'orders/users_wishlist.html',{'wishlist':wishlist,'properties': properties,'exist': exist,})
     
 
 class AddItemsToUserWishlistView(APIView):
@@ -142,7 +150,12 @@ class UserOrderPlacedView(APIView):
         try:
             if 'quantity' in request.GET:
                 user = User.objects.get(id = id)
-                data = {"user": id,"payment_status" : "Paid",'address':request.GET['address']}
+                if request.GET.get('address_id'):
+                    data = {"user": id,"payment_status" : "COD",'address':request.GET['address_id']}
+                    address = UserAddress.objects.get(id = request.GET['address_id'])
+                else:
+                    data = {"user": id,"payment_status" : "Paid",'address':request.GET['address']}
+                    address = UserAddress.objects.get(id = request.GET['address'])
                 serializer = UserOrdersSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
@@ -152,15 +165,32 @@ class UserOrderPlacedView(APIView):
                     UserOrderItems.objects.create(user_order = user_order,product_variant = product_variant,quantity = request.GET['quantity'])
                     mail = user.username
                     print("--------------------------------------------------",mail)
-                    order_mail.delay(mail)
+                    name = user.first_name
+                    item_count = 1
+                    total = int(product_variant.price) * int(request.GET['quantity'])
+                    house = address.house_no
+                    street = address.street
+                    city = address.city
+                    state = address.state
+                    pincode = address.postal_code
+                    order_mail.delay(mail,name,item_count,total,house,street,city,state,pincode)
                     return Response("i am here")
                 else:
                     print(serializer.errors)
                     return Response(serializer.errors)
+                
             else:
                 user = User.objects.get(id = id)
                 cart_items = UserCart.objects.filter(user = id)
-                data = {"user": id,"payment_status" : "Paid",'address':request.GET['address']}
+                item_count = cart_items.count()
+                total = 0
+                print(request.GET.get('address_id'))
+                if request.GET.get('address_id'):
+                    data = {"user": id,"payment_status" : "COD",'address':request.GET['address_id']}
+                    address = UserAddress.objects.get(id = request.GET['address_id'])
+                else:
+                    data = {"user": id,"payment_status" : "Paid",'address':request.GET['address']}
+                    address = UserAddress.objects.get(id = request.GET['address'])
                 serializer = UserOrdersSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
@@ -168,10 +198,17 @@ class UserOrderPlacedView(APIView):
                     user_order = UserOrders.objects.get(id = serializer.instance.id)
                     for item in cart_items:
                         UserOrderItems.objects.create(user_order = user_order,product_variant = item.product_variant,quantity = item.quantity)
+                        total += int(item.product_variant.price) * int(item.quantity)
                         item.delete()
                     mail = user.username
                     print("--------------------------------------------------",mail)
-                    order_mail.delay(mail)
+                    name = user.first_name
+                    house = address.house_no
+                    street = address.street
+                    city = address.city
+                    state = address.state
+                    pincode = address.postal_code 
+                    order_mail.delay(mail,name,item_count,total,house,street,city,state,pincode)
                     return Response("i am here")
                 else:
                     print(serializer.errors)

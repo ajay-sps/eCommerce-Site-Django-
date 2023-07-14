@@ -4,7 +4,8 @@
 {% if user.role.name == 'buyer' %}
 {% block search %}
 <form class="d-flex" style="margin: auto;" role="search" method="get" action="/products/search">
-  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="width: 20rem" name="search">
+  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="width: 20rem;" name="search">
+  <input type="hidden" value="{{ user.id }}" name="user_id">
   <button class="btn btn-outline-success" type="submit" style="color: white;">Search</button>
 </form>
 {% endblock %}
@@ -37,7 +38,7 @@
     }
     .category-card:hover{
       cursor: pointer;
-        border: 3px solid rgb(189, 176, 176);
+      background-color: rgb(250, 247, 247);
     }
 </style>
 
@@ -101,7 +102,7 @@
                     {% for category in categories %}
                     <div class="carousel-item category-items carousel-item-category" style="padding-left: 2%;">
                       <a href="/products/categories/{{ category.name }}?user_id={{ user.id }}" class="d-flex flex-column align-items-center category-card" style="text-decoration: none;">
-                      <img src="{{ category.image.url }}" height="200px" style="object-fit: contain; background-color: white;" class="w-100" alt="...">
+                      <img src="{{ category.image.url }}"  style="height: 170px; width: 170px; object-fit: contain; background-color: white; mix-blend-mode: darken;" alt="...">
                       <strong style="color:var(--yellow) ;color: #837a7a;
                       font-size: 21px;">{{category.name}}</strong>
                       </a>
@@ -137,7 +138,7 @@
                     <div class="card product-card" style="margin: 0% 6% 0% 6%;" >
                       <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
                         data-mdb-ripple-color="light">
-                        <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; padding: 3%; margin-top: 6%;" />
+                        <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; padding: 3%; margin-top: 6%; mix-blend-mode: darken; " />
                       </div>
                       <div class="card-body" style="color: #837a7a;">
                           <h5 class="card-title mb-3">{{ product.name }}</h5>
@@ -251,7 +252,7 @@
                     {% for category in categories %}
                     <div class="carousel-item category-items carousel-item-category" style="padding-left: 2%;">
                       <a href="/products/categories/{{ category.name }}" class="d-flex flex-column align-items-center category-card" style="text-decoration: none;">
-                      <img src="{{ category.image.url }}" height="200px" style="object-fit: contain; background-color: white;" class="w-100" alt="...">
+                      <img src="{{ category.image.url }}" height="200px" style="height: 170px; width: 170px; object-fit: contain; background-color: white; mix-blend-mode: darken;" alt="...">
                       <strong style="color:var(--yellow) ;color: #837a7a;
                       font-size: 21px;">{{category.name}}</strong>
                       </a>
@@ -286,7 +287,7 @@
                   <div class="card product-card" style="margin: 0% 6% 0% 6%;" >
                     <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
                       data-mdb-ripple-color="light">
-                      <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; padding: 3%; margin-top: 6%;" />
+                      <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; padding: 3%; margin-top: 6%; mix-blend-mode: darken;" />
                     </div>
                     <div class="card-body" style="color: #837a7a;">
                         <h5 class="card-title mb-3">{{ product.name }}</h5>

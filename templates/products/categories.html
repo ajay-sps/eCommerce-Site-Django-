@@ -63,7 +63,7 @@ td{
           <tr>
             <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
             <td>{{ category.name }}</td>
-            <td><img src="{{ category.image.url }}" style="height: 60px; width: 60px; object-fit: contain;"></td>
+            <td><img src="{{ category.image.url }}" style="height: 60px; width: 60px; object-fit: contain; mix-blend-mode: darken;"></td>
             <td>
               <div class="form-check form-switch">
                 <a href="/products/categories/update/{{ category.id }}" >

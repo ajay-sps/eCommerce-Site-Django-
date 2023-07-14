@@ -394,15 +394,14 @@ class ProductVariantDetailsView(APIView):
 class ProductSearchView(APIView):
 
     def get(self,request):
-        lst_search = request.GET.get('search').split()
-        products = Products.objects.filter(name__icontains = request.GET.get('search') )
-        for product in products:
-            print(product)
-        products_variants = ProductVariants.objects.filter(product__in = products,is_master = True)
-        lst = []
-        for prod in products_variants:
-            old_price = prod.price + ((prod.price/100)*5)
-            lst.append({'product_variant': prod,'old_price':old_price})
+        product = Products.objects.filter(name__icontains = request.GET.get('search') )
+        products_variants = ProductVariants.objects.filter(product__in = product,is_master = True)
+        products = []
+        for item,variant in zip(product,products_variants):
+            if UserWishlist.objects.filter(product_variant = variant,user = request.GET.get('user_id')):
+                products.append({'product':item,'status':True})
+            else:
+                products.append({'product':item,'status':False})
 
         print(products_variants)
-        return render(request,'products/category_details.html',{'products':products,'product_variant':lst})
+        return render(request,'products/category_details.html',{'products':products,'product_variant':products_variants})

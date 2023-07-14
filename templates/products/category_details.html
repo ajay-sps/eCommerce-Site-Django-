@@ -21,9 +21,9 @@
 
               {% for product in products %}
               {% for variant in product_variant %}
-              {% if variant.product.id == product.product.id %}
+              {% if variant.product.id == product.product.id %} 
               <div class="col-lg-3 col-md-12 mb-4">
-                <div class="card product-card" >
+                <div class="card product-card" style="font-size: 15px;">
                   <div class="row">
                       <div class="col-sm-12" style="text-align: right;">
                         {% if product.status %}
@@ -40,7 +40,7 @@
                   <a href="/products/{{ product.product.id }}/details?user_id={{ user.id }}" class="text-reset anchortag">
                     <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
                       data-mdb-ripple-color="light">
-                      <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain;"/>
+                      <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
                     </div>
                     <div class="card-body" style="color: #837a7a;">
                         <h5 class="card-title mb-3" style="color:#3e3b3b">{{ product.product.name }}</h5>
@@ -169,7 +169,7 @@ function removeFromWishList(user_id,variant_id){
             {% for variant in product_variant %}
             {% if variant.product.id == product.product.id %}
             <div class="col-lg-3 col-md-12 mb-4">
-              <div class="card product-card" >
+              <div class="card product-card" style="font-size: 15px;">
                 <div class="row">
                     <div class="col-sm-12" style="text-align: right;">
                       {% if product.status %}
@@ -186,8 +186,7 @@ function removeFromWishList(user_id,variant_id){
                 <a href="/products/{{ product.product.id }}/details?user_id={{ user.id }}" class="text-reset anchortag">
                   <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
                     data-mdb-ripple-color="light">
-                    <img src="{{ variant.image.url }}"
-                      class="w-100" height="150px" style="object-fit: contain;"/>
+                    <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
                   </div>
                   <div class="card-body" style="color: #837a7a;">
                       <h5 class="card-title mb-3" style="color:#3e3b3b">{{ product.product.name }}</h5>

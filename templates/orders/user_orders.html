@@ -281,7 +281,7 @@ h4{
 }
 </style>
 
-<div class="row p-3 box-shadow rowclass" style="margin-top: 3%; color: #201f1f;" >
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%; color: #2f618d" >
   <div class="col">
     <div class="container mt-4">
       <div class="row">
@@ -299,22 +299,28 @@ h4{
                               <div class="ms-auto number">{{ order_count }}</div>
                           </div>
                       </div>
-                      <div class="box me-4 my-1 bg-light">
-                          <img src="https://www.freepnglogos.com/uploads/shopping-cart-png/shopping-cart-campus-recreation-university-nebraska-lincoln-30.png"
-                              alt="">
-                          <div class="d-flex align-items-center mt-2">
-                              <div class="tag">Items in Cart</div>
-                              <div class="ms-auto number">{{ cart_count }}</div>
-                          </div>
-                      </div>
-                      <div class="box me-4 my-1 bg-light">
-                          <img src="https://www.freepnglogos.com/uploads/love-png/love-png-heart-symbol-wikipedia-11.png"
-                              alt="">
-                          <div class="d-flex align-items-center mt-2">
-                              <div class="tag">Wishlist</div>
-                              <div class="ms-auto number">{{ wishlist_count }}</div>
-                          </div>
-                      </div>
+
+                        <a href="/cart/users/{{ user.id }}/cart">
+                            <div class="box me-4 my-1 bg-light">
+                                <img src="https://www.freepnglogos.com/uploads/shopping-cart-png/shopping-cart-campus-recreation-university-nebraska-lincoln-30.png"
+                                    alt="">
+                                <div class="d-flex align-items-center mt-2">
+                                    <div class="tag">Items in Cart</div>
+                                    <div class="ms-auto number">{{ cart_count }}</div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="/cart/users/wishlist?user_id={{ user.id }}">
+                            <div class="box me-4 my-1 bg-light">
+                            <img src="https://www.freepnglogos.com/uploads/love-png/love-png-heart-symbol-wikipedia-11.png"
+                                alt="">
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="tag">Wishlist</div>
+                                <div class="ms-auto number">{{ wishlist_count }}</div>
+                            </div>
+                            </div>
+                        </a>
+
                   </div>
                   <div class="text-uppercase">My orders</div>
 
