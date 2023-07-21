@@ -21,6 +21,7 @@ class UserOrders(BaseModel):
     user = models.ForeignKey(User,on_delete=models.PROTECT)
     payment_status = models.CharField(max_length=50,default="Paid")
     address = models.ForeignKey(UserAddress,on_delete=models.PROTECT,default=1)
+    status = models.CharField(max_length=100,default='placed')
 
 
 class UserOrderItems(BaseModel):
@@ -28,6 +29,7 @@ class UserOrderItems(BaseModel):
     user_order = models.ForeignKey(UserOrders,on_delete=models.PROTECT)
     product_variant = models.ForeignKey(ProductVariants,on_delete=models.PROTECT)
     quantity = models.IntegerField()
+    status = models.CharField(max_length=100,default='placed')
 
 
 class UserWishlist(BaseModel) :

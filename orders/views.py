@@ -8,7 +8,8 @@ from django.http import HttpResponse
 from django.conf import settings
 import razorpay
 from users.models import UserAddress,User
-from users.tasks import order_mail
+from users.tasks import order_mail,order_status_mail,send_sms
+from django.core.paginator import Paginator
 
 
 class UserCartView(APIView):
@@ -104,6 +105,7 @@ class DeleteFromUserWishlistView(APIView):
             return Response('Okk')
         except Exception as e:
             print(str(e))
+            return HttpResponse(str(e))
 
 
 class UserCartCheckOutView(APIView):
@@ -221,14 +223,14 @@ class UserOrderPlacedView(APIView):
 class UserOrdersView(APIView):
 
     def get(self,request,id):
-        wishlist_count = UserWishlist.objects.filter(user = id).count()
-        cart_count = UserCart.objects.filter(user = id).count()
-        orders = UserOrders.objects.filter(user = id)
-        order_count = orders.count()
-        orders_ids = [order.id for order in orders]
-        order_items = UserOrderItems.objects.filter(user_order__in = orders_ids)
-        print(orders,order_items)
-        return render(request,'orders/user_orders.html',{'orders':orders,'order_items':order_items,'wishlist_count':wishlist_count,'cart_count':cart_count,'order_count':order_count})
+        try:
+            wishlist_count = UserWishlist.objects.filter(user = id).count()
+            cart_count = UserCart.objects.filter(user = id).count()
+            orders = UserOrders.objects.filter(user = id).order_by('-id')
+            order_count = orders.count()
+            return render(request,'orders/user_orders.html',{'orders':orders,'wishlist_count':wishlist_count,'cart_count':cart_count,'order_count':order_count})
+        except Exception as e:
+            return HttpResponse(str(e))
     
 
 class UserOrdersDetailView(APIView):
@@ -242,3 +244,71 @@ class UserOrdersDetailView(APIView):
             total_price += int(item.quantity)*int(item.product_variant.price)
         print(order_items,total_price)
         return render(request,'orders/user_order_details.html',{'order_items':order_items,'order':order,'total_price':total_price,'items_count':order_items.count()})
+    
+
+class OrdersView(APIView):
+
+    def get(self,request):
+        try:
+            if request.GET.get('search'):
+                orders = UserOrders.objects.filter(user__first_name__icontains = request.GET['search'])
+            else:
+                orders = UserOrders.objects.all()
+            lst = []
+            for order in orders:
+                price = 0
+                items = UserOrderItems.objects.filter(user_order = order)
+                for item in items:
+                    price += int(item.product_variant.price) * int(item.quantity)
+                lst.append({'order':order,'price': price})
+            item_per_page = 10
+            paginator = Paginator(lst,item_per_page)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            return render(request,'orders/orders.html',{"page_obj":page_obj})
+        except Exception as e:
+            return HttpResponse(str(e)) 
+            
+    
+
+class OrderDetailView(APIView):
+
+    def get(self,request):
+        data = request.GET
+        order_items = UserOrderItems.objects.filter(user_order = data['order_id'])
+        item_per_page = 10
+        paginator = Paginator(order_items,item_per_page)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        print(order_items)
+        return render(request,'orders/order_details.html',{"page_obj":page_obj})
+    
+
+class UpdateOrderStatusView(APIView):
+
+    def get(self,request):
+        data = request.GET
+        order = UserOrders.objects.get(id = data['order_id'])
+        return render(request,'orders/update_order_status.html',{'order':order})
+    
+    def post(self,request):
+        data = request.data
+        print(data)
+        order = UserOrders.objects.get(id = data['order_id'])
+        items = []
+        order_items = UserOrderItems.objects.filter(user_order = order)
+        for item in order_items:
+            items.append(item.product_variant.product.name)
+        print(items)
+        user = order.user.first_name
+        email = order.user.username
+        status = data['status']
+        order_status_mail.delay(email,status,items,user)
+        print(type(order.user.profile.contact))
+        phone = "+91" + order.user.profile.contact
+        message = f"you order has been {status}"
+        print(phone,message)
+        send_sms.delay(phone,message)
+        # order.status = status
+        # order.save()
+        # return redirect('/cart/orders')

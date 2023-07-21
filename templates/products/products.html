@@ -46,7 +46,7 @@ td{
   </div>
 </div>
 
-<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%; font-size: 15px;" >
   <div class="col">
     <table class="table table-success table-striped" >
         <thead class="thead-light" >
@@ -66,7 +66,7 @@ td{
             <td>{{ product.name }}</td>
             <td>{{ product.brand.name }}</td>
             <td>{{ product.category.name }}</td>
-            <td><img src="{{ product.image.url }}" style="height: 60px; width: 60px; object-fit: contain; mix-blend-mode: darken;"></td>
+            <td><img src="{{ product.image.url }}" style="height: 40px; width: 50px; object-fit: contain; mix-blend-mode: darken;"></td>
             <td>
               <div class="form-check form-switch">
                 <a href="/products/update/{{ product.id }}" >

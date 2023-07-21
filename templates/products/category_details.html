@@ -1,4 +1,4 @@
-{% extends 'base/sidebar.html' %}
+{% extends 'users/users.html' %}
 
 {% block content %}
 
@@ -9,9 +9,12 @@
       cursor: pointer;
       background-color: rgb(245, 240, 240);
     }
+    .anchortag{
+      text-decoration: none;
+    }
 </style>
 
-<div class="row" style="margin-top: 2%; margin-left: 5%; margin-right: 5%;">
+<div class="row">
   <div class="col-sm-12">
       <section style="background-color: #eee; border-radius: 15px;">
           <div class="text-center container ">
@@ -26,6 +29,7 @@
                 <div class="card product-card" style="font-size: 15px;">
                   <div class="row">
                       <div class="col-sm-12" style="text-align: right;">
+                        {% if user.role.name == 'buyer' %}
                         {% if product.status %}
                         <a href="#" style="text-decoration: none; padding-right: 4%;">
                           <i class="bi bi-heart-fill wishlist" style="font-size: 20px; color:#f30909" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
@@ -35,13 +39,23 @@
                           <i class="bi bi-heart wishlist" style="font-size: 20px; color:#f30909" title="Add to WishList" onclick="addToWishList('{{ user.id }}','{{ variant.id }}')" ></i>
                         </a>
                         {% endif %}
+                        {% endif %}
                       </div>
                   </div>
                   <a href="/products/{{ product.product.id }}/details?user_id={{ user.id }}" class="text-reset anchortag">
+
+                    {% if user.role.name == 'buyer' %}
                     <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
-                      data-mdb-ripple-color="light">
+                      data-mdb-ripple-color="light" >
                       <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
                     </div>
+                    {% else %}
+                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                      data-mdb-ripple-color="light" style="padding-top: 10%;">
+                      <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
+                    </div>
+                    {% endif %}
+
                     <div class="card-body" style="color: #837a7a;">
                         <h5 class="card-title mb-3" style="color:#3e3b3b">{{ product.product.name }}</h5>
                         <p>Rs. {{ variant.price }}</p>
@@ -154,6 +168,9 @@ function removeFromWishList(user_id,variant_id){
   .product-card:hover{
     cursor: pointer;
     background-color: rgb(245, 240, 240);
+  }
+  .anchortag{
+    text-decoration: none;
   }
 </style>
 

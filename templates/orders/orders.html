@@ -1,7 +1,6 @@
 {% extends 'base/sidebar.html' %}
 
 {% block content %}
-
 <style>
 .box-shadow{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -9,6 +8,7 @@
     background-color: aliceblue;
     margin: 1% 2% 1% 1%;
 }
+
 .table-success {
     --bs-table-bg: #ffffff;
     --bs-table-striped-bg: #ededed;
@@ -21,55 +21,56 @@
 td{
   vertical-align: middle;
 }
+
 </style>
 
+
 <div class="row p-3 box-shadow rowclass" style="margin-top: 3%;">
-    <div class="col-sm-4">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
-          <a href="/sellers" style="text-decoration: none;">
-            <li class="breadcrumb-item active" aria-current="page">Sellers</li>
-          </a>
-        </ol>
-      </nav>
-    </div>
-    <div class="col-sm-4" style="text-align: center;">
-        <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
-        </form>
-    </div>
-    <div class="col-sm-4" style="text-align: right;">
-        <a href="#"><button type="button" class="btn btn-primary">Add Seller</button></a>
-    </div>
+  <div class="col-sm-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
+        <a href="/cart/orders" style="text-decoration: none;">
+          <li class="breadcrumb-item active" aria-current="page">Orders</li>
+        </a>
+      </ol>
+    </nav>
+  </div>
+  
+  <div class="col-sm-4" style="text-align: center;">
+      <form class="d-flex" action="" method="get" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
+          <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
+      </form>
+  </div>
 </div>
 
-<div class="row p-3 box-shadow rowclass"  style="margin-top: 3%; font-size: 15px;" >
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%; font-size: 15px;" >
   <div class="col">
     <table class="table table-success table-striped" >
         <thead class="thead-light" >
           <tr >
-            <th scope="col" >S.No.</th>
+            <th scope="col">S.No.</th>
             <th scope="col">Name</th>
-            <th scope="col">Address</th>
-            <th scope="col">Active</th>
+            <th scope="col">Payment Status</th>
+            <th scope="col">Price</th>
+            <th scope="col">Status</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-            {% for seller in page_obj %}
+            {% for order in page_obj %}
           <tr>
             <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
-            <td>{{ seller.username }}</td>
-            <td>{{ seller.profile.address_line_1 }}</td>
-            <td>{{ seller.is_active }}</td>
+            <td>{{ order.order.user.first_name }} {{ order.order.user.last_name}}</td>
+            <td>{{ order.order.payment_status }}</td>
+            <td>Rs. {{ order.price }}</td>
+            <td>{{ order.order.status }} <a href="/cart/order/status?order_id={{ order.order.id }}" >
+                <i class='bx bx-edit-alt' title="Update Status"></i>
+              </a></td>
             <td>
-              <div class="form-check form-switch">
-                <a href="#" >
-                  <i class='bx bx-edit-alt' title="Update"></i>
+                <a href="/cart/order/items?order_id={{ order.order.id }}" >
+                  <i class='bx bx-detail' title="Check Order Items"></i>
                 </a>
-                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onclick="is_active('{{ brand.id }}','{{ brand.is_active }}')" title="Active/Deactive" style="cursor: pointer;" checked>
-              </div>
             </td>
           </tr>
             {% endfor%}
@@ -93,5 +94,6 @@ td{
     </nav>
   </div>
 </div>
+
 
 {% endblock %}

@@ -1,11 +1,13 @@
 from django.urls import path
-from users.views import HomeView,LoginView,SignupView,TokenVerificationView,LogOutView,SellersView,SellersInvetoryView,UpdateInventoryItemsView,SellerProductsView,SellerAddVariantsView,UserProfileView,AdminDashboardView,UpdateUserProfileView,AddUserAddressView,UpdateUserAddressView,DeleteUserAddressView
+from users.views import HomeView,LoginView,SignupView,TokenVerificationView,LogOutView,SellersView,SellersInvetoryView,UpdateInventoryItemsView,SellerProductsView,SellerAddVariantsView,UserProfileView,AdminDashboardView,UpdateUserProfileView,AddUserAddressView,UpdateUserAddressView,DeleteUserAddressView,ForgotPasswordView,ResetPasswordView
 
 
 
 urlpatterns = [
     path('',HomeView.as_view(),name='homepage'),
     path('login/',LoginView.as_view(),name='login_page'),
+    path('login/forgot',ForgotPasswordView.as_view(),name='forgot_password'),
+    path('login/forgot/<str:token>',ResetPasswordView.as_view(),name='reset_password'),
     path('signup/',SignupView.as_view(),name='signup_page'),
     path('logout/',LogOutView.as_view(),name='logout_page'),
     path('sellers/',SellersView.as_view(),name='logout_page'),

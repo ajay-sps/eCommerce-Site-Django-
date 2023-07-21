@@ -3,6 +3,7 @@ from django.core.mail import send_mail,EmailMessage,EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
+from twilio.rest import Client
 
 
 @shared_task(bind = True)
@@ -52,3 +53,58 @@ def verification_mail(self,token,email):
         return f'mail sent successfully'
     except Exception as e:
         print(str(e))
+
+
+@shared_task(bind = True)
+def password_reset_mail(self,email,token,name):
+    try:
+        context = {
+            'token' : token,
+            'user' : name ,
+        }
+        template = 'users/forgot_password_email_template.html'
+        html_content = render_to_string(template,context)
+        subject="Reset Password Mail"
+
+        email = EmailMessage(subject,html_content,to=[email])
+        email.content_subtype = 'html'
+        email.send()
+
+        return f'mail sent successfully'
+    except Exception as e:
+        print(str(e))
+
+
+@shared_task(bind = True)
+def order_status_mail(self,email,status,items,user):
+    try:
+        context = {
+            'status' : status,
+            'items' : items,
+            'user' : user,
+        }
+        template = 'orders/order_status_email_template.html'
+        html_content = render_to_string(template,context)
+        subject="Your Order Status"
+
+        email = EmailMessage(subject,html_content,to=[email])
+        email.content_subtype = 'html'
+        email.send()
+
+        return f'mail sent successfully'
+    except Exception as e:
+        print(str(e))
+
+
+@shared_task(bind = True)
+def send_sms(self,to_number, message):
+    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    twilio_phone_number = settings.TWILIO_PHONE_NUMBER
+
+    client.messages.create(
+        to=to_number,
+        from_=twilio_phone_number,
+        body=message
+    )
+
+    return f"SMS sent successfully !"

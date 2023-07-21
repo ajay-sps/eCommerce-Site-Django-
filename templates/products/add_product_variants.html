@@ -12,6 +12,10 @@
 .edit:hover{
     cursor: pointer;
 }
+
+.cross-sign:hover{
+    cursor: pointer;
+}
 </style>
 
 <div class="row box-shadow" style="margin: 2% 7% 4% 7%; padding: 1%; background-color: aliceblue;">
@@ -83,14 +87,18 @@
                     <label>Add Property</label>
                 </div>
                 <div class="col-sm-1">
-                    <i class='bx bx-plus edit' style="color: #4f4ff3;font-size: 30px;" title="Add Property" onclick="AddFields()"></i>
+                    <i class='bx bx-plus edit' style="color: #4f4ff3;font-size: 30px;" title="Add Property" onclick="AddFieldss()"></i>
                 </div>
-                <div class="col-sm-3 " style="text-align: center;" >
+                <div class="col-sm-7" id="rowField">
+
+                </div>
+
+                <!-- <div class="col-sm-3 " style="text-align: center;" >
                     <div id="selectField"></div>
                 </div>
                 <div class="col-sm-3">
                     <div id="valueField" style="width: 100%;"></div>
-                </div>
+                </div> -->
             </div>
             <div class="row" style="margin-top:2%; margin-bottom: 2%;">
                 <div class="col" style="text-align: center;">
@@ -145,6 +153,70 @@
         selectContainer.appendChild(select)
         valueContainer.appendChild(input)
     }
+
+    function AddFieldss() {
+
+    var parent = document.getElementById('rowField')
+    var div_row = document.createElement('div')
+    var col_select = document.createElement('div')
+    var col_input = document.createElement('div')
+    var col_cancel = document.createElement('div')
+    div_row.className = "row"
+    col_select.className = "col-sm-5"
+    col_input.className = "col-sm-5"
+    col_cancel.className = "col-sm-2 crosss"
+    parent.appendChild(div_row)
+    div_row.appendChild(col_select)
+    div_row.appendChild(col_input)
+    div_row.appendChild(col_cancel)
+
+    var select = document.createElement('select')
+        select.className = "form-control"
+        select.name = "property"
+        select.style.display = 'block'
+        select.style.width = '100%'
+        select.style.marginBottom = '3%'
+        select.style.marginTop = '1%'
+        select.style.padding = '2px'
+
+
+        var properties = JSON.parse("{{ properties|escapejs }}")
+        console.log(properties)
+
+        var option = document.createElement('option')
+        option.selected = 'property'
+        option.text = "-----------"
+        select.append(option)
+       
+        for(var i = 0;i< properties.length;i++){
+            var option = document.createElement('option')
+            option.text = properties[i]
+            option.value = properties[i]
+            select.appendChild(option)
+        }
+
+        var input = document.createElement('input')
+        input.className = "form-control"
+        input.type = 'text'
+        input.name = 'value'
+        input.placeholder = 'Value'
+        input.style.padding = "2px"
+        input.style.marginTop = '1%'
+        input.style.marginBottom = '3%'
+        input.style.textAlign = 'center'
+
+        var delete_icon = document.createElement('i')
+        delete_icon.className = "bi bi-x cross-sign "
+        delete_icon.onclick = deleteRow
+
+        col_select.appendChild(select)
+        col_input.appendChild(input)
+        col_cancel.appendChild(delete_icon)
+  }
+  function deleteRow() {
+    $(document).on( 'click', '.crosss', function(){this.parentNode.remove()} );
+    }
+
 </script>
 
 

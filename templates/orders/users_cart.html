@@ -1,4 +1,4 @@
-{% extends 'base/sidebar.html' %}
+{% extends 'users/users.html' %}
 
 {% block content %}
 
@@ -19,22 +19,12 @@
     .removeItem:hover{
         cursor: pointer;
     }
+    body{
+        background-color: #eee;
+    }
 </style>
 
-
-<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
-    <div class="col-sm-4">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
-          <a href="#" style="text-decoration: none;">
-            <li class="breadcrumb-item active" aria-current="page" style="color: #1f90f3;" >My Cart </li>
-          </a>
-        </ol>
-      </nav>
-    </div>
-</div>
-
-<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
+<div class="row" >
 
     {% if exist %}
     <section class="h-100" style="background-color: #eee;">

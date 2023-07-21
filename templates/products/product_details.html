@@ -1,4 +1,4 @@
-{% extends 'base/sidebar.html' %}
+{% extends 'users/users.html' %}
 
 {% block content %}
 
@@ -35,6 +35,8 @@
                         <h4 class="title text-dark">{{ variant.product.name }}
                         </h4>
                       </div>
+
+                      {% if user.role.name == "buyer" %}
                       <div class="col-sm-5" style="text-align: right;">
 
                         {% if user_wishlist %}
@@ -44,6 +46,8 @@
                         {% endif %}
 
                       </div>
+                      {% endif %}
+
                     </div>
                     <div class="d-flex flex-row my-3">
                       <div class="text-warning mb-1 me-2">
@@ -115,11 +119,13 @@
 {% endfor %}
 
 <div class="row" style="margin-bottom: 4%; color: black;">
+        {% if other_variants %}
         <div class="row py-3 " >
             <div class="col" style="text-align: center;">
                 <h4>Other Variants</h4>
             </div>
         </div>
+        {% endif %}
         <div class="row">
             {% for variant in product_variants %}
             {% if not variant.is_master %}
@@ -380,11 +386,13 @@ function checkout(user_id,variant_id){
 {% endfor %}
 
 <div class="row" style="margin-bottom: 4%; color: black;">
+        {% if other_variants%}
         <div class="row py-3 " >
             <div class="col" style="text-align: center;">
                 <h4>Other Variants</h4>
             </div>
         </div>
+        {% endif %}
         <div class="row">
             {% for variant in product_variants %}
             {% if not variant.is_master %}

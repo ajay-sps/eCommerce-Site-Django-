@@ -7,18 +7,32 @@ from django.contrib.auth import authenticate,login,logout
 from products.models import Products,ProductVariants,Categories,ProductVariantProperties,Properties,Brands
 from django.core.paginator import Paginator
 from rest_framework.response import Response
-from users.tasks import displayNumberFunction,verification_mail
+from users.tasks import verification_mail,password_reset_mail
+from orders.models import UserWishlist,UserCart
 
 
 class HomeView(APIView):
 
     def get(self,request):
-        first_product = Products.objects.first()
-        products = Products.objects.all()[:12]
-        product_variants = ProductVariants.objects.filter(is_master = True)
-        categories = Categories.objects.all()
-        return render(request,'users/home.html',{'products':products ,'categories' : categories,'first_product':first_product,'product_variants':product_variants})
+        try:
+            wishlist_count = 0
+            cart_count = 0
+            try :
+                if request.user.id :
+                    wishlist_count = UserWishlist.objects.filter(user = request.user).count()
+                    cart_count = UserCart.objects.filter(user = request.user).count()
+            except:
+                pass
+            first_product = Products.objects.first()
+            products = Products.objects.all()[:12]
+            product_variants = ProductVariants.objects.filter(is_master = True)
+            categories = Categories.objects.all()
+            return render(request,'users/home.html',{'products':products ,'categories' : categories,'first_product':first_product,'product_variants':product_variants,'wishlist_count':wishlist_count,'cart_count':cart_count,})
+        except Exception as e:
+            print(str(e))
+            return HttpResponse(str(e))
     
+
 
 class LoginView(APIView):
 
@@ -29,15 +43,22 @@ class LoginView(APIView):
         data = request.data
         username = data.get('email')
         password = data.get('password')
+        print(username,password)
 
         user = authenticate(username = username,password = password)
         if user is not None:
             if user.is_verified == True:
-                login(request,user)
-                return redirect('/')
+                if user.role.name == 'admin':
+                    login(request,user)
+                    return redirect('/dashboard')
+                else:
+                    login(request,user)
+                    return redirect('/')
             else:
                 return render(request,'users/login.html',{"message" : "Email is not verified"})
         else :
+            user_obj = User.objects.filter(username = username)
+            print(user,user_obj)
             return render(request,'users/login.html',{"message" : "invalid email or password"})
     
 
@@ -67,7 +88,7 @@ class SignupView(APIView):
             serializer = UserSerializer(data = arranged_data)
 
             if serializer.is_valid():
-                user = serializer.save()
+                user = serializer.save() 
                 user.profile.generate_token()
                 token = user.profile.token
                 verification_mail.delay(token,arranged_data.get('email'))
@@ -222,7 +243,7 @@ class UserProfileView(APIView):
 
     def get(self,request):
         try:
-            addresses = UserAddress.objects.filter(user = request.GET['user_id'])
+            addresses = UserAddress.objects.filter(user = request.GET['user_id']).order_by('-id')
             return render(request,'users/profile.html',{'addresses':addresses})
         except Exception as e:
             return Response(str(e))
@@ -323,3 +344,50 @@ class DeleteUserAddressView(APIView):
             return Response('Deleted Successfully')
         except Exception as e:
             return Response(str(e))
+        
+
+class ForgotPasswordView(APIView):
+
+    def get(self,request):
+        return render(request,'users/forgot_password.html')
+    
+    def post(self,request):
+        data = request.data
+        if User.objects.filter(username = data['email']):
+            user = User.objects.get(username = data['email'])
+            user.profile.generate_token()
+            token = user.profile.token
+            name = user.first_name
+            password_reset_mail.delay(data['email'],token,name)
+            message = "check your mail to proceed further"
+        else:
+            message = 'This mail is not registered'
+        return render(request,'users/forgot_password.html',{'message':message})
+    
+
+class ResetPasswordView(APIView):
+
+    def get(self,request,token):
+        return render(request,'users/reset_password.html')
+    
+    def post(self,request,token):
+        try:
+            data = request.data
+            if data['password1'] == data['password2']:
+                if len(data['password1']) < 5 :
+                    message = 'Please enter password of length 5 or greater '
+                else :
+                    user = User.objects.get(profile__token = token)
+                    user.set_password(data['password1'])
+                    print(user,data['password1'])
+                    user.save()
+                    profile = UserProfile.objects.get(token = token)
+                    profile.token = None
+                    profile.save()
+                    message = 'Password Changed Successfully'
+            else : 
+                message = "confirm password and password did not match"
+            print(data,token)
+            return render(request,'users/reset_password.html',{'message':message})
+        except Exception as e :
+            return HttpResponse(str(e))

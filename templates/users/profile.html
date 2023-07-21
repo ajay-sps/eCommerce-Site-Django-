@@ -1,4 +1,4 @@
-{% extends 'base/sidebar.html' %}
+{% extends 'users/users.html' %}
 
 {% block content %}
 
@@ -22,20 +22,12 @@
     .edit:hover{
         cursor: pointer;
     }
+    .anchortag{
+        text-decoration: none;
+    }
 
 </style>
 
-
-<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
-    <div class="col-sm-11" style="text-align: center;">
-        <h4 style="margin: 0; padding-left: 8%; color: #1f90f3;">My Profile</h4>
-    </div>
-    <div class="col-sm-1">
-        <a href="/users/profile/update?user_id={{ user.id }}">
-            <i class='bx bx-edit-alt edit' style="padding-left: 50%; color: rgb(101, 101, 235); font-size: 25px;" title="Update Profile"></i>
-        </a>
-    </div>
-</div>
 
 <div class="row p-3 mt-5 box-shadow rowclass">
     <div class="col-sm-12">
@@ -85,7 +77,7 @@
                                                     </div>
                                                     <div class="col-sm-3" style="text-align: right;">
                                                         <div>
-                                                            <a href="/users/address/update?address_id={{ address.id }}">
+                                                            <a href="/users/address/update?address_id={{ address.id }}" class="anchortag">
                                                                 <i class='bx bx-pencil edit' style="color: rgb(58, 235, 58);" title="Update Address"></i>
                                                             </a>
                                                             <i class='bx bx-trash-alt edit' style="color: rgb(58, 235, 58);" title="Delete Address" onclick="deleteAddress('{{ address.id }}')"></i>

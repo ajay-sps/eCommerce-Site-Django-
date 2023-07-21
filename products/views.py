@@ -16,7 +16,7 @@ class BrandsView(APIView):
 
     def get(self,request):
         brands = Brands.objects.order_by('-is_active')
-        item_per_page = 5
+        item_per_page = 10
         paginator = Paginator(brands,item_per_page)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
@@ -83,7 +83,7 @@ class CategoriesView(APIView):
 
     def get(self,request):
         categories = Categories.objects.order_by('-is_active')
-        item_per_page = 5
+        item_per_page = 10
         paginator = Paginator(categories,item_per_page)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number) 
@@ -148,7 +148,7 @@ class ProductsView(APIView):
 
     def get(self,request):
         products = Products.objects.order_by('-is_active')
-        item_per_page = 5
+        item_per_page = 10
         paginator = Paginator(products,item_per_page)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
@@ -356,19 +356,21 @@ class ProductDetailsView(APIView):
     def get(self,request,id):
         try:
             user_id = request.GET.get('user_id')
-            print(request.GET.get('user_id'))
             product_variants = ProductVariants.objects.filter(product = id)
             master_variant = ProductVariants.objects.get(product = id,is_master = True)
             user_wishlist = False
             user_cart = False
+            other_variants = False
             if user_id != "None":
                 if UserCart.objects.filter(user = user_id,product_variant = master_variant):
                     user_cart = True
                 if UserWishlist.objects.filter(user = user_id,product_variant = master_variant):
                     user_wishlist = True
+            if len(product_variants) > 1 :
+                other_variants = True
             variant_ids = [variant.id for variant in product_variants]
             product_variants_properties = ProductVariantProperties.objects.filter(product_variant__in = variant_ids)
-            return render(request,'products/product_details.html',{'product_variants': product_variants,'product_variants_properties' : product_variants_properties,'id':id,'user_cart':user_cart,'user_wishlist':user_wishlist})
+            return render(request,'products/product_details.html',{'product_variants': product_variants,'product_variants_properties' : product_variants_properties,'id':id,'user_cart':user_cart,'user_wishlist':user_wishlist,'other_variants':other_variants,})
         except Exception as e:
             return HttpResponse(str(e))
     
@@ -397,11 +399,13 @@ class ProductSearchView(APIView):
         product = Products.objects.filter(name__icontains = request.GET.get('search') )
         products_variants = ProductVariants.objects.filter(product__in = product,is_master = True)
         products = []
-        for item,variant in zip(product,products_variants):
-            if UserWishlist.objects.filter(product_variant = variant,user = request.GET.get('user_id')):
+        for item in product:
+            products_variant_obj = ProductVariants.objects.get(product = item,is_master = True)
+            if UserWishlist.objects.filter(product_variant = products_variant_obj,user = request.GET.get('user_id')):
                 products.append({'product':item,'status':True})
             else:
                 products.append({'product':item,'status':False})
 
         print(products_variants)
+        print(products)
         return render(request,'products/category_details.html',{'products':products,'product_variant':products_variants})

@@ -1,12 +1,13 @@
-from django.core.mail import send_mail
-from django.conf import settings
 
+from twilio.rest import Client
 
-def verification_mail(token,email):
+client = Client("AC78a600694d3dedfbd98a42c2c8efb727","6d0e62f41eaf2d95820baffe87396072")
+phone = 9815430168
+twilio_phone = "+14325294960"
 
-    subject = 'Email Verification'
-    message = f"please click on the link to verify your account http://127.0.0.1:8000/user/verification/{token}"
-    from_email = settings.EMAIL_HOST_USER
-    recipient_list = [email]
-
-    send_mail(subject,message,from_email,recipient_list)
+client.messages.create(
+    to = phone,
+    from_ = twilio_phone,
+    body = "hello Ritsh"
+)
+print('hello')
