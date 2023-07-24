@@ -16,71 +16,78 @@
 
 <div class="row">
   <div class="col-sm-12">
+    <div class="row">
+      <div class="col-sm-12" style="text-align: center;">
+        <p class="py-3" style="color:#59786e; font-size: 30px; font-weight: 400;"><strong>{{ category_name }}</strong></p>
+      </div>
+    </div>
+
+    <div class="row">
       <section style="background-color: #eee; border-radius: 15px;">
-          <div class="text-center container ">
-            <p class="py-3" style="color:#59786e; font-size: 30px; font-weight: 400;"><strong>{{ category_name }}</strong></p>
-        
-            <div class="row">
+          <div class="row">
 
-              {% for product in products %}
-              {% for variant in product_variant %}
-              {% if variant.product.id == product.product.id %} 
-              <div class="col-lg-3 col-md-12 mb-4">
-                <div class="card product-card" style="font-size: 15px;">
-                  <div class="row">
-                      <div class="col-sm-12" style="text-align: right;">
-                        {% if user.role.name == 'buyer' %}
-                        {% if product.status %}
-                        <a href="#" style="text-decoration: none; padding-right: 4%;">
-                          <i class="bi bi-heart-fill wishlist" style="font-size: 20px; color:#f30909" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
-                        </a>
-                        {% else %}
-                        <a href="#" style="text-decoration: none; padding-right: 4%;">
-                          <i class="bi bi-heart wishlist" style="font-size: 20px; color:#f30909" title="Add to WishList" onclick="addToWishList('{{ user.id }}','{{ variant.id }}')" ></i>
-                        </a>
-                        {% endif %}
-                        {% endif %}
-                      </div>
-                  </div>
-                  <a href="/products/{{ product.product.id }}/details?user_id={{ user.id }}" class="text-reset anchortag">
-
-                    {% if user.role.name == 'buyer' %}
-                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
-                      data-mdb-ripple-color="light" >
-                      <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
+            {% for product in products %}
+            {% for variant in product_variant %}
+            {% if variant.product.id == product.product.id %} 
+            <div class="col-lg-2">
+              <div class="card product-card" style="font-size: 15px;">
+                <div class="row">
+                    <div class="col-sm-12" style="text-align: right;">
+                      {% if user.role.name == 'buyer' %}
+                      {% if product.status %}
+                      <a href="#" style="text-decoration: none; padding-right: 4%;">
+                        <i class="bi bi-heart-fill wishlist" style="font-size: 20px; color:#f30909" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                      </a>
+                      {% else %}
+                      <a href="#" style="text-decoration: none; padding-right: 4%;">
+                        <i class="bi bi-heart wishlist" style="font-size: 20px; color:#f30909" title="Add to WishList" onclick="addToWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                      </a>
+                      {% endif %}
+                      {% endif %}
                     </div>
-                    {% else %}
-                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
-                      data-mdb-ripple-color="light" style="padding-top: 10%;">
-                      <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
-                    </div>
-                    {% endif %}
-
-                    <div class="card-body" style="color: #837a7a;">
-                        <h5 class="card-title mb-3" style="color:#3e3b3b">{{ product.product.name }}</h5>
-                        <p>Rs. {{ variant.price }}</p>
-                        <div style="color:#3e3b3b">4.6/5 (223)</div>
-                        <div class="stars">
-                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                          <i class="bi bi-star-half" style="color: rgb(21, 194, 21)"></i>
-                        </div>
-                        
-                    </div>
-                  </a>
                 </div>
-              </div>
-              {% endif %}
-              {% endfor %}
-              {% endfor %}
+                <a href="/products/{{ product.product.id }}/details?user_id={{ user.id }}" class="text-reset anchortag">
 
+                  {% if user.role.name == 'buyer' %}
+                  <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                    data-mdb-ripple-color="light" >
+                    <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
+                  </div>
+                  {% else %}
+                  <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                    data-mdb-ripple-color="light" style="padding-top: 10%;">
+                    <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
+                  </div>
+                  {% endif %}
+
+                  <div class="card-body" style="color: #837a7a;">
+                      <h5 class="card-title mb-3" style="color:#3e3b3b">{{ product.product.name }}</h5>
+                      <p>Rs. {{ variant.price }}</p>
+                      <div style="color:#3e3b3b">4.6/5 (223)</div>
+                      <div class="stars">
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-half" style="color: rgb(21, 194, 21)"></i>
+                      </div>
+                      
+                  </div>
+                </a>
+              </div>
             </div>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+
           </div>
-      </section>
+    </section>
+    </div>
+    
+      
   </div>
-</div><br>
+</div>
+
 <p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
 
 
@@ -175,61 +182,68 @@ function removeFromWishList(user_id,variant_id){
 </style>
 
 <div class="row" style="margin-top: 2%; margin-left: 5%; margin-right: 5%;">
-<div class="col-sm-12">
-    <section style="background-color: #eee; border-radius: 15px;">
-        <div class="text-center container ">
-          <p class="py-3" style="color:#59786e; font-size: 30px; font-weight: 400;"><strong>{{ category_name }}</strong></p>
-      
-          <div class="row">
+  <div class="col-sm-12">
+    <div class="row">
+      <div class="col-sm-12">
+        <p class="py-3" style="color:#59786e; font-size: 30px; font-weight: 400;"><strong>{{ category_name }}</strong></p>
+      </div>
+    </div>
+      <section style="background-color: #eee; border-radius: 15px;">
+          <div class="text-center container ">
+            
+        
+            <div class="row">
 
-            {% for product in products %}
-            {% for variant in product_variant %}
-            {% if variant.product.id == product.product.id %}
-            <div class="col-lg-3 col-md-12 mb-4">
-              <div class="card product-card" style="font-size: 15px;">
-                <div class="row">
-                    <div class="col-sm-12" style="text-align: right;">
-                      {% if product.status %}
-                      <a href="#" style="text-decoration: none; padding-right: 4%;">
-                        <i class="bi bi-heart-fill wishlist" style="font-size: 20px; color:#f30909" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
-                      </a>
-                      {% else %}
-                      <a href="#" style="text-decoration: none; padding-right: 4%;">
-                        <i class="bi bi-heart wishlist" style="font-size: 20px; color:#f30909" title="Add to WishList" onclick="login()" ></i>
-                      </a>
-                      {% endif %}
-                    </div>
-                </div>
-                <a href="/products/{{ product.product.id }}/details?user_id={{ user.id }}" class="text-reset anchortag">
-                  <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
-                    data-mdb-ripple-color="light">
-                    <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
-                  </div>
-                  <div class="card-body" style="color: #837a7a;">
-                      <h5 class="card-title mb-3" style="color:#3e3b3b">{{ product.product.name }}</h5>
-                      <p>Rs. {{ variant.price }}</p>
-                      <div style="color:#3e3b3b">4.6/5 (223)</div>
-                      <div class="stars">
-                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                        <i class="bi bi-star-half" style="color: rgb(21, 194, 21)"></i>
+              {% for product in products %}
+              {% for variant in product_variant %}
+              {% if variant.product.id == product.product.id %}
+              <div class="col-lg-3 col-md-12 mb-4">
+                <div class="card product-card" style="font-size: 15px;">
+                  <div class="row">
+                      <div class="col-sm-12" style="text-align: right;">
+                        {% if product.status %}
+                        <a href="#" style="text-decoration: none; padding-right: 4%;">
+                          <i class="bi bi-heart-fill wishlist" style="font-size: 20px; color:#f30909" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                        </a>
+                        {% else %}
+                        <a href="#" style="text-decoration: none; padding-right: 4%;">
+                          <i class="bi bi-heart wishlist" style="font-size: 20px; color:#f30909" title="Add to WishList" onclick="login()" ></i>
+                        </a>
+                        {% endif %}
                       </div>
-                      
                   </div>
-                </a>
+                  <a href="/products/{{ product.product.id }}/details?user_id={{ user.id }}" class="text-reset anchortag">
+                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                      data-mdb-ripple-color="light">
+                      <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
+                    </div>
+                    <div class="card-body" style="color: #837a7a;">
+                        <h5 class="card-title mb-3" style="color:#3e3b3b">{{ product.product.name }}</h5>
+                        <p>Rs. {{ variant.price }}</p>
+                        <div style="color:#3e3b3b">4.6/5 (223)</div>
+                        <div class="stars">
+                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                          <i class="bi bi-star-half" style="color: rgb(21, 194, 21)"></i>
+                        </div>
+                        
+                    </div>
+                  </a>
+                </div>
               </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-            {% endfor %}
+              {% endif %}
+              {% endfor %}
+              {% endfor %}
 
+            </div>
           </div>
-        </div>
-    </section>
+      </section>
+  </div>
 </div>
-</div><br>
+
+
 
 
 <script>
