@@ -4,15 +4,15 @@
 
 <style>
 .box-shadow{
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 12px;
-    background-color: aliceblue;
     margin: 1% 2% 1% 1%;
 }
 
 .table-success {
     --bs-table-bg: #ffffff;
     --bs-table-striped-bg: #ededed;
+    --bs-table-hover-bg: #cfd7d3;
 }
 .rowclass{
   margin-left: 5%;
@@ -21,6 +21,10 @@
 
 td{
   vertical-align: middle;
+}
+th{
+  font-weight: 500;
+  font-size: 18px;
 }
 </style>
 
@@ -35,24 +39,17 @@ td{
     </div>
 </div>
 
-{% if updated %}
-<div class="row">
-    <div class="col" style="text-align: center; color: green;">
-        <h4>Updated Succefully!</h4>
-    </div>
-</div>
-{% endif %}
 
 <div class="row p-3 box-shadow rowclass" style="margin-top: 3%; font-size: 15px;" >
     <div class="col">
-      <table class="table table-success table-striped" >
+      <table class="table table-success table-striped table-hover" >
           <thead class="thead-light" >
             <tr >
               <th scope="col">S.No.</th>
               <th scope="col">Name</th>
               <th scope="col">Image</th>
               <th scope="col">Quantity</th>
-              <th scope="col">Price</th>
+              <th scope="col">Price (Rs.)</th>
             </tr>
           </thead>
           <tbody>

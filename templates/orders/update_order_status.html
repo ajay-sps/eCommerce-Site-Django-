@@ -3,89 +3,89 @@
 {% block content %}
 
 <style>
-.box-shadow{
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  .box-shadow {
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 12px;
-    background-color: aliceblue;
     margin: 1% 2% 1% 1%;
-}
+  }
 
-.table-success {
+  .table-success {
     --bs-table-bg: #ffffff;
     --bs-table-striped-bg: #ededed;
-}
-.rowclass{
-  margin-left: 5%;
-  margin-right: 5%;
-}
+  }
 
-td{
-  vertical-align: middle;
-}
+  .rowclass {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
 
+  td {
+    vertical-align: middle;
+  }
 </style>
 
 
 <div class="row p-3 box-shadow rowclass" style="margin-top: 3%;">
   <div class="col-sm-4">
     <nav aria-label="breadcrumb">
-      <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
-        <a href="/products" style="text-decoration: none;">
-          <li class="breadcrumb-item active" aria-current="page">Update Order Status</li>
-        </a>
+      <ol class="breadcrumb" style="margin: 0px;">
+        <li class="breadcrumb-item"><a href="/cart/orders" style="text-decoration: none;">Orders</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Update Order Status</li>
       </ol>
     </nav>
   </div>
 </div>
 
-<div class="row box-shadow rowclass" style="margin-top: 2%; color: black;">
-    <div class="col-sm-12" style="border-radius: 12px; background-color: aliceblue;">
-        <form method="post" action="" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%; margin-bottom: 3%;">
-                <div class="col" style="text-align: center;">
-                    <h4 style="color: green;">Update Order Status</h4>
-                </div>
-            </div>
-            <div class="row" style=" padding-left: 2%; padding-right: 2%;">
-                <div class="col-sm-6">
-                    <div><label for="name">Name</label></div>
-                    <div><input type="text" class="form-control" name="name" id="name" value="{{ order.user.first_name }} {{ order.user.last_name }}" required></div>
-                    <input type="hidden" name="order_id" value="{{ order.id }}">
-                </div>
-                <div class="col-sm-6">
-                    <div><label for="name">Select Status</label></div>
-                    <div>
-                        <select class="form-control" name="status">
-                            <option selected value="{{ order.status }}">{{ order.status }}</option>
+<div class="row" style="margin-top: 3%; color: black;">
+  <div class="col-sm-8 offset-sm-2 box-shadow" style="border-radius: 12px; font-size: 16px; margin-left: 15%;">
+    <form method="post" action="" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%; margin-bottom: 3%;">
+        <div class="col" style="text-align: center;">
+          <h4 style="color: rgb(59, 162, 247);">Update Order Status</h4>
+        </div>
+      </div>
+      <div class="row" style=" padding-left: 2%; padding-right: 2%;">
+        <div class="col-sm-6">
+          <div><label for="name">Name</label></div>
+          <div><input type="text" class="form-control" name="name" id="name"
+              value="{{ order.user.first_name }} {{ order.user.last_name }}" required></div>
+          <input type="hidden" name="order_id" value="{{ order.id }}">
+        </div>
+        <div class="col-sm-6">
+          <div><label for="name">Select Status</label></div>
+          <div>
+            <select class="form-control" name="status">
+              <option selected value="{{ order.status }}">{{ order.status }}</option>
 
-                            {% if order.status == "placed" %}
-                            <option value="accepted">accepted</option>
-                            <option value="packed">packed</option>
-                            <option value="shipped">shipped</option>
-                            <option value="delivered">delivered</option>
-                            {% elif order.status == 'accepted' %}
-                            <option value="packed">packed</option>
-                            <option value="shipped">shipped</option>
-                            <option value="delivered">delivered</option>
-                            {% elif order.status == 'packed' %}
-                            <option value="shipped">shipped</option>
-                            <option value="delivered">delivered</option>
-                            {% elif order.status == 'shipped' %}
-                            <option value="delivered">delivered</option>
-                            {% else %}
-                            {% endif %}
+              {% if order.status == "placed" %}
+              <option value="accepted">accepted</option>
+              <option value="packed">packed</option>
+              <option value="shipped">shipped</option>
+              <option value="delivered">delivered</option>
+              {% elif order.status == 'accepted' %}
+              <option value="packed">packed</option>
+              <option value="shipped">shipped</option>
+              <option value="delivered">delivered</option>
+              {% elif order.status == 'packed' %}
+              <option value="shipped">shipped</option>
+              <option value="delivered">delivered</option>
+              {% elif order.status == 'shipped' %}
+              <option value="delivered">delivered</option>
+              {% else %}
+              {% endif %}
 
-                        </select></div>
-                    </div>
-                </div>
-            <div class="row" style="margin-top:2%; margin-bottom: 2%;">
-                <div class="col" style="text-align: center;">
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </div>
-            </div>
-        </form>
-    </div>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:4%; margin-bottom: 2%;">
+        <div class="col" style="text-align: center;">
+          <button type="submit" class="btn btn-primary" style="padding: 4px 8px 4px 8px;">Update</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 

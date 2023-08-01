@@ -12,25 +12,42 @@
     .anchortag{
       text-decoration: none;
     }
+    .zoom{
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .zoom:hover{
+      cursor: pointer;
+      transform: translateY(-10px);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
 </style>
 
 <div class="row">
   <div class="col-sm-12">
-    <div class="row">
-      <div class="col-sm-12" style="text-align: center;">
-        <p class="py-3" style="color:#59786e; font-size: 30px; font-weight: 400;"><strong>{{ category_name }}</strong></p>
+
+    <div class="row" style="margin-left: 4%; margin-right: 4%;">
+      <div class="col-sm-12">
+        <img src="/static/images/discount banner 2.jpg" style="width: 100%; mix-blend-mode: hard-light;">
       </div>
     </div>
 
     <div class="row">
-      <section style="background-color: #eee; border-radius: 15px;">
+      <div class="col-sm-12" style="text-align: center;">
+        <p class="py-3" style="margin: 0;" ><strong style="color:#000000; font-size: 30px; font-weight: 400;">{{ category_name }}</strong></p>
+      </div>
+    </div>
+
+    <div class="row" style="margin-left: 4%; margin-right: 4%;">
+      <div class="col-sm-12" style="padding: 3%; text-align: center;">
           <div class="row">
 
             {% for product in products %}
             {% for variant in product_variant %}
             {% if variant.product.id == product.product.id %} 
-            <div class="col-lg-2">
-              <div class="card product-card" style="font-size: 15px;">
+            <div class="col-lg-2" style="margin-bottom: 35px;">
+              <div class="card product-card zoom" style="font-size: 15px; border-radius: 20px;">
                 <div class="row">
                     <div class="col-sm-12" style="text-align: right;">
                       {% if user.role.name == 'buyer' %}
@@ -43,6 +60,10 @@
                         <i class="bi bi-heart wishlist" style="font-size: 20px; color:#f30909" title="Add to WishList" onclick="addToWishList('{{ user.id }}','{{ variant.id }}')" ></i>
                       </a>
                       {% endif %}
+                      {% else %}
+                      <a href="#" style="text-decoration: none; padding-right: 4%;">
+                        <i class="bi bi-heart wishlist" style="font-size: 20px; color:#f30909" title="Add to WishList" onclick="login()" ></i>
+                      </a>
                       {% endif %}
                     </div>
                 </div>
@@ -55,7 +76,7 @@
                   </div>
                   {% else %}
                   <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
-                    data-mdb-ripple-color="light" style="padding-top: 10%;">
+                    data-mdb-ripple-color="light">
                     <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
                   </div>
                   {% endif %}
@@ -81,10 +102,11 @@
             {% endfor %}
 
           </div>
-    </section>
+      </div>
     </div>
+
     
-      
+
   </div>
 </div>
 
@@ -159,98 +181,11 @@ function removeFromWishList(user_id,variant_id){
     }) 
 }
 
-
-
-</script>
-
-{% endblock %}
-
-
-{% block non_auth_content %}
-{% if not user.is_authenticated %}
-
-<style>
-  @media (max-width: 767.98px) { .border-sm-start-none { border-left: none !important; } }
-
-  .product-card:hover{
-    cursor: pointer;
-    background-color: rgb(245, 240, 240);
-  }
-  .anchortag{
-    text-decoration: none;
-  }
-</style>
-
-<div class="row" style="margin-top: 2%; margin-left: 5%; margin-right: 5%;">
-  <div class="col-sm-12">
-    <div class="row">
-      <div class="col-sm-12">
-        <p class="py-3" style="color:#59786e; font-size: 30px; font-weight: 400;"><strong>{{ category_name }}</strong></p>
-      </div>
-    </div>
-      <section style="background-color: #eee; border-radius: 15px;">
-          <div class="text-center container ">
-            
-        
-            <div class="row">
-
-              {% for product in products %}
-              {% for variant in product_variant %}
-              {% if variant.product.id == product.product.id %}
-              <div class="col-lg-3 col-md-12 mb-4">
-                <div class="card product-card" style="font-size: 15px;">
-                  <div class="row">
-                      <div class="col-sm-12" style="text-align: right;">
-                        {% if product.status %}
-                        <a href="#" style="text-decoration: none; padding-right: 4%;">
-                          <i class="bi bi-heart-fill wishlist" style="font-size: 20px; color:#f30909" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
-                        </a>
-                        {% else %}
-                        <a href="#" style="text-decoration: none; padding-right: 4%;">
-                          <i class="bi bi-heart wishlist" style="font-size: 20px; color:#f30909" title="Add to WishList" onclick="login()" ></i>
-                        </a>
-                        {% endif %}
-                      </div>
-                  </div>
-                  <a href="/products/{{ product.product.id }}/details?user_id={{ user.id }}" class="text-reset anchortag">
-                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
-                      data-mdb-ripple-color="light">
-                      <img src="{{ variant.image.url }}" style="height: 150px; width: 150px; object-fit: contain; mix-blend-mode: darken;"/>
-                    </div>
-                    <div class="card-body" style="color: #837a7a;">
-                        <h5 class="card-title mb-3" style="color:#3e3b3b">{{ product.product.name }}</h5>
-                        <p>Rs. {{ variant.price }}</p>
-                        <div style="color:#3e3b3b">4.6/5 (223)</div>
-                        <div class="stars">
-                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                          <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
-                          <i class="bi bi-star-half" style="color: rgb(21, 194, 21)"></i>
-                        </div>
-                        
-                    </div>
-                  </a>
-                </div>
-              </div>
-              {% endif %}
-              {% endfor %}
-              {% endfor %}
-
-            </div>
-          </div>
-      </section>
-  </div>
-</div>
-
-
-
-
-<script>
 function login(){
   Swal.fire('Please login or SignUp')
 }
+
+
 </script>
 
-{% endif %}
 {% endblock %}

@@ -11,21 +11,40 @@
   .quantity:hover{
     cursor: pointer;
   }
-  .wishlist:hover{
+  /* .wishlist:hover{
     cursor : pointer;
+  } */
+  .zoom{
+    transition: transform 0.6s;
+  }
+  .zoom:hover{
+    cursor: pointer;
+    transform: scale(1.05); 
+    z-index: 1;
+  }
+  .zoom-heart{
+    transition: transform 0.6s;
+  }
+  .zoom-heart:hover{
+    cursor: pointer;
+    transform: scale(1.2); 
+    z-index: 1;
+  }
+  a{
+    text-decoration: none;
   }
 </style>
 
 {% for variant in product_variants %}
 {% if variant.is_master %}
-<div class="row" style="color: black;">
+<div class="row" style="color: black; margin-top: 3%;">
     <div class="col-sm-12">
-        <section class="py-5" style="font-size: 16px;">
+        <section style="font-size: 16px;">
             <div class="container">
               <div class="row gx-5">
                 <aside class="col-lg-6">
                   <div class="border rounded-4 mb-3 d-flex justify-content-center">
-                      <img style="height: 30rem; width: 30rem; object-fit: contain; padding: 5%;" class="rounded-4 fit" src="{{ variant.image.url }}" />
+                      <img style="height: 30rem; width: 30rem; object-fit: contain; padding: 5%;" class="rounded-4 fit zoom" src="{{ variant.image.url }}" >
                   </div>
                 </aside>
                 <main class="col-lg-6">
@@ -40,11 +59,22 @@
                       <div class="col-sm-5" style="text-align: right;">
 
                         {% if user_wishlist %}
-                        <i class="bi bi-heart-fill wishlist" style="font-size: 30px; color: red;" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                        <span class="zoom-heart">
+                          <i class="bi bi-heart-fill wishlist" style="font-size: 30px; color: red;" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                        </span>
                         {% else %}
-                        <i class="bi bi-heart wishlist" style="font-size: 30px; color: red;" title="Add to WishList" onclick="addToWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                        <span class="zoom-heart">
+                          <i class="bi bi-heart wishlist " style="font-size: 30px; color: red;" title="Add to WishList" onclick="addToWishList('{{ user.id }}','{{ variant.id }}')" ></i>
+                        </span>
                         {% endif %}
 
+                      </div>
+
+                      {% else %}
+                      <div class="col-sm-5" style="text-align: right;">
+                        <span class="zoom-heart">
+                          <i class="bi bi-heart wishlist " style="font-size: 30px; color: red;" title="Add to WishList" onclick="login()" ></i>
+                        </span>
                       </div>
                       {% endif %}
 
@@ -105,6 +135,27 @@
                     {% else %}
                     <button  class="btn btn-primary shadow-0" onclick="addToCart('{{ user.id }}','{{ variant.id }}')"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </button>
                     {% endif %}
+
+                    {% else %}
+
+                    <div class="row">
+                      <div class="col-3">
+                        <dt>Quantity</dt>
+                      </div>
+                      <div class="col-5">
+                        <select class="form-control quantity" id="quantity">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                      </div>
+                    </div>
+          
+                    <hr />
+                    <a onclick="login()" class="btn btn-warning shadow-0"> Buy now </a>
+                    <button  class="btn btn-primary shadow-0" onclick="login()"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </button>
                     
                     {% endif %}
 
@@ -118,7 +169,9 @@
 {% endif %}
 {% endfor %}
 
-<div class="row" style="margin-bottom: 4%; color: black;">
+<!-- <div class="row" style="margin:0% 4% 4% 4%; color: black;">
+
+  <div class="col-sm-12">
         {% if other_variants %}
         <div class="row py-3 " >
             <div class="col" style="text-align: center;">
@@ -129,13 +182,77 @@
         <div class="row">
             {% for variant in product_variants %}
             {% if not variant.is_master %}
-            <div class="col-sm-3">
-                <a href="/products/{{ id }}/details/{{ variant.id }}?user_id={{ user.id }}"><img src="{{ variant.image.url }}" style="width: 150px; height: 150px; object-fit: contain;"></a>
+            <div class="col-lg-2" style="text-align: center;">
+              <a href="/products/{{ variant.product.id }}/details/{{ variant.id }}?user_id={{ user.id }}" class="text-reset anchortag">
+                <div class="card product-card zoom" style="margin: 3%; border-radius: 20px; margin-bottom: 20px;">
+                  <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                    data-mdb-ripple-color="light">
+                    <img src="{{ variant.image.url }}"
+                      style="height: 150px; width: 150px; object-fit: contain; padding: 3%; margin-top: 6%; mix-blend-mode: darken; "/>
+                  </div>
+                  <div class="card-body" style="color: #443e3e; font-size: 14px;">
+                    <h5 class="card-title mb-3" style="color:black; font-weight: 400;">{{ variant.product.name }}</h5>
+                    <p>Rs. {{ variant.price }}</p>
+                  </div>
+                </div>
+              </a>
             </div>
             {% endif %}
             {% endfor %}
         </div>
+        <div class="row">
+          <img src="/static/images/discount banner 2.jpg">
+        </div>
+  </div>
+  
+</div> -->
+
+<div class="row" style="margin:1%;">
+  <div class="col-sm-12">
+    <div class="row">
+      <div class="col-sm-12" style="text-align: center;">
+        <h3>
+          <strong style="color:black; font-weight: 400;">Similar Items</strong>
+        </h3>
+      </div>
+    </div>
+    <div class="row" >
+      <div class="col-sm-12" >
+        <section style=" border-radius: 15px;">
+            <div class="row" style="padding: 2%;">
+              {% for product in similar_products %}
+              <div class="col-lg-2" style="text-align: center;">
+                <a href="/products/{{ product.product.id }}/details/{{ product.id }}?user_id={{ user.id }}" class="text-reset anchortag">
+                  <div class="card product-card zoom" style="margin: 3%; border-radius: 20px; margin-bottom: 20px;">
+                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                      data-mdb-ripple-color="light">
+                      <img src="{{ product.image.url }}"
+                        style="height: 150px; width: 150px; object-fit: contain; padding: 3%; margin-top: 6%; mix-blend-mode: darken; "/>
+                    </div>
+                    <div class="card-body" style="color: #443e3e; font-size: 14px;">
+                      <h5 class="card-title mb-3" style="color:black; font-weight: 400;">{{ product.product.name }}</h5>
+                      <p>Rs. {{ product.price }}</p>
+                      <div style="color:#3e3b3b">4.6/5 (223)</div>
+                      <div class="stars">
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                        <i class="bi bi-star-half" style="color: rgb(21, 194, 21)"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              {% endfor %}
+            </div>
+        </section>
+      </div>
+    </div>
+    
+  </div>
 </div>
+
 <p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
 
 
@@ -262,158 +379,10 @@ function checkout(user_id,variant_id){
 
 }
 
-
-</script>
-
-{% endblock %}
-
-{% block non_auth_content %}
-{% if not user.is_authenticated %}
-
-<style>
-  .quantity{
-    padding: 1%;
-    padding-left: 4%;
-    border-color: black;
-  }
-  .quantity:hover{
-    cursor: pointer;
-  }
-  .wishlist:hover{
-    cursor : pointer;
-  }
-</style>
-
-
-{% for variant in product_variants %}
-{% if variant.is_master %}
-
-<div class="row" style="color: black;">
-    <div class="col-sm-12">
-        <section class="py-5" style="font-size: 16px;">
-            <div class="container">
-              <div class="row gx-5">
-                <aside class="col-lg-6">
-                  <div class="border rounded-4 mb-3 d-flex justify-content-center">
-                      <img style="height: 27rem; object-fit: contain; padding: 5%;" class="rounded-4 fit" src="{{ variant.image.url }}" />
-                  </div>
-                </aside>
-                <main class="col-lg-6">
-                  <div class="ps-lg-3">
-                    <div class="row">
-                      <div class="col-sm-6">
-                        <h4 class="title text-dark">{{ variant.product.name }}
-                        </h4>
-                      </div>
-                      <div class="col-sm-5" style="text-align: right;">
-
-                        {% if user_wishlist %}
-                        <i class="bi bi-heart-fill wishlist" style="font-size: 30px; color: red;" title="Remove from WishList" onclick="removeFromWishList('{{ user.id }}','{{ variant.id }}')" ></i>
-                        {% else %}
-                        <i class="bi bi-heart wishlist" style="font-size: 30px; color: red;" title="Add to WishList" onclick="login()" ></i>
-                        {% endif %}
-
-                      </div>
-                    </div>
-                    <div class="d-flex flex-row my-3">
-                      <div class="text-warning mb-1 me-2">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                        <span class="ms-1">
-                          4.5
-                        </span>
-                      </div>
-                      <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
-                      <span class="text-success ms-2">In stock</span>
-                    </div>
-          
-                    <div class="mb-3">
-                      <span class="h5">Rs . {{ variant.price }}</span>
-                    </div>
-          
-                    <p>
-                      {{ variant.product.description }}
-                    </p>
-          
-                    <div class="row">
-                        {% for properties in product_variants_properties %}
-                        {% if properties.product_variant.id == variant.id %}
-                        <dt class="col-3">{{ properties.property.name }}</dt>
-                        <dd class="col-9">{{ properties.value }}</dd>
-                        {% endif %}
-                        {% endfor%}
-                    </div>
-                    {% if user.role.name == 'buyer'%}
-
-                    <div class="row">
-                      <div class="col-3">
-                        <dt>Quantity</dt>
-                      </div>
-                      <div class="col-5">
-                        <select class="form-control quantity" id="quantity">
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                        </select>
-                      </div>
-                    </div>
-          
-                    <hr />
-                    <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
-
-                    {% if user_cart %}
-                    <a href="/cart/users/{{ user.id }}/cart"><button  class="btn btn-primary shadow-0" > <i class="me-1 fa fa-shopping-basket"></i> Item in cart </button></a>
-                    {% else %}
-                    <button  class="btn btn-primary shadow-0" onclick="addToCart('{{ user.id }}','{{ variant.id }}')"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </button>
-                    {% endif %}
-
-                    <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
-                    {% endif %}
-
-                  </div>
-                </main>
-              </div>
-            </div>
-          </section>
-    </div>
-</div>
-{% endif %}
-{% endfor %}
-
-<div class="row" style="margin-bottom: 4%; color: black;">
-        {% if other_variants%}
-        <div class="row py-3 " >
-            <div class="col" style="text-align: center;">
-                <h4>Other Variants</h4>
-            </div>
-        </div>
-        {% endif %}
-        <div class="row">
-            {% for variant in product_variants %}
-            {% if not variant.is_master %}
-            <div class="col-sm-3">
-                <a href="/products/{{ id }}/details/{{ variant.id }}?user_id={{ user.id }}"><img src="{{ variant.image.url }}" style="width: 150px; height: 150px; object-fit: contain;"></a>
-            </div>
-            {% endif %}
-            {% endfor %}
-        </div>
-</div>
-<p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
-
-
-<script>
-
 function login(){
   Swal.fire('Please login or SignUp')
 }
 
 </script>
 
-
-{% endif %}
 {% endblock %}

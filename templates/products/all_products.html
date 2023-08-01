@@ -1,0 +1,96 @@
+{% extends 'users/users.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<style>
+    a {
+        text-decoration: none;
+        color: rgb(41, 36, 36);
+    }
+
+    .zoom {
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .zoom:hover {
+        cursor: pointer;
+        /* transform: scale(1.2);  */
+        transform: translateY(-10px);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        background-color: rgb(245, 240, 240);
+        z-index: 1;
+    }
+</style>
+
+<div class="row" style="margin :1%;">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12" style="text-align: center;">
+                <h3 class="py-1">
+                    <strong style="color:black; font-weight: 400;">All Products</strong>
+                </h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <section style=" border-radius: 15px;">
+                    <div class="row" style="padding: 2%;">
+                        {% for product in page_obj %}
+                        {% for variant in product_variants %}
+                        {% if variant.product.id == product.id %}
+                        <div class="col-lg-2" style="text-align: center;">
+                            <a href="/products/{{ product.id }}/details?user_id={{ user.id }}"
+                                class="text-reset anchortag">
+                                <div class="card product-card zoom"
+                                    style="margin: 3%; border-radius: 20px; margin-bottom: 20px;">
+                                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                                        data-mdb-ripple-color="light">
+                                        <img src="{{ variant.image.url }}"
+                                            style="height: 150px; width: 150px; object-fit: contain; padding: 3%; margin-top: 6%; mix-blend-mode: darken; " />
+                                    </div>
+                                    <div class="card-body" style="color: #443e3e; font-size: 14px;">
+                                        <h5 class="card-title mb-3" style="color:black; font-weight: 400;">{{ product.name }}</h5>
+                                        <p>Rs. {{ variant.price }}</p>
+                                        <div style="color:#3e3b3b">4.6/5 (223)</div>
+                                        <div class="stars">
+                                            <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                                            <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                                            <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                                            <i class="bi bi-star-fill" style="color: rgb(21, 194, 21)"></i>
+                                            <i class="bi bi-star-half" style="color: rgb(21, 194, 21)"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row" style="margin-top: 3%; margin-bottom: 3%;">
+    <div class="col-sm-4 offset-sm-5" style="text-align: center;">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination" style="margin: 0%; font-weight: 500;">
+          {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+          {% endif %}
+          <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+          {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+{% endblock %}

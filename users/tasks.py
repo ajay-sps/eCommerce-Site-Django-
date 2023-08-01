@@ -42,14 +42,20 @@ def order_mail(self,email,name,item,total,house,street,city,state,pincode):
 
 
 @shared_task(bind = True)
-def verification_mail(self,token,email):
+def verification_mail(self,token,email,name):
     try:
+        context = {
+            'token' : token,
+            'name' : name ,
+        }
         subject = 'Email Verification'
-        message = f"please click on the link to verify your account http://127.0.0.1:8000/user/verification/{token}"
-        from_email = settings.EMAIL_HOST_USER
-        recipient_list = [email]
+        template = 'users/email_verification_email_template.html'
+        html_content = render_to_string(template,context)
 
-        send_mail(subject,message,from_email,recipient_list)
+        email = EmailMessage(subject,html_content,to=[email])
+        email.content_subtype = 'html'
+        email.send()
+        
         return f'mail sent successfully'
     except Exception as e:
         print(str(e))
@@ -100,11 +106,11 @@ def order_status_mail(self,email,status,items,user):
 def send_sms(self,to_number, message):
     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     twilio_phone_number = settings.TWILIO_PHONE_NUMBER
-
+    
     client.messages.create(
-        to=to_number,
-        from_=twilio_phone_number,
-        body=message
+        to = to_number,
+        from_ = twilio_phone_number,
+        body = message
     )
 
     return f"SMS sent successfully !"

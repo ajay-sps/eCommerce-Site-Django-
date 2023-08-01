@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'products',
     'orders',
+    'django_elasticsearch_dsl',
 ]
 
 MIDDLEWARE = [
@@ -174,3 +175,11 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = config('TWILIO_PHONE_NUMBER')
+
+
+#ElasticSearch
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}

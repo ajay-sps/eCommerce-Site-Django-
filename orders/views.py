@@ -10,6 +10,7 @@ import razorpay
 from users.models import UserAddress,User
 from users.tasks import order_mail,order_status_mail,send_sms
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 
 class UserCartView(APIView):
@@ -250,10 +251,19 @@ class OrdersView(APIView):
 
     def get(self,request):
         try:
+            search_item = False
+            search_name =''
             if request.GET.get('search'):
-                orders = UserOrders.objects.filter(user__first_name__icontains = request.GET['search'])
+                search_item = True 
+                search_name += request.GET.get('search')
+                search_list = request.GET.get('search').split(' ')
+                print(search_list)
+                if len(search_list)>1:
+                    orders = UserOrders.objects.filter(Q(user__first_name__icontains = search_list[0]) | Q(user__last_name__icontains = search_list[1]))
+                else:
+                    orders = UserOrders.objects.filter(Q(user__first_name__icontains = request.GET['search']) | Q(user__last_name__icontains = request.GET['search'])).order_by('-id')
             else:
-                orders = UserOrders.objects.all()
+                orders = UserOrders.objects.all().order_by('-id')
             lst = []
             for order in orders:
                 price = 0
@@ -265,7 +275,7 @@ class OrdersView(APIView):
             paginator = Paginator(lst,item_per_page)
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
-            return render(request,'orders/orders.html',{"page_obj":page_obj})
+            return render(request,'orders/orders.html',{"page_obj":page_obj,'search_item':search_item,'search_name':search_name})
         except Exception as e:
             return HttpResponse(str(e)) 
             
@@ -292,23 +302,26 @@ class UpdateOrderStatusView(APIView):
         return render(request,'orders/update_order_status.html',{'order':order})
     
     def post(self,request):
-        data = request.data
-        print(data)
-        order = UserOrders.objects.get(id = data['order_id'])
-        items = []
-        order_items = UserOrderItems.objects.filter(user_order = order)
-        for item in order_items:
-            items.append(item.product_variant.product.name)
-        print(items)
-        user = order.user.first_name
-        email = order.user.username
-        status = data['status']
-        order_status_mail.delay(email,status,items,user)
-        print(type(order.user.profile.contact))
-        phone = "+91" + order.user.profile.contact
-        message = f"you order has been {status}"
-        print(phone,message)
-        send_sms.delay(phone,message)
-        # order.status = status
-        # order.save()
-        # return redirect('/cart/orders')
+        try:
+            data = request.data
+            print(data)
+            order = UserOrders.objects.get(id = data['order_id'])
+            items = []
+            order_items = UserOrderItems.objects.filter(user_order = order)
+            for item in order_items:
+                items.append(item.product_variant.product.name)
+            print(items)
+            user = order.user.first_name
+            email = order.user.username
+            status = data['status']
+            order_status_mail.delay(email,status,items,user)
+            print(type(order.user.profile.contact))
+            phone = "+91" + order.user.profile.contact
+            message = f"you order has been {status}"
+            print(message)
+            send_sms.delay(phone,message)
+            order.status = status
+            order.save()
+            return redirect('/cart/orders')
+        except Exception as e:
+            return HttpResponse(str(e))

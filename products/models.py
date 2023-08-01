@@ -39,6 +39,7 @@ class Products(BaseModel):
 class Properties(BaseModel):
     
     name = models.CharField(max_length=20,unique=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return self.name
@@ -65,3 +66,12 @@ class ProductVariantProperties(BaseModel):
 
     def __str__(self) -> str:
         return self.product_variant.code
+    
+
+class CategoryBanners(BaseModel):
+
+    category = models.OneToOneField(Categories,on_delete=models.PROTECT)
+    image = models.ImageField(upload_to='products/category_banner')
+
+    def __str__(self) -> str:
+        return self.category.name

@@ -6,8 +6,6 @@
     .box-shadow{
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         border-radius: 12px;
-        background-color: aliceblue;
-        margin: 1% 2% 1% 1%;
     }
     .rowclass{
       margin-left: 5%;
@@ -22,28 +20,36 @@
     a:hover{
         cursor: pointer;
     }
+    .zoom{
+    transition: transform 0.6s;
+    }
+    .zoom:hover{
+        cursor: pointer;
+        transform: scale(1.1); 
+        z-index: 1;
+    }
 </style>
 
 <div class="row ">
 
     {% if exist %}
-    <section class="h-100" style="background-color: #eee;">
+    <section class="h-100">
         <div class="container h-100 py-4">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-10">
     
             <div class="row mb-4" style="text-align: center;">
-                <h4 style="color: #1f90f3;">Wishlist</h4>
+                <h4 style="color: #1f90f3;">My Wishlist</h4>
             </div>
             
             {% for item in wishlist %}
             <div class="card rounded-3 mb-4">
-                <div class="card-body ">
+                <div class="card-body box-shadow ">
                 <div class="row d-flex justify-content-between align-items-center">
-                    <div class="col-md-3 col-lg-3 col-xl-3">
+                    <div class="col-md-3 col-lg-3 col-xl-3" style="text-align: center;">
                         <a href="/products/{{ item.product_variant.product.id }}/details/{{ item.product_variant.id }}?user_id={{ user.id }}">
                         <img
-                            src="{{ item.product_variant.image.url }}" height="120px" width="120px" style="object-fit: contain;" alt="Cotton T-shirt" >
+                            src="{{ item.product_variant.image.url }}" height="120px" width="120px" style="object-fit: contain;" alt="Cotton T-shirt" class="zoom">
                         </a>
                     </div>
                     <div class="col-md-5 col-lg-5 col-xl-5" style="font-size: 14px;">
@@ -62,12 +68,12 @@
                         <h6 class="mb-0" style="font-size: 14px;">Rs. {{ item.product_variant.price }}</h6>
                     </div>
                     <div class="col-md-2 col-lg-2 col-xl-2 text-end">
-                        <p style="margin: 0;">
+                        <!-- <p style="margin: 0;">
                             <i class="bi bi-cart icons" style="font-size: 18px; color: rgb(58, 55, 55);" title="Add to Cart"></i>
                         </p>
                         <p style="margin: 0;">
                             <i class="bi bi-bag icons" style="font-size: 18px; color:rgb(58, 55, 55);" title="Buy Now"></i>
-                        </p>
+                        </p> -->
                         <p onclick="removeItem('{{ user.id }}','{{ item.product_variant.id }}')" style="margin: 0;">
                             <i class="bi bi-x icons" style="font-size: 22px; color: rgb(58, 55, 55);" title="Remove From Wishlist"></i>
                         </p>
@@ -81,11 +87,13 @@
         </div>
         </div>
     </section>
+
     {% else %}
-    <div class="col-sm-12">
+
+    <div class="col-sm-12" style="padding-top: 3%;">
         <div class="row mb-4">
             <div class="col-sm-12" style="text-align: center;">
-                <img src="/static/images/empty.jpg" style="height: 400px; width: 400px; object-fit: contain;">
+                <img src="/static/images/empty.jpg" style="height: 400px; width: 700px; object-fit: contain;">
             </div>
         </div>
         <div class="row mb-4">
@@ -93,10 +101,27 @@
                 <h5 style="color: rgb(58, 50, 50);">OOPS ! There is no Item in the Wishlist </h5>
             </div>
         </div>
+        <div class="row mb-4">
+            <div class="col-sm-12" style="text-align: center;">
+                <a href="/">
+                    <button type="button" class="btn btn-primary" >Add Some </button>
+                </a>
+            </div>    
+        </div>
+
     </div>
     {% endif %}
 
 </div>
+
+{% if exist %}
+<div style="text-align: center; margin-bottom: 4%;">
+    <a href="/">
+        <button type="button" class="btn btn-primary">Add more items</button>
+    </a>
+</div>
+{% endif %}
+
 <p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
 
 <script>
