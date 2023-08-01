@@ -259,7 +259,7 @@ class OrdersView(APIView):
                 search_list = request.GET.get('search').split(' ')
                 print(search_list)
                 if len(search_list)>1:
-                    orders = UserOrders.objects.filter(Q(user__first_name__icontains = search_list[0]) | Q(user__last_name__icontains = search_list[1]))
+                    orders = UserOrders.objects.filter(Q(user__first_name__icontains = search_list[0]) | Q(user__last_name__icontains = search_list[1])).order_by('-id')
                 else:
                     orders = UserOrders.objects.filter(Q(user__first_name__icontains = request.GET['search']) | Q(user__last_name__icontains = request.GET['search'])).order_by('-id')
             else:

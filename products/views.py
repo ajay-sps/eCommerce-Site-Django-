@@ -101,14 +101,14 @@ class CategoriesView(APIView):
         if request.GET.get('search') != None:
             search_item = True
             search_name = request.GET.get('search')
-            brands = Categories.objects.filter(name__icontains = request.GET.get('search')).order_by('-is_active','-id')
+            categories = Categories.objects.filter(name__icontains = request.GET.get('search')).order_by('-is_active','-id')
         else:
             categories = Categories.objects.order_by('-is_active','-id')
         item_per_page = 10
         paginator = Paginator(categories,item_per_page)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number) 
-        return render(request,'products/categories.html',{'page_obj':page_obj})
+        return render(request,'products/categories.html',{'page_obj':page_obj,'search_item':search_item,'search_name':search_name})
     
 
 class AddCategoriesView(APIView):
@@ -168,12 +168,27 @@ class ProductsView(APIView):
     permission_classes = [AdminUser,]
 
     def get(self,request):
-        products = Products.objects.order_by('-is_active','-id')
-        item_per_page = 10
-        paginator = Paginator(products,item_per_page)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        return render(request,'products/products.html',{"page_obj":page_obj})
+        try:
+            search_item = False
+            search_name =''
+            if request.GET.get('search'):
+                search_item = True 
+                search_name += request.GET.get('search')
+                search_list = request.GET.get('search').split(' ')
+                print(search_list)
+                if len(search_list)>1:
+                    products = Products.objects.filter(Q(name__icontains = search_list[0]) | Q(name__icontains = search_list[1])).order_by('-is_active','id')
+                else:
+                    products = Products.objects.filter(Q(name__icontains = request.GET['search']) | Q(name__icontains = request.GET['search'])).order_by('-id')
+            else:
+                products = Products.objects.order_by('-is_active','-id')
+            item_per_page = 10
+            paginator = Paginator(products,item_per_page)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            return render(request,'products/products.html',{"page_obj":page_obj, 'search_item':search_item,'search_name':search_name})
+        except Exception as e:
+            return HttpResponse(str(e))
     
 
 class AddProductsView(APIView):
@@ -464,12 +479,20 @@ class PropertiesView(APIView):
     permission_classes = [AdminUser,]
 
     def get(self,request):
-        properties = Properties.objects.all().order_by('-is_active','-id')
+        print(type(request.GET.get('search')))
+        search_item = False
+        search_name =''
+        if request.GET.get('search') != None:
+            search_item = True
+            search_name = request.GET.get('search')
+            properties = Properties.objects.filter(name__icontains = request.GET.get('search')).order_by('-is_active','-id')
+        else:
+            properties = Properties.objects.all().order_by('-is_active','-id')
         item_per_page = 10
         paginator = Paginator(properties,item_per_page)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        return render(request,'products/properties.html',{'page_obj':page_obj})
+        return render(request,'products/properties.html',{'page_obj':page_obj,'search_item':search_item,'search_name':search_name})
     
 
 class AddPropertiesView(APIView):
