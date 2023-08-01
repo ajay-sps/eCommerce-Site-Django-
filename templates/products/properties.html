@@ -61,12 +61,13 @@ input{
       </nav>
     </div>
     <div class="col-sm-4" style="text-align: center;">
-        <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success search-button " type="submit">
-              <i class="bi bi-search"></i>
-            </button>
-        </form>
+      <form class="d-flex" action="" method="get" role="search">
+        <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search" style="width: 20rem;">
+        <button class="btn btn-outline-success search-button " type="submit" style="border: none;
+        height: 29px; position: relative; right: 52px; top: 2px; background-color: white;">
+          <i class="bi bi-search" style="color: black;"></i>
+        </button>
+      </form>
     </div>
     <div class="col-sm-4" style="text-align: right;">
         <a href="/products/properties/add"><button type="button" class="btn btn-primary">Add Property</button></a>
@@ -111,6 +112,16 @@ input{
   <div class="col-sm-4 offset-sm-5" style="text-align: center;">
     <nav aria-label="Page navigation example">
       <ul class="pagination" style="margin: 0%; font-weight: 500;">
+
+        {% if search_item %}
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_name }}">Previous</a></li>
+        {% endif %}
+        <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_name }}">Next</a></li>
+        {% endif %}
+        {% else %}
         {% if page_obj.has_previous %}
         <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
         {% endif %}
@@ -118,10 +129,13 @@ input{
         {% if page_obj.has_next %}
         <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
         {% endif %}
+        {% endif %}
+
       </ul>
     </nav>
   </div>
 </div>
+
 <p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
 
 <script>
