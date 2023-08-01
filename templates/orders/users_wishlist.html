@@ -137,7 +137,7 @@
                 if (result.isConfirmed) {
 
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-                    const url = `http://127.0.0.1:8000/cart/users/${user_id}/wishlist/delete`;
+                    const url = `/cart/users/${user_id}/wishlist/delete`;
                     const data = {
                     "user" : user_id,
                     "product_variant" : item_id,

@@ -141,7 +141,7 @@
         }).then((result) => {
                 if (result.isConfirmed) {
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-                    const url = `http://127.0.0.1:8000/cart/users/${user_id}/cart/delete/${cart_item_id}`;
+                    const url = `/cart/users/${user_id}/cart/delete/${cart_item_id}`;
 
                     fetch(url, {
                         method : 'DELETE',
@@ -170,7 +170,7 @@
                     console.log(quantity,item_id,user_id)
 
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-                    const url = `http://127.0.0.1:8000/cart/users/${user_id}/cart/update/`;
+                    const url = `/cart/users/${user_id}/cart/update/`;
                     const data = {
                     "item_id" : item_id,
                     "quantity" : quantity,

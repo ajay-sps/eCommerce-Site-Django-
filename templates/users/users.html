@@ -188,7 +188,7 @@
     wishlist_element = document.querySelector('.heart-count')
 
     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-    const url = `http://127.0.0.1:8000/user/wishlist_cart/count`;
+    const url = `/user/wishlist_cart/count`;
 
     fetch(url, {
       method : 'GET',

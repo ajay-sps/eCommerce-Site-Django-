@@ -157,7 +157,7 @@ var options = {
         
                     address_id = document.getElementById('address').value
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-                    const url = `http://127.0.0.1:8000/cart/users/{{ user.id }}/orderplaced?address=${address_id}`;
+                    const url = `/cart/users/{{ user.id }}/orderplaced?address=${address_id}`;
 
                     fetch(url, {
                         method : 'GET',
@@ -204,7 +204,7 @@ function cashOnDelivery(){
   
                     address_id = document.getElementById('address').value
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-                    const url = `http://127.0.0.1:8000/cart/users/{{ user.id }}/orderplaced?address_id=${address_id}`;
+                    const url = `/cart/users/{{ user.id }}/orderplaced?address_id=${address_id}`;
 
                     fetch(url, {
                         method : 'GET',

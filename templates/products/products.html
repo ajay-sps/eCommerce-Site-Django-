@@ -169,7 +169,7 @@ input{
               if (result.isConfirmed) {
               
               csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-              const url = `http://127.0.0.1:8000/products/delete/${id}`;
+              const url = `/products/delete/${id}`;
               console.log(csrf_element)
     
               fetch(url , {
@@ -224,7 +224,7 @@ input{
               if (result.isConfirmed) {
   
                 csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-                const url = `http://127.0.0.1:8000/products/delete/${id}`;
+                const url = `/products/delete/${id}`;
                 console.log(csrf_element)
                   
                   fetch(url , {
