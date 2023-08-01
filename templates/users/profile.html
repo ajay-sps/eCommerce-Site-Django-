@@ -189,7 +189,7 @@ function deleteAddress(address_id){
         }).then((result) => {
                 if (result.isConfirmed) {
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-                    const url = `http://127.0.0.1:8000/users/address/delete/${address_id}`;
+                    const url = `/users/address/delete/${address_id}`;
 
                     fetch(url, {
                         method : 'DELETE',
