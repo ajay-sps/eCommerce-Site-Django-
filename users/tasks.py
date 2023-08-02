@@ -15,8 +15,8 @@ def displayNumberFunction(self,a,b):
     return 'printed from 1 to 10'
 
 
-@shared_task(bind = True)
-def order_mail(self,email,name,item,total,house,street,city,state,pincode):
+# @shared_task(bind = True)
+def order_mail(email,name,item,total,house,street,city,state,pincode):
     try:
         context = {
             'name' : name,
@@ -41,12 +41,14 @@ def order_mail(self,email,name,item,total,house,street,city,state,pincode):
         print(str(e))
 
 
-@shared_task(bind = True)
-def verification_mail(self,token,email,name):
+# @shared_task(bind = True)
+def verification_mail(token,email,name,url):
     try:
+        print(email,token,name,url)
         context = {
             'token' : token,
             'name' : name ,
+            'url' : url,
         }
         subject = 'Email Verification'
         template = 'users/email_verification_email_template.html'
@@ -61,12 +63,14 @@ def verification_mail(self,token,email,name):
         print(str(e))
 
 
-@shared_task(bind = True)
-def password_reset_mail(self,email,token,name):
+# @shared_task(bind = True)
+def password_reset_mail(email,token,name,url):
     try:
+        print(email,token,name,url)
         context = {
             'token' : token,
             'user' : name ,
+            'url' : url,
         }
         template = 'users/forgot_password_email_template.html'
         html_content = render_to_string(template,context)
@@ -102,8 +106,8 @@ def order_status_mail(self,email,status,items,user):
         print(str(e))
 
 
-@shared_task(bind = True)
-def send_sms(self,to_number, message):
+# @shared_task(bind = True)
+def send_sms(to_number, message):
     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     twilio_phone_number = settings.TWILIO_PHONE_NUMBER
     

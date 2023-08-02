@@ -15,7 +15,7 @@ from django.db.models import Q
 
 class UserCartView(APIView):
     def get(self,request,user_id):
-        cart_items = UserCart.objects.filter(user__id = user_id)
+        cart_items = UserCart.objects.filter(user__id = user_id).order_by('-id')
         if cart_items:
             exist = True
         else:
@@ -69,7 +69,7 @@ class UserWishlistView(APIView):
 
     def get(self,request):
         user_id = request.GET.get('user_id')
-        wishlist = UserWishlist.objects.filter(user = user_id)
+        wishlist = UserWishlist.objects.filter(user = user_id).order_by('-id')
         if wishlist:
             exist = True
         else:
@@ -176,7 +176,11 @@ class UserOrderPlacedView(APIView):
                     city = address.city
                     state = address.state
                     pincode = address.postal_code
-                    order_mail.delay(mail,name,item_count,total,house,street,city,state,pincode)
+                    order_mail(mail,name,item_count,total,house,street,city,state,pincode)
+                    phone = "+919588797029"
+                    message = f"you order has been Placed"
+                    print(message)
+                    send_sms(phone,message)
                     return Response("i am here")
                 else:
                     print(serializer.errors)
@@ -211,7 +215,11 @@ class UserOrderPlacedView(APIView):
                     city = address.city
                     state = address.state
                     pincode = address.postal_code 
-                    order_mail.delay(mail,name,item_count,total,house,street,city,state,pincode)
+                    order_mail(mail,name,item_count,total,house,street,city,state,pincode)
+                    phone = "+919588797029"
+                    message = f"you order has been Placed"
+                    print(message)
+                    send_sms(phone,message)
                     return Response("i am here")
                 else:
                     print(serializer.errors)
@@ -316,10 +324,10 @@ class UpdateOrderStatusView(APIView):
             status = data['status']
             order_status_mail.delay(email,status,items,user)
             print(type(order.user.profile.contact))
-            phone = "+91" + order.user.profile.contact
+            phone = "+919588797029" 
             message = f"you order has been {status}"
             print(message)
-            send_sms.delay(phone,message)
+            send_sms(phone,message)
             order.status = status
             order.save()
             return redirect('/cart/orders')
