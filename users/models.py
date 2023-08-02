@@ -60,6 +60,7 @@ class UserAddress(BaseModel):
     state = models.CharField(max_length=40,default='haryana')
     postal_code = models.CharField(max_length=40,default=127028)
     detail_address = models.CharField(max_length=255,blank=True,null=True)
+    is_active = models.BooleanField(default=True)
 
 
 @receiver(pre_save,sender = UserAddress)

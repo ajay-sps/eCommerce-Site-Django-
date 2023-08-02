@@ -97,15 +97,29 @@ class SignupView(APIView):
                     'address_line_1' : data.get('address_line_1')
                 }
             }
+            
             serializer = UserSerializer(data = arranged_data)
 
             if serializer.is_valid():
                 user = serializer.save() 
                 user.profile.generate_token()
+                address_data = {
+                    'user' : user.id,
+                    'state' : data.get('state'),
+                    'city' : data.get('city'),
+                    'postal_code' : data.get('pincode'),
+                    'street' : "St. 140",
+                    'house_no' : 1434, 
+                }
                 token = user.profile.token
                 verification_mail(token,arranged_data.get('email'),user.first_name,config('URL'))
                 context = {'success':'An Email has been sent for Email Verification'}
-                return render(request,'users/signup.html',context)
+                address_serializer = UserAddressesSerialiazer(data=address_data)
+                if address_serializer.is_valid():
+                    address_serializer.save()
+                    return render(request,'users/signup.html',context)
+                else:
+                    return HttpResponse(address_serializer.errors)
             else:
                 for key,value in serializer.errors.items():
                     print(key,value)
@@ -255,7 +269,7 @@ class UserProfileView(APIView):
 
     def get(self,request):
         try:
-            addresses = UserAddress.objects.filter(user = request.GET['user_id']).order_by('-id')
+            addresses = UserAddress.objects.filter(user = request.GET['user_id'],is_active = True).order_by('-id')
             return render(request,'users/profile.html',{'addresses':addresses})
         except Exception as e:
             return Response(str(e))
@@ -353,7 +367,8 @@ class DeleteUserAddressView(APIView):
     def delete(self,request,address_id):
         try:
             address = UserAddress.objects.get(id = address_id)
-            address.delete()
+            address.is_active = False
+            address.save()
             return Response('Deleted Successfully')
         except Exception as e:
             return Response(str(e))
