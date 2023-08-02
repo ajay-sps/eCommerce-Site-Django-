@@ -14,9 +14,9 @@
     color: #684242;
   }
   .eyeIcon {
-    position: relative;
-    top: -29px;
-    left: 130px;
+    position: absolute;
+    top: 9px;
+    right: 20px;
     font-size: 19px;
     color: #5e5858;
 }
@@ -87,7 +87,7 @@ justify-content: center;
                 {% endfor %}
                   <input type="email" id="form3Example3" class="form-control" name="email" placeholder="Email" required value = {{ email }} >
               </div>
-              <div class="col-md-6 mb-4">
+              <div class="col-md-6 mb-4" style="position: relative;">
                   <input type="password" id="password-field" class="form-control" name="password" placeholder="Password" required>
                   <i class=" eyeIcon bi bi-eye-slash"></i>
               </div>
