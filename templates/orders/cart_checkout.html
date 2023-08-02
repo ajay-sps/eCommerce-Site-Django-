@@ -8,7 +8,30 @@
         background-color: aliceblue;
         margin: 1% 2% 1% 1%;
     }
+
+
+.loader{
+  position: absolute;
+  right: 46%;
+  top: 50%;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border-top: 8px solid rgb(65 65 72);
+  border-left: 8px solid rgb(65 65 72);
+  border-right: 8px solid rgba(255, 255, 255, 0);
+  animation: spin 0.575s infinite linear;
+  z-index: 1000;
+  display: none; 
+justify-content: center;
+}
+
+@keyframes spin {
+  to {transform: rotate(360deg);}
+}
 </style>
+
+<div class="loader"></div>
 
 <div class="row p-3 box-shadow rowclass" style="margin: 4% 5% 4% 4%;" >
   <section class="bg-light py-5">
@@ -154,6 +177,9 @@ var options = {
     "image": "{{ user.profile.profile_image.url }}",
     "order_id": "{{ payment.id }}",
     "handler": function (response){
+
+                    loader = document.querySelector(".loader")
+                    loader.style.display = "flex"
         
                     address_id = document.getElementById('address').value
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
@@ -168,6 +194,7 @@ var options = {
                         }).then(response => {
                         console.log(response)
                         if(response.ok){
+                          loader.style.display = "none"
                           Swal.fire({
                                     icon: 'success',
                                     title: 'Payment paid Succesfully and Order Placed',
@@ -201,6 +228,8 @@ document.getElementById('rzp-button1').onclick = function(e){
 
 
 function cashOnDelivery(){
+                    loader = document.querySelector(".loader")
+                    loader.style.display = "flex"
   
                     address_id = document.getElementById('address').value
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
@@ -215,6 +244,7 @@ function cashOnDelivery(){
                         }).then(response => {
                         console.log(response)
                         if(response.ok){
+                          loader.style.display = "none"
                           Swal.fire({
                                     icon: 'success',
                                     title: 'Order Placed',

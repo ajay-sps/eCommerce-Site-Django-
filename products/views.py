@@ -294,9 +294,12 @@ class SpecificCategoryView(APIView):
             product = Products.objects.filter(category__name = name.strip(),is_active = True,brand__is_active = True).order_by('?')
             products_variants = ProductVariants.objects.filter(product__in = product,is_master = True)
             products = []
+            print(product,product.count())
+            print(products_variants,products_variants.count())
             if request.GET.get('user_id') != "None":
-                for item,variant in zip(product,products_variants):
-                    if UserWishlist.objects.filter(product_variant = variant,user = request.GET.get('user_id')):
+                for item in product:
+                    variant = ProductVariants.objects.filter(product = item,is_master = True)
+                    if UserWishlist.objects.filter(product_variant = variant[0],user = request.GET.get('user_id')):
                         products.append({'product':item,'status':True})
                     else:
                         products.append({'product':item,'status':False})
