@@ -22,9 +22,28 @@
   td {
     vertical-align: middle;
   }
+  .loader{
+  position: absolute;
+  right: 46%;
+  top: 35%;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border-top: 8px solid rgb(158, 158, 158);
+  border-left: 8px solid rgb(158, 158, 158);
+  border-right: 8px solid rgba(255, 255, 255, 0);
+  animation: spin 0.575s infinite linear;
+  z-index: 1000;
+  display: none; 
+justify-content: center;
+}
+
+@keyframes spin {
+  to {transform: rotate(360deg);}
+}
 </style>
 
-
+<div class="loader"></div>
 <div class="row p-3 box-shadow rowclass" style="margin-top: 3%;">
   <div class="col-sm-4">
     <nav aria-label="breadcrumb">
@@ -38,7 +57,7 @@
 
 <div class="row" style="margin-top: 3%; color: black;">
   <div class="col-sm-8 offset-sm-2 box-shadow" style="border-radius: 12px; font-size: 16px; margin-left: 15%;">
-    <form method="post" action="" enctype="multipart/form-data">
+    <form method="post" action="" id="myform" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%; margin-bottom: 3%;">
         <div class="col" style="text-align: center;">
@@ -88,7 +107,19 @@
   </div>
 </div>
 
+<script>
+  $(document).ready(function(){
+      $('#myform').on('submit',function(event){
+            event.preventDefault();
+            console.log('loader function')
+            loader = document.querySelector(".loader")
+            loader.style.display = "flex"
 
+
+            event.currentTarget.submit();
+      });
+});
+</script>
 
 
 

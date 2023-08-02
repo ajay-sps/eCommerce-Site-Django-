@@ -85,8 +85,8 @@ def password_reset_mail(email,token,name,url):
         print(str(e))
 
 
-@shared_task(bind = True)
-def order_status_mail(self,email,status,items,user):
+# @shared_task(bind = True)
+def order_status_mail(email,status,items,user):
     try:
         context = {
             'status' : status,
