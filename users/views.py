@@ -7,9 +7,33 @@ from django.contrib.auth import authenticate,login,logout
 from products.models import Products,ProductVariants,Categories,ProductVariantProperties,Properties,Brands,CategoryBanners
 from django.core.paginator import Paginator
 from rest_framework.response import Response
-from users.tasks import verification_mail,password_reset_mail
+# from users.tasks import verification_mail,password_reset_mail
 from orders.models import UserWishlist,UserCart,UserOrders
+from django.core.mail import send_mail,EmailMessage,EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
+from twilio.rest import Client
 
+# function defined to send emails
+
+def verification_mail(token,email,name):
+    try:
+        context = {
+            'token' : token,
+            'name' : name ,
+        }
+        subject = 'Email Verification'
+        template = 'users/email_verification_email_template.html'
+        html_content = render_to_string(template,context)
+
+        email = EmailMessage(subject,html_content,to=[email])
+        email.content_subtype = 'html'
+        email.send()
+        
+        return f'mail sent successfully'
+    except Exception as e:
+        print(str(e))
 
 class HomeView(APIView):
 
@@ -96,8 +120,8 @@ class SignupView(APIView):
                 user = serializer.save() 
                 user.profile.generate_token()
                 token = user.profile.token
-                verification_mail.delay(token,arranged_data.get('email'),user.first_name)
-                context = {'success':'User Created Successfully !'}
+                verification_mail(token,arranged_data.get('email'),user.first_name)
+                context = {'success':'An Email has been sent for Email Verification'}
                 return render(request,'users/signup.html',context)
             else:
                 for key,value in serializer.errors.items():
