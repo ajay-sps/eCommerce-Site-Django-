@@ -322,7 +322,7 @@ class UpdateOrderStatusView(APIView):
             user = order.user.first_name
             email = order.user.username
             status = data['status']
-            order_status_mail.delay(email,status,items,user)
+            order_status_mail(email,status,items,user)
             print(type(order.user.profile.contact))
             phone = "+919588797029" 
             message = f"you order has been {status}"
