@@ -16,17 +16,17 @@ def displayNumberFunction(self,a,b):
 
 
 # @shared_task(bind = True)
-def order_mail(email,name,item,total,house,street,city,state,pincode):
+def order_mail(email,name,total,house,street,city,state,pincode,items):
     try:
         context = {
             'name' : name,
-            'item' : item,
             'total' : total,
             'house' : house,
             'street' : street,
             'city' : city,
             'state' : state,
             'pincode' : pincode,
+            'items' : items
         }
         template = 'orders/order_email_template.html'
         html_content = render_to_string(template,context)

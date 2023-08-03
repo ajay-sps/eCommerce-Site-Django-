@@ -165,9 +165,8 @@ class UserOrderPlacedView(APIView):
                     print(serializer.instance.id)
                     user_order = UserOrders.objects.get(id = serializer.instance.id)
                     product_variant = ProductVariants.objects.get(id = request.GET['variant_id'])
-                    UserOrderItems.objects.create(user_order = user_order,product_variant = product_variant,quantity = request.GET['quantity'])
+                    order_items = UserOrderItems.objects.create(user_order = user_order,product_variant = product_variant,quantity = request.GET['quantity'])
                     mail = user.username
-                    print("--------------------------------------------------",mail)
                     name = user.first_name
                     item_count = 1
                     total = int(product_variant.price) * int(request.GET['quantity'])
@@ -176,10 +175,18 @@ class UserOrderPlacedView(APIView):
                     city = address.city
                     state = address.state
                     pincode = address.postal_code
-                    order_mail(mail,name,item_count,total,house,street,city,state,pincode)
+                    items = []
+                    items.append({'name':order_items.product_variant.product.name,
+                                  'quantity':order_items.quantity,
+                                  'price':order_items.product_variant.price})
+                    order_mail(mail,name,total,house,street,city,state,pincode,items)
                     phone = "+919588797029"
-                    message = f"you order has been Placed"
-                    print(message)
+                    message = f"""Hello {user.first_name},
+                      We have received your order ,
+                      OrderID : LUXE84064210{serializer.instance.id}
+                      Order Date : {serializer.instance.created_at.date()}
+                      We will continously update you regarding your order status
+                      Thank you for shopping with LuxeLane :)"""
                     send_sms(phone,message)
                     return Response("i am here")
                 else:
@@ -208,17 +215,27 @@ class UserOrderPlacedView(APIView):
                         total += int(item.product_variant.price) * int(item.quantity)
                         item.delete()
                     mail = user.username
-                    print("--------------------------------------------------",mail)
                     name = user.first_name
                     house = address.house_no
                     street = address.street
                     city = address.city
                     state = address.state
-                    pincode = address.postal_code 
-                    order_mail(mail,name,item_count,total,house,street,city,state,pincode)
+                    pincode = address.postal_code
+                    order_items = UserOrderItems.objects.filter(user_order = user_order)
+                    items = []
+                    for item in order_items:
+                        items.append({'name':item.product_variant.product.name,
+                                    'quantity':item.quantity,
+                                    'price':item.product_variant.price})
+                    
+                    order_mail(mail,name,total,house,street,city,state,pincode,items)
                     phone = "+919588797029"
-                    message = f"you order has been Placed"
-                    print(message)
+                    message = f"""Hello {user.first_name},
+                      We have received your order ,
+                      OrderID : LUXE84064210{serializer.instance.id}
+                      Order Date : {serializer.instance.created_at.date()}
+                      We will continously update you regarding your order status
+                      Thank you for shopping with LuxeLane :)"""
                     send_sms(phone,message)
                     return Response("i am here")
                 else:
@@ -325,7 +342,10 @@ class UpdateOrderStatusView(APIView):
             order_status_mail(email,status,items,user)
             print(type(order.user.profile.contact))
             phone = "+919588797029" 
-            message = f"you order has been {status}"
+            message = f"""Hello {order.user.first_name},
+                        Your Order with ,
+                        OrderID : LUXE84064210{order.id} has been {status}
+                        Thank you for shopping with LuxeLane :)"""
             print(message)
             send_sms(phone,message)
             order.status = status
