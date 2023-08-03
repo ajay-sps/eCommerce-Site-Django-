@@ -307,7 +307,7 @@ class SpecificCategoryView(APIView):
                 for item,variant in zip(product,products_variants):
                         products.append({'product':item,'status':False})
 
-            return render(request,'products/category_details.html',{'products':products,'product_variant':products_variants,'category_name':name})
+            return render(request,'products/category_details.html',{'products':products,'product_variant':products_variants,'category_name':name,'exist':True})
         except Exception as e:
             print(str(e))
             return HttpResponse(str(e))
@@ -461,6 +461,9 @@ class ProductSearchView(APIView):
     def get(self,request):
         try:
             product = Products.objects.filter(name__icontains = request.GET.get('search'),is_active = True,category__is_active = True,brand__is_active = True)
+            product_exist = False
+            if product:
+                product_exist = True
             products_variants = ProductVariants.objects.filter(product__in = product,is_master = True)
             products = []
             if request.GET.get('user_id') != "None":
@@ -473,7 +476,7 @@ class ProductSearchView(APIView):
             else:
                 for item in product:
                     products.append({'product':item,'status':False})
-            return render(request,'products/category_details.html',{'products':products,'product_variant':products_variants})
+            return render(request,'products/category_details.html',{'products':products,'product_variant':products_variants,'exist':product_exist})
         except Exception as e:
             return HttpResponse(str(e))
     
