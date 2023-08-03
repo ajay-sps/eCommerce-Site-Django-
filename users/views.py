@@ -107,7 +107,7 @@ class SignupView(APIView):
                     'user' : user.id,
                     'state' : data.get('state'),
                     'city' : data.get('city'),
-                    'postal_code' : data.get('pincode'),
+                    'postal_code' : 127028,
                     'street' : "St. 140",
                     'house_no' : 1434, 
                 }
@@ -128,7 +128,7 @@ class SignupView(APIView):
             
         except Exception as e:
             print(str(e))
-            return HttpResponse('hi')
+            return HttpResponse(str(e))
 
 
 class TokenVerificationView(APIView):
