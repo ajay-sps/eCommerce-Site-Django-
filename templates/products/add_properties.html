@@ -1,0 +1,50 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+
+<style>
+.box-shadow{
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 12px;
+}
+.form-control{
+    padding: 1%;
+}
+</style>
+
+<div class="row box-shadow" style="margin: 2% 7% 4% 7%; padding: 1%;">
+    <div class="col">
+        <nav aria-label="breadcrumb" >
+            <ol class="breadcrumb" style="margin: 0px;">
+                <li class="breadcrumb-item"><a href="/products/properties" style="text-decoration: none;">Properties</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add Property</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row " style="margin-top: 2%; color: black;">
+    <div class="col-sm-8 offset-sm-2 box-shadow" style="border-radius: 12px; font-size: 16px;">
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
+                <div class="col" style="text-align: center;">
+                    <h4 style="color: rgb(59, 162, 247);">Add Property</h4>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 3%; padding-left: 2%; padding-right: 2%;">
+                <div class="col-sm-12">
+                    <div><label for="name">Name</label></div>
+                    <div><input type="text" class="form-control" name="name" id="name" style="width: 50%; height: 2rem;" required></div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:4%; margin-bottom: 2%;">
+                <div class="col" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary" style="padding: 4px 8px 4px 8px;">Add Property</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

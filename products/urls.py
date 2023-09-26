@@ -1,9 +1,10 @@
 from django.urls import path
-from products.views import BrandsView,CategoriesView,ProductsView,AddProductsView,Test,SpecificCategoryView,UpdateProductView,AddProductVariantsView,AddBrandsView,AddCategoriesView,UpdateCategoryView,UpdateBrandView,ProductDetailsView,ProductVariantDetailsView,DeleteBrandView,DeleteCategoryView,DeleteProductView,ProductSearchView
+from products.views import BrandsView,CategoriesView,ProductsView,AddProductsView,Test,SpecificCategoryView,UpdateProductView,AddProductVariantsView,AddBrandsView,AddCategoriesView,UpdateCategoryView,UpdateBrandView,ProductDetailsView,ProductVariantDetailsView,DeleteBrandView,DeleteCategoryView,DeleteProductView,ProductSearchView,PropertiesView,AddPropertiesView,UpdatePropertiesView,DeletePropertiesView,DisplayAllProducts
 
 
 urlpatterns = [
     path('',ProductsView.as_view()),
+    path('all/',DisplayAllProducts.as_view()),
     path('<int:id>/details',ProductDetailsView.as_view()),
     path('<int:id>/details/<int:variant_id>',ProductVariantDetailsView.as_view()),
     path('add/',AddProductsView.as_view()),
@@ -21,4 +22,8 @@ urlpatterns = [
     path('categories/delete/<int:id>',DeleteCategoryView.as_view()),
     path('categories/<str:name>',SpecificCategoryView.as_view()),
     path('test/',Test.as_view()),
+    path('properties/',PropertiesView.as_view()),
+    path('properties/add',AddPropertiesView.as_view()),
+    path('properties/update/<int:id>',UpdatePropertiesView.as_view()),
+    path('properties/delete/<int:id>',DeletePropertiesView.as_view()),
 ]

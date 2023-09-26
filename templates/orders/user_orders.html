@@ -1,4 +1,4 @@
-{% extends 'base/sidebar.html' %}
+{% extends 'users/users.html' %}
 
 {% block content %}
 
@@ -88,8 +88,8 @@ h4{
 }
 
 .order .blue-label {
-    background-color: #aeaeeb;
-    color: #0046dd;
+    background-color: #ffffff;
+    color: #2f618d;
     font-size: 0.9rem;
     padding: 0px 3px;
 }
@@ -131,7 +131,7 @@ h4{
 }
 
 .order .btn.btn-primary:hover {
-    background-color: #4e2296;
+    background-color: #2f618d;
     color: #fff;
 }
 
@@ -200,6 +200,11 @@ h4{
     left: -10px;
 }
 
+#step-6::after {
+    content: 'Delivered';
+    left: -10px;
+}
+
 
 
 /* Backgrounds */
@@ -213,6 +218,11 @@ h4{
 
 .green {
     color: #007965 !important;
+}
+.order .btn.btn-primary {
+    background-color: #fff;
+    color: #2f618d;
+    border: 1px solid #2f618d;
 }
 
 /* Media Queries */
@@ -281,8 +291,8 @@ h4{
 }
 </style>
 
-<div class="row p-3 box-shadow rowclass" style="margin-top: 3%; color: #201f1f;" >
-  <div class="col">
+<div class="row " style=" color: #2f618d" >
+  <div class="col-sm-10 offset-sm-1">
     <div class="container mt-4">
       <div class="row">
           <div class="col-lg-12 my-lg-0 my-1">
@@ -299,22 +309,29 @@ h4{
                               <div class="ms-auto number">{{ order_count }}</div>
                           </div>
                       </div>
-                      <div class="box me-4 my-1 bg-light">
-                          <img src="https://www.freepnglogos.com/uploads/shopping-cart-png/shopping-cart-campus-recreation-university-nebraska-lincoln-30.png"
-                              alt="">
-                          <div class="d-flex align-items-center mt-2">
-                              <div class="tag">Items in Cart</div>
-                              <div class="ms-auto number">{{ cart_count }}</div>
-                          </div>
-                      </div>
-                      <div class="box me-4 my-1 bg-light">
-                          <img src="https://www.freepnglogos.com/uploads/love-png/love-png-heart-symbol-wikipedia-11.png"
-                              alt="">
-                          <div class="d-flex align-items-center mt-2">
-                              <div class="tag">Wishlist</div>
-                              <div class="ms-auto number">{{ wishlist_count }}</div>
-                          </div>
-                      </div>
+
+                        <a href="/cart/users/{{ user.id }}/cart">
+                            <div class="box me-4 my-1 bg-light">
+                                <img src="https://www.freepnglogos.com/uploads/shopping-cart-png/shopping-cart-campus-recreation-university-nebraska-lincoln-30.png"
+                                    alt="">
+                                <div class="d-flex align-items-center mt-2">
+                                    <div class="tag">Items in Cart</div>
+                                    <div class="ms-auto number">{{ cart_count }}</div>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <a href="/cart/users/wishlist?user_id={{ user.id }}">
+                            <div class="box me-4 my-1 bg-light">
+                            <img src="https://www.freepnglogos.com/uploads/love-png/love-png-heart-symbol-wikipedia-11.png"
+                                alt="">
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="tag">Wishlist</div>
+                                <div class="ms-auto number">{{ wishlist_count }}</div>
+                            </div>
+                            </div>
+                        </a>
+
                   </div>
                   <div class="text-uppercase">My orders</div>
 
@@ -342,11 +359,83 @@ h4{
                             </div>
                             <div class="col-lg-8">
                                 <div class="d-sm-flex align-items-sm-start justify-content-sm-between">
-                                    <div class="status">Status : Delivered</div>
-                                    <div class="btn btn-primary text-uppercase">order info</div>
+                                    <div class="status">Status : {{ order.status|capfirst }}</div>
+                                    <a href="/cart/users/{{ user.id }}/order/details?order_id={{ order.id }}">
+                                        <div class="btn btn-primary text-uppercase">order info</div>
+                                    </a>
                                 </div>
                                 <div class="progressbar-track">
                                     <ul class="progressbar">
+
+                                        {% if order.status == 'placed' %}
+                                        <li id="step-1" class="text-muted green">
+                                            <span class="fas fa-gift"></span>
+                                        </li>
+                                        <li id="step-2" class="text-muted grey">
+                                            <span class="fas fa-check"></span>
+                                        </li>
+                                        <li id="step-3" class="text-muted grey">
+                                            <span class="fas fa-box"></span>
+                                        </li>
+                                        <li id="step-4" class="text-muted grey">
+                                            <span class="fas fa-truck"></span>
+                                        </li>
+                                        <li id="step-5" class="text-muted grey">
+                                            <span class="fas fa-box-open"></span>
+                                        </li>
+
+                                        {% elif order.status == 'accepted' %}
+                                        <li id="step-1" class="text-muted green">
+                                            <span class="fas fa-gift"></span>
+                                        </li>
+                                        <li id="step-2" class="text-muted green">
+                                            <span class="fas fa-check"></span>
+                                        </li>
+                                        <li id="step-3" class="text-muted grey">
+                                            <span class="fas fa-box"></span>
+                                        </li>
+                                        <li id="step-4" class="text-muted grey">
+                                            <span class="fas fa-truck"></span>
+                                        </li>
+                                        <li id="step-5" class="text-muted grey">
+                                            <span class="fas fa-box-open"></span>
+                                        </li>
+
+                                        {% elif order.status == 'packed' %}
+                                        <li id="step-1" class="text-muted green">
+                                            <span class="fas fa-gift"></span>
+                                        </li>
+                                        <li id="step-2" class="text-muted green">
+                                            <span class="fas fa-check"></span>
+                                        </li>
+                                        <li id="step-3" class="text-muted green">
+                                            <span class="fas fa-box"></span>
+                                        </li>
+                                        <li id="step-4" class="text-muted grey">
+                                            <span class="fas fa-truck"></span>
+                                        </li>
+                                        <li id="step-5" class="text-muted grey">
+                                            <span class="fas fa-box-open"></span>
+                                        </li>
+
+                                        {% elif order.status == 'shipped' %}
+                                        <li id="step-1" class="text-muted green">
+                                            <span class="fas fa-gift"></span>
+                                        </li>
+                                        <li id="step-2" class="text-muted green">
+                                            <span class="fas fa-check"></span>
+                                        </li>
+                                        <li id="step-3" class="text-muted green">
+                                            <span class="fas fa-box"></span>
+                                        </li>
+                                        <li id="step-4" class="text-muted green">
+                                            <span class="fas fa-truck"></span>
+                                        </li>
+                                        <li id="step-5" class="text-muted grey">
+                                            <span class="fas fa-box-open"></span>
+                                        </li>
+
+                                        {% else %}
                                         <li id="step-1" class="text-muted green">
                                             <span class="fas fa-gift"></span>
                                         </li>
@@ -362,6 +451,9 @@ h4{
                                         <li id="step-5" class="text-muted green">
                                             <span class="fas fa-box-open"></span>
                                         </li>
+                                        {% endif %}
+                                        
+
                                     </ul>
                                     <div id="tracker"></div>
                                 </div>
@@ -376,8 +468,6 @@ h4{
     </div>
   </div>   
 </div>
-
-
 
 
 {% endblock %}

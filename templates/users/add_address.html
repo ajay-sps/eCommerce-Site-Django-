@@ -1,4 +1,4 @@
-{% extends 'base/sidebar.html' %}
+{% extends 'users/users.html' %}
 
 {% block content %}
 
@@ -12,35 +12,38 @@
 }
 </style>
 
-<div class="row box-shadow" style="margin: 2% 7% 4% 7%; padding: 1%; background-color: aliceblue;">
-    <div class="col">
-        <nav aria-label="breadcrumb" >
-            <ol class="breadcrumb" style="margin: 0px;">
-                <li class="breadcrumb-item"><a href="/users/profile" style="text-decoration: none;">Profile</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Add Address</li>
-            </ol>
-        </nav>
-    </div>
-</div>
 
-
-<div class="row " style="margin-top: 2%; color: black;">
-    <div class="col-sm-10 offset-sm-1 box-shadow" style="border-radius: 12px; background-color: aliceblue;">
+<div class="row " style="margin-top: 4%; color: black;">
+    <div class="col-sm-8 offset-sm-2 box-shadow" style="border-radius: 12px; font-size: 18px; font-weight: 400;">
         <form method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%; margin-bottom: 2%;">
                 <div class="col" style="text-align: center;">
-                    <h4 style="color: green;">Add Address</h4>
+                    <h4 style="color: rgb(14, 139, 241);">Add Address</h4>
                 </div>
             </div>
             <div class="row" style=" padding-left: 2%; padding-right: 2%;">
-                <div class="col-sm-12">
-                    <div>
-                        <label for="address">Write Your Address in details :</label>
-                    </div>
-                    <div>
-                        <textarea class="form-control" name="address" id="address" rows="3" required></textarea>
-                    </div>
+                <div class="col-sm-4">
+                    <div><label for="house_no">House No.</label></div>
+                    <div><input type="text" class="form-control" name="house_no" id="house_no" required></div>
+                </div>
+                <div class="col-sm-4">
+                    <div><label for="street">Street</label></div>
+                    <div><input type="text" class="form-control" name="street" id="street"  required></div>
+                </div>
+                <div class="col-sm-4" >
+                    <div><label for="city">City</label></div>
+                    <div><input type="text" class="form-control" name="city" id="city" required></div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
+                <div class="col-sm-4">
+                    <div><label for="state">State</label></div>
+                    <div><input type="text" class="form-control" name="state" id="state" required></div>
+                </div>
+                <div class="col-sm-4">
+                    <div><label for="postal_code">Postal Code</label></div>
+                    <div><input type="text" class="form-control" name="postal_code" id="postal_code" required></div>
                 </div>
                 <input type="hidden" value="{{ user.id }}" name="user">
             </div>
@@ -52,5 +55,6 @@
         </form>
     </div>
 </div>
+
 
 {% endblock %}

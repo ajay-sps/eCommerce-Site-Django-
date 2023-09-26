@@ -1,0 +1,269 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
+<style>
+.box-shadow{
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 12px;
+    margin: 1% 2% 1% 1%;
+}
+.swal2-cancel{
+  margin-right: 4%;
+}
+.table-success {
+    --bs-table-bg: #ffffff;
+    --bs-table-striped-bg: #ededed;
+    --bs-table-hover-bg: #cfd7d3;
+}
+.rowclass{
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+td{
+  vertical-align: middle;
+}
+th{
+  font-weight: 500;
+  font-size: 18px;
+}
+input{
+  height: 33px;
+  margin-top: 3px;
+}
+.search-button{
+  height: 33px;
+  margin-top: 3px;
+}
+.bi-search{
+  position: relative;
+  top: -5px;
+}
+.bx-edit-alt{
+    font-size: 18px;
+    margin-left: 5px;
+    margin-top: 2px;
+}
+
+</style>
+
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
+    <div class="col-sm-4">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
+          <a href="/products/properties" style="text-decoration: none;">
+            <li class="breadcrumb-item active" aria-current="page">Properties</li>
+          </a>
+        </ol>
+      </nav>
+    </div>
+    <div class="col-sm-4" style="text-align: center;">
+      <form class="d-flex" action="" method="get" role="search">
+        <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search" style="width: 20rem;">
+        <button class="btn btn-outline-success search-button " type="submit" style="border: none;
+        height: 29px; position: relative; right: 52px; top: 2px; background-color: white;">
+          <i class="bi bi-search" style="color: black;"></i>
+        </button>
+      </form>
+    </div>
+    <div class="col-sm-4" style="text-align: right;">
+        <a href="/products/properties/add"><button type="button" class="btn btn-primary">Add Property</button></a>
+    </div>
+</div>
+
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%; font-size: 15px;" >
+  <div class="col"> 
+    <table class="table table-success table-striped table-hover" >
+        <thead class="thead-light" >
+          <tr >
+            <th scope="col" >S.No.</th>
+            <th scope="col">Property Name</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for property in page_obj %}
+          <tr>
+            <td>{{ page_obj.start_index|add:forloop.counter0 }}</td> 
+            <td>{{ property.name }}</td>
+            <td>
+              <div class="form-check form-switch">
+                <a href="/products/properties/update/{{ property.id }}" >
+                  <i class='bx bx-edit-alt' title="Update"></i>
+                </a>
+                {% if property.is_active %}
+                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onclick="is_active('{{ property.id }}','{{ property.is_active }}')" title="Active/Deactive" style="cursor: pointer;" checked>
+                {% else %}
+                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onclick="is_active('{{ property.id }}','{{ property.is_active }}')" title="Active/Deactive" style="cursor: pointer;" >
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>   
+</div>
+
+<div class="row" style="margin-top: 3%; margin-bottom: 3%;">
+  <div class="col-sm-4 offset-sm-5" style="text-align: center;">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination" style="margin: 0%; font-weight: 500;">
+
+        {% if search_item %}
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_name }}">Previous</a></li>
+        {% endif %}
+        <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_name }}">Next</a></li>
+        {% endif %}
+        {% else %}
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+        {% endif %}
+        <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+        {% endif %}
+        {% endif %}
+
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
+
+<script>
+
+function is_active(id,status){
+       
+      console.log(id,typeof status,status)
+
+      const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+              },
+      buttonsStyling: false
+        })
+
+      if ( status == 'True'){
+
+swalWithBootstrapButtons.fire({
+title: 'Are you sure?',
+text: "You want to deactivate it",
+icon: 'warning',
+showCancelButton: true,
+confirmButtonText: 'Yes, deactivate it!',
+cancelButtonText: 'No, cancel!',
+reverseButtons: true
+}).then((result) => {
+if (result.isConfirmed) {
+
+csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+const url = `/products/properties/delete/${id}`;
+console.log(csrf_element)
+  
+  fetch(url , {
+      method : 'GET',
+      headers : {
+          'Content-Type' : 'application/json',
+          "X-CSRFToken": csrf_element
+      }
+  }).then(response=>{
+      console.log(response)
+      if(response.ok){
+          swalWithBootstrapButtons.fire(
+              'Deactivated',
+              'success'
+              ).then(() => {
+                  location.reload()
+              })
+  
+      }else{
+        console.log('erros',csrf_element)
+      } 
+  
+  }).catch(error=>{
+      console.log(error)
+  })
+
+
+} else if (
+result.dismiss === Swal.DismissReason.cancel
+) {
+swalWithBootstrapButtons.fire(
+  'Cancelled',
+  'Your item is not deactivated',
+  'error'
+).then(()  =>{
+  location.reload()
+} )
+}
+})
+      }
+     else{
+      swalWithBootstrapButtons.fire({
+title: 'Are you sure?',
+text: "You want to activate it",
+icon: 'warning',
+showCancelButton: true,
+confirmButtonText: 'Yes, activate it!',
+cancelButtonText: 'No, cancel!',
+reverseButtons: true
+}).then((result) => {
+if (result.isConfirmed) {
+
+csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
+const url = `/products/properties/delete/${id}`;
+console.log(csrf_element)
+  
+  fetch(url , {
+      method : 'GET',
+      headers : {
+          'Content-Type' : 'application/json',
+          "X-CSRFToken": csrf_element
+      }
+  }).then(response=>{
+      console.log(response)
+      if(response.ok){
+          swalWithBootstrapButtons.fire(
+              'Activated',
+              'success'
+              ).then(() => {
+                  location.reload()
+              })
+  
+      }else{
+        console.log('erros',csrf_element)
+      } 
+  
+  }).catch(error=>{
+      console.log(error)
+  })
+
+
+} else if (
+result.dismiss === Swal.DismissReason.cancel
+) {
+swalWithBootstrapButtons.fire(
+  'Cancelled',
+  'Your item is not Activated',
+  'error'
+).then(()  =>{
+  location.reload()
+} )
+
+}
+})
+     }
+
+}
+</script>
+
+{% endblock %}

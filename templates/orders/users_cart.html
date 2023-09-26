@@ -1,4 +1,4 @@
-{% extends 'base/sidebar.html' %}
+{% extends 'users/users.html' %}
 
 {% block content %}
 
@@ -6,8 +6,6 @@
     .box-shadow{
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         border-radius: 12px;
-        background-color: aliceblue;
-        margin: 1% 2% 1% 1%;
     }
     .rowclass{
       margin-left: 5%;
@@ -19,42 +17,39 @@
     .removeItem:hover{
         cursor: pointer;
     }
+    .zoom{
+    transition: transform 0.6s;
+    }
+    .zoom:hover{
+        cursor: pointer;
+        transform: scale(1.1); 
+        z-index: 1;
+    }
 </style>
 
+<div class="row" >
 
-<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
-    <div class="col-sm-4">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
-          <a href="/products/brands" style="text-decoration: none;">
-            <li class="breadcrumb-item active" aria-current="page" >My Cart </li>
-          </a>
-        </ol>
-      </nav>
-    </div>
-</div>
-
-<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
-    <section class="h-100" style="background-color: #eee;">
-        <div class="container h-100 py-5">
+    {% if exist %}
+    <section class="h-100">
+        <div class="container h-100 py-4">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-10">
     
-            <div class="row" style="text-align: center;">
-                <h4>Cart Items</h4>
+            <div class="row mb-4" style="text-align: center;">
+                <h4 style="color: #1f90f3;">Cart Items</h4>
             </div>
             
             {% for item in items %}
             <div class="card rounded-3 mb-4">
-                <div class="card-body p-4">
+                <div class="card-body box-shadow">
                 <div class="row d-flex justify-content-between align-items-center">
-                    <div class="col-md-2 col-lg-2 col-xl-2">
+                    <div class="col-md-2 col-lg-2 col-xl-2" style="text-align: center;">
                         <a href="/products/{{ item.item.product_variant.product.id }}/details/{{ item.item.product_variant.id }}?user_id={{ user.id }}">
                         <img
-                            src="{{ item.item.product_variant.image.url }}" height="120px" width="120px" style="object-fit: contain;" alt="Cotton T-shirt" >
+                            src="{{ item.item.product_variant.image.url }}" style="height: 120px; width: 120px; object-fit: contain;" alt="Cotton T-shirt" class="zoom" >
                         </a>
                     </div>
-                    <div class="col-md-3 col-lg-3 col-xl-3">
+                    <div class="col-md-3 col-lg-3 col-xl-3" style="font-size: 14px;padding-left: 5%;">
                     <p class="lead fw-normal mb-2 properties">
                         {{ item.item.product_variant.product.name }}
                     </p>
@@ -66,28 +61,28 @@
                     {% endif %}
                     {% endfor %}
                     </div>
-                    <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                    <div class="col-md-3 col-lg-3 col-xl-3 d-flex" style="padding-left: 5%;">
 
-                        <button class="btn btn-link px-2"
-                            onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                            <i class="fas fa-minus"></i>
+                        <button class="btn btn-link px-2 change-quantity"
+                            onclick="decrease('{{ forloop.counter }}')">
+                            <i class="fas fa-minus" style="font-size: 12px;"></i>
                         </button>
         
-                        <input id="form1" min="0" name="quantity" value="{{ item.item.quantity }}" onchange="updateCartItem(this.value,'{{ item.item.id }}','{{ user.id }}')" type="number"
+                        <input id="form{{ forloop.counter }}" min="0" name="quantity" value="{{ item.item.quantity }}" onchange="updateCartItem(this.value,'{{ item.item.id }}','{{ user.id }}')" type="number" style="height: 10px; margin-top: 2%; width: 65px;"
                             class="form-control form-control-sm" />
         
-                        <button class="btn btn-link px-2"
-                            onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                            <i class="fas fa-plus"></i>
+                        <button class="btn btn-link px-2 change-quantity"
+                            onclick="increase('{{ forloop.counter }}')">
+                            <i class="fas fa-plus" style="font-size: 12px;"></i>
                         </button>
 
                     </div>
-                    <div class="col-md-3 col-lg-3 col-xl-2 ">
-                    <h6 class="mb-0">Rs. {{ item.total_price }}</h6>
+                    <div class="col-md-2 col-lg-2 col-xl-2 " >
+                    <h6 class="mb-0" style="font-size: 14px;">Rs. {{ item.total_price }}</h6>
                     </div>
                     <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                     <p>
-                        <i class="bi bi-trash removeItem" onclick="removeItem('{{ user.id }}','{{ item.item.id }}')" style="font-size: 22px; color: green;" title="remove from cart"></i>
+                        <i class="bi bi-x removeItem" onclick="removeItem('{{ user.id }}','{{ item.item.id }}')" style="font-size: 25px; color: rgb(0, 0, 0);" title="remove from cart"></i>
                     </p>
                     </div>
                 </div>
@@ -95,19 +90,10 @@
             </div>
             {% endfor %}
     
-            <div class="card mb-4">
-                <div class="card-body p-4 d-flex flex-row">
-                <div class="form-outline flex-fill">
-                    <input type="text" id="form1" class="form-control form-control-lg" placeholder="Discount Code" />
-                </div>
-                <button type="button" class="btn btn-outline-warning btn-lg ms-3">Apply</button>
-                </div>
-            </div>
-    
-            <div class="card">
-                <div class="card-body">
+            <div class="row " style="margin-top: 6%;">
+                <div class="col-sm-12" style="text-align: center;">
                 <a href="/cart/users/{{ user.id }}/checkout">
-                    <button type="button" class="btn btn-warning btn-block btn-lg" style="width: -webkit-fill-available;">Checkout</button>
+                    <button type="button" class="btn btn-warning btn-block" style="width:150px;">Checkout</button>
                 </a>
                 </div>
             </div>
@@ -116,6 +102,30 @@
         </div>
         </div>
     </section>
+
+    {% else %}
+
+    <div class="col-sm-12" style="padding-top: 3%;">
+        <div class="row mb-4">
+            <div class="col-sm-12" style="text-align: center;">
+                <img src="/static/images/empty.jpg" style="height: 400px; width: 700px; object-fit: contain;">
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-sm-12" style="text-align: center;">
+                <h5 style="color: rgb(58, 50, 50);">OOPS ! There is no Item in the Cart </h5>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-sm-12" style="text-align: center;">
+                <a href="/">
+                    <button type="button" class="btn btn-primary" >Add Some </button>
+                </a>
+            </div>    
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 <p type = "text" id="csrf" style="display: none;">{% csrf_token %}</p>
 
@@ -131,7 +141,7 @@
         }).then((result) => {
                 if (result.isConfirmed) {
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-                    const url = `http://127.0.0.1:8000/cart/users/${user_id}/cart/delete/${cart_item_id}`;
+                    const url = `/cart/users/${user_id}/cart/delete/${cart_item_id}`;
 
                     fetch(url, {
                         method : 'DELETE',
@@ -160,7 +170,7 @@
                     console.log(quantity,item_id,user_id)
 
                     csrf_element = document.getElementsByName('csrfmiddlewaretoken')[0].value
-                    const url = `http://127.0.0.1:8000/cart/users/${user_id}/cart/update/`;
+                    const url = `/cart/users/${user_id}/cart/update/`;
                     const data = {
                     "item_id" : item_id,
                     "quantity" : quantity,
@@ -186,6 +196,19 @@
                     })
                 }
 
+function decrease(counter){
+
+    input = document.getElementById(`form${counter}`)
+    input.value = parseInt(input.value) - 1
+    input.onchange()
+}
+
+function increase(counter){
+
+    input = document.getElementById(`form${counter}`)
+    input.value = parseInt(input.value) + 1
+    input.onchange()
+}
 
 </script>
 

@@ -1,11 +1,13 @@
 from django.urls import path
-from users.views import HomeView,LoginView,SignupView,TokenVerificationView,LogOutView,SellersView,SellersInvetoryView,UpdateInventoryItemsView,SellerProductsView,SellerAddVariantsView,UserProfileView,AdminDashboardView,UpdateUserProfileView,AddUserAddressView,UpdateUserAddressView,DeleteUserAddressView
+from users.views import HomeView,LoginView,SignupView,TokenVerificationView,LogOutView,SellersView,SellersInvetoryView,UpdateInventoryItemsView,SellerProductsView,SellerAddVariantsView,UserProfileView,AdminDashboardView,UpdateUserProfileView,AddUserAddressView,UpdateUserAddressView,DeleteUserAddressView,ForgotPasswordView,ResetPasswordView,GetUserCartWishlishCount,AdminProfileView,AdminProfileUpdateView,AboutUsView
 
 
 
 urlpatterns = [
     path('',HomeView.as_view(),name='homepage'),
     path('login/',LoginView.as_view(),name='login_page'),
+    path('login/forgot',ForgotPasswordView.as_view(),name='forgot_password'),
+    path('login/forgot/<str:token>',ResetPasswordView.as_view(),name='reset_password'),
     path('signup/',SignupView.as_view(),name='signup_page'),
     path('logout/',LogOutView.as_view(),name='logout_page'),
     path('sellers/',SellersView.as_view(),name='logout_page'),
@@ -20,4 +22,8 @@ urlpatterns = [
     path('users/address/update',UpdateUserAddressView.as_view(),name='update_user_address'),
     path('users/address/delete/<int:address_id>',DeleteUserAddressView.as_view(),name='delete_user_address'),
     path('dashboard',AdminDashboardView.as_view(),name='dashboard_view'),
+    path('user/wishlist_cart/count',GetUserCartWishlishCount.as_view()),
+    path('admin_profile/',AdminProfileView.as_view(),name='admin_profile_view'),
+    path('admin_profile/update',AdminProfileUpdateView.as_view(),name='admin_profile_update'),
+    path('about_us',AboutUsView.as_view(),name='about_us'),
 ]

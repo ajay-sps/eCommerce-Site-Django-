@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG',cast = bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = "users.User"
 
@@ -87,7 +87,7 @@ DATABASES = {
         'NAME': config('DATABASE_NAME'),
         'USER': config('DATABASE_USER'),
         'PASSWORD': config('DATABASE_PASSWORD'),
-        'HOST' : 'localhost',
+        'HOST' : config('DB_HOST'),
         'PORT' : 3306,
 
     }
@@ -158,3 +158,21 @@ MYTEST=2
 
 RAZOR_KEY_ID = config('RAZOR_KEY_ID')
 RAZOR_KEY_SECRET = config('RAZOR_KEY_SECRET') 
+
+
+# Celery Settings
+# for reference broker_url = amqp://your_username:your_password@localhost:5672/your_virtual_host
+
+CELERY_BROKER_URL = 'amqp://ajay:ajay@localhost:5672/myhost'
+CELERY_ACCEPT_CONTENT =['json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+
+
+# Twilio Settings
+TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
+TWILIO_PHONE_NUMBER = config('TWILIO_PHONE_NUMBER')
+
+

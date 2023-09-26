@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User,UserProfile,SellerInventory,UserAddresses
+from users.models import User,UserProfile,SellerInventory,UserAddress
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -66,5 +66,5 @@ class SellerInvenotrySerializer(serializers.ModelSerializer):
 class UserAddressesSerialiazer(serializers.ModelSerializer):
 
     class Meta:
-        model = UserAddresses
-        fields = "__all__"
+        model = UserAddress
+        fields = ['city','state','postal_code','house_no','street','user']

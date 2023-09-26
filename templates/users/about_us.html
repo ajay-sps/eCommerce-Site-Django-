@@ -1,0 +1,97 @@
+{% extends 'users/users.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<style>
+    a{
+        text-decoration: none;
+    }
+    .zoom{
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .zoom:hover{
+    cursor: pointer;
+    /* transform: scale(1.2);  */
+    transform: translateY(-10px);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    background-color: rgb(245, 240, 240);
+    z-index: 1;
+  }
+</style>
+
+<div class="row" style="margin :1%;">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12" style="text-align: center;">
+                <h3 class="py-1">
+                    <strong style="color:black; font-weight: 400;">Managers</strong>
+                </h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <section style=" border-radius: 15px;">
+                    <div class="row" style="padding: 2%;">
+                        <div class="col-lg-4" style="text-align: center;">
+                            <a href="https://in.linkedin.com/in/ajay-sihag-004b49241"
+                                class="text-reset anchortag">
+                                <div class="card product-card zoom"
+                                    style="margin: 3%; border-radius: 20px; margin-bottom: 20px;">
+                                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                                        data-mdb-ripple-color="light">
+                                        <img src="/static/images/ajay.png"
+                                            style="height: 250px; width: 250px; object-fit: contain; padding: 3%; margin-top: 6%; mix-blend-mode: darken; " />
+                                    </div>
+                                    <div class="card-body" style="color: #443e3e; font-size: 14px;">
+                                        <h5 class="card-title mb-3" style="color:black; font-weight: 400;">Ajay Sihag</h5>
+                                        <p>CEO/Product Owner</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-4" style="text-align: center;">
+                            <a href="https://in.linkedin.com/in/ranjeet-singh-1427621a7"
+                                class="text-reset anchortag">
+                                <div class="card product-card zoom"
+                                    style="margin: 3%; border-radius: 20px; margin-bottom: 20px;">
+                                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                                        data-mdb-ripple-color="light">
+                                        <img src="/static/images/ranjeet.png"
+                                            style="height: 250px; width: 250px; object-fit: contain; padding: 3%; margin-top: 6%; mix-blend-mode: darken; " />
+                                    </div>
+                                    <div class="card-body" style="color: #443e3e; font-size: 14px;">
+                                        <h5 class="card-title mb-3" style="color:black; font-weight: 400;">Ranjeet Singh</h5>
+                                        <p>Backend Manager</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-4" style="text-align: center;">
+                            <a href="https://in.linkedin.com/in/nishant-sisodiya-5411551aa"
+                                class="text-reset anchortag">
+                                <div class="card product-card zoom"
+                                    style="margin: 3%; border-radius: 20px; margin-bottom: 20px;">
+                                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                                        data-mdb-ripple-color="light">
+                                        <img src="/static/images/nishant.png"
+                                            style="height: 250px; width: 250px; object-fit: contain; padding: 3%; margin-top: 6%; mix-blend-mode: darken; " />
+                                    </div>
+                                    <div class="card-body" style="color: #443e3e; font-size: 14px;">
+                                        <h5 class="card-title mb-3" style="color:black; font-weight: 400;">Nishant Sisodiya</h5>
+                                        <p>Frontend Manager</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

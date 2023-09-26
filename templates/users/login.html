@@ -1,17 +1,16 @@
-{% extends 'base/base.html' %}]
 
-{% block body %}
 
 <style>
   #forgotPassword{
     text-decoration: none;
     cursor: pointer;
-    color: white;
+    color: black;
   }
   .loginForm{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    background: linear-gradient(90deg, rgba(98,98,98,1) 0%, rgba(235,238,241,1) 0%, rgba(212,227,242,1) 0%, rgba(127,172,218,1) 40%, rgba(62,145,232,1) 100%, rgba(0,82,167,1) 100%);
     border-radius: 20px;
+    border: 1px solid #9b9696;
+    color: black;
   }
   .button{
     background-color: white;
@@ -24,28 +23,67 @@
     font-size: 1rem;
     border-radius: var(--bs-border-radius-lg);
 }
+
+.eyeIcon {
+    position: absolute;
+    top: 9px;
+    right: 8px;
+    font-size: 19px;
+    color: #5e5858;
+}
+.eyeIcon:hover{
+  cursor: pointer;
+}
 </style>
 
-<div class="row" style="text-align: center; margin-top: 5%;">
-  <div class="col-sm-4 offset-sm-4 loginForm">
-    <div class="card-body py-5 px-md-5">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
+
+<div class="row" style="padding-top: 2%;">
+  <div class="col-sm-12" style="text-align: center;">
+    <a href="/" style="text-decoration: none;">
+      <img class="rounded-circle" src="/static/images/logo2.png"  width="200px" style="object-fit: contain;">
+    </a>
+  </div>
+</div>
+
+{% if verified %}
+<div class="row">
+  <div class="col-sm-12" style="text-align: center; margin: 1%;">
+    <span>Thank you , Your email is verified</span>
+  </div>
+</div>
+{% endif %}
+
+<div class="row" style="text-align: center; margin-top: 3%;">
+  <div class="col-sm-3 offset-sm-4 loginForm" style="margin-left: 38%;">
+    <div class="card-body py-2 px-md-3" style="font-size: 24px;">
       <div class="row d-flex justify-content-center">
         <div class="col-lg-12">
           <form action="" method="post">
             {% csrf_token %}
             <div class="card-body">
-              <h2 class="fw-bold mb-3" style="color: white;">LogIn</h2>
-              <h4 style="color: red; padding-bottom: 5%;">{{ message }}</h4>
+              <p class="mb-3" style="font-weight: 400;">LogIn</p>
+              {% if message %}
+              <h6 style=" padding-bottom: 5%; font-weight: 400;">{{ message }}</h6>
+              {% endif %}
               <div class="form-outline mb-4">
-                <input type="email" id="typeEmailX-2" class="form-control form-control-lg" name="email" placeholder="Email" required/>
+                <input type="email" id="typeEmailX-2" class="form-control" name="email" placeholder="Email" style="font-size: 17px; height: 12%;" required/>
               </div>
-              <div class="form-outline mb-4">
-                <input type="password" id="typePasswordX-2" class="form-control form-control-lg" name="password" placeholder="Password" required />
+              <div class="form-outline mb-4" style="position: relative;">
+                <input type="password" id="typePasswordX-2" class="form-control" name="password" style="font-size: 17px; height: 12%;" placeholder="Password" required >
+                <i class=" eyeIcon bi bi-eye-slash"></i>
               </div>
-              <div class="form-check d-flex justify-content-start mb-4" style="padding-left: 0;">
-                <a class="form-check-label" for="form1Example3" id="forgotPassword"  ><h6>Forgot password</h6></a>
+              <div class="form-check d-flex justify-content-start mb-3" style="padding-left: 0;">
+                <a href="/login/forgot" class="form-check-label" for="form1Example3" id="forgotPassword"  ><h6 style="font-weight: 400;">Forgot password</h6></a>
               </div>
-              <button class="btn btn-primary btn-lg btn-block button" style="padding: 4px 15px 4px 15px;" type="submit">Login</button>
+              <button class="btn btn-primary btn-lg btn-block button" style="padding: 4px 15px 4px 15px; font-size: 17px;" type="submit">Login</button>
+              <div class="row" style="margin-top: 6%;">
+                <div class="col-sm-12" style="text-align: right; font-size: 14px;">
+                  <span>Don't have an account ? Create <a href="/signup" style="text-decoration: none; margin-left: 3px;">Sign Up</a></span>
+                </div>
+              </div>
             </div>
           </form>
         </div>
@@ -53,5 +91,24 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded',function(){
+    const eyeIcon = document.querySelector('.eyeIcon');
+    const passwordField = document.querySelector('#typePasswordX-2')
+
+    eyeIcon.addEventListener('click',function(){
+      if(passwordField.getAttribute('type') === 'password'){
+        passwordField.setAttribute('type','text')
+        this.classList.remove('bi-eye-slash')
+        this.classList.add('bi-eye')
+      }
+      else{
+        passwordField.setAttribute('type','password')
+        this.classList.remove('bi-eye')
+        this.classList.add('bi-eye-slash')
+      }
+    })
+  })
+</script>
     
-{% endblock %}

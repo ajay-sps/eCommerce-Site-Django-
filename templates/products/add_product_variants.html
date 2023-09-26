@@ -4,7 +4,7 @@
 
 <style>
 .box-shadow{
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .form-control{
     padding: 2px;
@@ -12,30 +12,34 @@
 .edit:hover{
     cursor: pointer;
 }
+
+.cross-sign:hover{
+    cursor: pointer;
+}
 </style>
 
-<div class="row box-shadow" style="margin: 2% 7% 4% 7%; padding: 1%; background-color: aliceblue;">
+<div class="row box-shadow" style="margin: 2% 7% 4% 7%; padding: 1%;">
     <div class="col">
         <nav aria-label="breadcrumb" >
             <ol class="breadcrumb" style="margin: 0px;">
                 <li class="breadcrumb-item"><a href="/products" style="text-decoration: none;">Products</a></li>
-                <li class="breadcrumb-item"><a href="/products/add" style="text-decoration: none;">AddProducts</a></li>
-                <li class="breadcrumb-item active" aria-current="page">AddProductVariants</li>
+                <li class="breadcrumb-item"><a href="/products/add" style="text-decoration: none;">Add Products</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add ProductVariants</li>
             </ol>
         </nav>
     </div>
 </div>
 
 <div class="row " style="margin-top: 2%; color: black;">
-    <div class="col-sm-10 offset-sm-1 box-shadow" style="border-radius: 12px; background-color: aliceblue;">
+    <div class="col-sm-10 offset-sm-1 box-shadow" style="border-radius: 12px; font-size: 16px;">
         <form method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
                 <div class="col" style="text-align: center;">
-                    <h5 style="color: green;">Product Details</h5>
+                    <h5 style="color: rgb(59, 162, 247);">Product Details</h5>
                 </div>
             </div>
-            <div class="row" style=" padding-left: 2%; padding-right: 2%; margin-bottom: 2%;">
+            <div class="row" style="margin-top: 2%; padding-left: 2%; padding-right: 2%; margin-bottom: 2%;">
                 <div class="col-sm-4">
                     <div><label for="name">Name</label></div>
                     <div><input type="text" class="form-control" name="name" id="name" value="{{ name }}" required></div>
@@ -54,15 +58,15 @@
 </div>
 
 <div class="row" style="margin-top: 3%; color: black;">
-    <div class="col-sm-10 offset-sm-1 box-shadow" style="border-radius: 12px; background-color: aliceblue;">
+    <div class="col-sm-10 offset-sm-1 box-shadow" style="border-radius: 12px; font-size: 16px;">
         <form method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%;">
                 <div class="col" style="text-align: center;">
-                    <h5 style="color: green;">Add Product Variant</h5>
+                    <h5 style="color: rgb(59, 162, 247);">Add Product Variant</h5>
                 </div>
             </div>
-            <div class="row" style=" padding-left: 2%; padding-right: 2%;">
+            <div class="row" style="margin-top: 2%; padding-left: 2%; padding-right: 2%;">
                 <div class="col-sm-3">
                     <div><label for="code">Code</label></div>
                     <input type="text" class="form-control" name="code" id="code" required>
@@ -83,18 +87,22 @@
                     <label>Add Property</label>
                 </div>
                 <div class="col-sm-1">
-                    <i class='bx bx-plus edit' style="color: #4f4ff3;font-size: 30px;" title="Add Property" onclick="AddFields()"></i>
+                    <i class='bx bx-plus edit' style="color: #4f4ff3;font-size: 30px;" title="Add Property" onclick="AddFieldss()"></i>
                 </div>
-                <div class="col-sm-3 " style="text-align: center;" >
+                <div class="col-sm-7" id="rowField">
+
+                </div>
+
+                <!-- <div class="col-sm-3 " style="text-align: center;" >
                     <div id="selectField"></div>
                 </div>
                 <div class="col-sm-3">
                     <div id="valueField" style="width: 100%;"></div>
-                </div>
+                </div> -->
             </div>
             <div class="row" style="margin-top:2%; margin-bottom: 2%;">
                 <div class="col" style="text-align: center;">
-                    <button type="submit" class="btn btn-primary">Add Variant</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 4px 8px 4px 8px;">Add Variant</button>
                 </div>
             </div>
         </form>
@@ -145,6 +153,70 @@
         selectContainer.appendChild(select)
         valueContainer.appendChild(input)
     }
+
+    function AddFieldss() {
+
+    var parent = document.getElementById('rowField')
+    var div_row = document.createElement('div')
+    var col_select = document.createElement('div')
+    var col_input = document.createElement('div')
+    var col_cancel = document.createElement('div')
+    div_row.className = "row"
+    col_select.className = "col-sm-5"
+    col_input.className = "col-sm-5"
+    col_cancel.className = "col-sm-2 crosss"
+    parent.appendChild(div_row)
+    div_row.appendChild(col_select)
+    div_row.appendChild(col_input)
+    div_row.appendChild(col_cancel)
+
+    var select = document.createElement('select')
+        select.className = "form-control"
+        select.name = "property"
+        select.style.display = 'block'
+        select.style.width = '100%'
+        select.style.marginBottom = '3%'
+        select.style.marginTop = '1%'
+        select.style.padding = '2px'
+
+
+        var properties = JSON.parse("{{ properties|escapejs }}")
+        console.log(properties)
+
+        var option = document.createElement('option')
+        option.selected = 'property'
+        option.text = "-----------"
+        select.append(option)
+       
+        for(var i = 0;i< properties.length;i++){
+            var option = document.createElement('option')
+            option.text = properties[i]
+            option.value = properties[i]
+            select.appendChild(option)
+        }
+
+        var input = document.createElement('input')
+        input.className = "form-control"
+        input.type = 'text'
+        input.name = 'value'
+        input.placeholder = 'Value'
+        input.style.padding = "2px"
+        input.style.marginTop = '1%'
+        input.style.marginBottom = '3%'
+        input.style.textAlign = 'center'
+
+        var delete_icon = document.createElement('i')
+        delete_icon.className = "bi bi-x cross-sign "
+        delete_icon.onclick = deleteRow
+
+        col_select.appendChild(select)
+        col_input.appendChild(input)
+        col_cancel.appendChild(delete_icon)
+  }
+  function deleteRow() {
+    $(document).on( 'click', '.crosss', function(){this.parentNode.remove()} );
+    }
+
 </script>
 
 

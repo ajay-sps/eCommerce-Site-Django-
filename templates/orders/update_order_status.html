@@ -1,0 +1,126 @@
+{% extends 'base/sidebar.html' %}
+
+{% block content %}
+
+<style>
+  .box-shadow {
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 12px;
+    margin: 1% 2% 1% 1%;
+  }
+
+  .table-success {
+    --bs-table-bg: #ffffff;
+    --bs-table-striped-bg: #ededed;
+  }
+
+  .rowclass {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+  td {
+    vertical-align: middle;
+  }
+  .loader{
+  position: absolute;
+  right: 46%;
+  top: 35%;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border-top: 8px solid rgb(158, 158, 158);
+  border-left: 8px solid rgb(158, 158, 158);
+  border-right: 8px solid rgba(255, 255, 255, 0);
+  animation: spin 0.575s infinite linear;
+  z-index: 1000;
+  display: none; 
+justify-content: center;
+}
+
+@keyframes spin {
+  to {transform: rotate(360deg);}
+}
+</style>
+
+<div class="loader"></div>
+<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;">
+  <div class="col-sm-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb" style="margin: 0px;">
+        <li class="breadcrumb-item"><a href="/cart/orders" style="text-decoration: none;">Orders</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Update Order Status</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="row" style="margin-top: 3%; color: black;">
+  <div class="col-sm-8 offset-sm-2 box-shadow" style="border-radius: 12px; font-size: 16px; margin-left: 15%;">
+    <form method="post" action="" id="myform" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row" style="margin-top:1%; padding-left: 2%; padding-right: 2%; margin-bottom: 3%;">
+        <div class="col" style="text-align: center;">
+          <h4 style="color: rgb(59, 162, 247);">Update Order Status</h4>
+        </div>
+      </div>
+      <div class="row" style=" padding-left: 2%; padding-right: 2%;">
+        <div class="col-sm-6">
+          <div><label for="name">Name</label></div>
+          <div><input type="text" class="form-control" name="name" id="name"
+              value="{{ order.user.first_name }} {{ order.user.last_name }}" required></div>
+          <input type="hidden" name="order_id" value="{{ order.id }}">
+        </div>
+        <div class="col-sm-6">
+          <div><label for="name">Select Status</label></div>
+          <div>
+            <select class="form-control" name="status">
+              <option selected value="{{ order.status }}">{{ order.status }}</option>
+
+              {% if order.status == "placed" %}
+              <option value="accepted">accepted</option>
+              <option value="packed">packed</option>
+              <option value="shipped">shipped</option>
+              <option value="delivered">delivered</option>
+              {% elif order.status == 'accepted' %}
+              <option value="packed">packed</option>
+              <option value="shipped">shipped</option>
+              <option value="delivered">delivered</option>
+              {% elif order.status == 'packed' %}
+              <option value="shipped">shipped</option>
+              <option value="delivered">delivered</option>
+              {% elif order.status == 'shipped' %}
+              <option value="delivered">delivered</option>
+              {% else %}
+              {% endif %}
+
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:4%; margin-bottom: 2%;">
+        <div class="col" style="text-align: center;">
+          <button type="submit" class="btn btn-primary" style="padding: 4px 8px 4px 8px;">Update</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function(){
+      $('#myform').on('submit',function(event){
+            event.preventDefault();
+            console.log('loader function')
+            loader = document.querySelector(".loader")
+            loader.style.display = "flex"
+
+
+            event.currentTarget.submit();
+      });
+});
+</script>
+
+
+
+{% endblock %}

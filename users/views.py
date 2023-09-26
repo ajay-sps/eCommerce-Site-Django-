@@ -1,44 +1,77 @@
 from django.shortcuts import render,redirect
 from rest_framework.views import APIView
-from users.models import User,UserProfile,SellerInventory,UserAddresses
+from users.models import User,UserProfile,SellerInventory,UserAddress
 from django.http import HttpResponse
 from users.serializer import UserSerializer,SellerInvenotrySerializer,UserAddressesSerialiazer,UpdateUserSerializer
-from base.email import verification_mail
 from django.contrib.auth import authenticate,login,logout
-from products.models import Products,ProductVariants,Categories,ProductVariantProperties,Properties,Brands
+from products.models import Products,ProductVariants,Categories,ProductVariantProperties,Properties,Brands,CategoryBanners
 from django.core.paginator import Paginator
 from rest_framework.response import Response
+from users.tasks import verification_mail,password_reset_mail
+from orders.models import UserWishlist,UserCart,UserOrders
+from django.core.mail import send_mail,EmailMessage,EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
+from twilio.rest import Client
+from decouple import config
+
 
 
 class HomeView(APIView):
 
     def get(self,request):
-        first_product = Products.objects.first()
-        products = Products.objects.all()[1:9]
-        product_variants = ProductVariants.objects.filter(is_master = True)
-        categories = Categories.objects.all()
-        return render(request,'users/home.html',{'products':products ,'categories' : categories,'first_product':first_product,'product_variants':product_variants})
+        try:
+            first_banner = CategoryBanners.objects.filter(category__is_active = True).order_by('?')[:1]
+            banner_id = []
+            for item in first_banner:
+                banner_id.append(item.id)
+            other_banners = CategoryBanners.objects.filter(category__is_active = True).exclude(id__in = banner_id).order_by('?')[:3]
+            products = Products.objects.filter(is_active = True,category__is_active=True,brand__is_active = True).order_by('?')[:12]
+            product_variants = ProductVariants.objects.filter(is_master = True,product__is_active = True)
+            categories = Categories.objects.filter(is_active = True).order_by('?')
+            return render(request,'users/home.html',{'products':products ,'categories' : categories,'product_variants':product_variants,'first_banner':first_banner,'other_banners':other_banners})
+        except Exception as e:
+            print(str(e))
+            return HttpResponse(str(e))
     
+
 
 class LoginView(APIView):
 
     def get(self,request):
-        return render(request,'users/login.html')
+        try:
+            verified = False
+            try:
+                if request.GET.get('verified'):
+                    verified = True
+            except:
+                pass
+            return render(request,'users/login.html',{'verified':verified})
+        except Exception as e:
+            return HttpResponse(str(e))
     
     def post(self,request):
         data = request.data
         username = data.get('email')
         password = data.get('password')
+        print(username,password)
 
         user = authenticate(username = username,password = password)
         if user is not None:
             if user.is_verified == True:
-                login(request,user)
-                return redirect('/')
+                if user.role.name == 'admin':
+                    login(request,user)
+                    return redirect('/dashboard')
+                else:
+                    login(request,user)
+                    return redirect('/')
             else:
-                return render(request,'users/login.html',{"message" : "Email is not verified"})
+                return render(request,'users/login.html',{"message" : "Email is not verified !"})
         else :
-            return render(request,'users/login.html',{"message" : "invalid email or password"})
+            user_obj = User.objects.filter(username = username)
+            print(user,user_obj)
+            return render(request,'users/login.html',{"message" : "Invalid email or password !"})
     
 
 class SignupView(APIView):
@@ -64,15 +97,29 @@ class SignupView(APIView):
                     'address_line_1' : data.get('address_line_1')
                 }
             }
+            
             serializer = UserSerializer(data = arranged_data)
 
             if serializer.is_valid():
-                user = serializer.save()
+                user = serializer.save() 
                 user.profile.generate_token()
+                address_data = {
+                    'user' : user.id,
+                    'state' : data.get('state'),
+                    'city' : data.get('city'),
+                    'postal_code' : 127028,
+                    'street' : "St. 140",
+                    'house_no' : 1434, 
+                }
                 token = user.profile.token
-                verification_mail(token,arranged_data.get('email'))
-                context = {'success':'User Created Successfully'}
-                return render(request,'users/signup.html',context)
+                verification_mail(token,arranged_data.get('email'),user.first_name,config('URL'))
+                context = {'success':'An Email has been sent for Email Verification'}
+                address_serializer = UserAddressesSerialiazer(data=address_data)
+                if address_serializer.is_valid():
+                    address_serializer.save()
+                    return render(request,'users/signup.html',context)
+                else:
+                    return HttpResponse(address_serializer.errors)
             else:
                 for key,value in serializer.errors.items():
                     print(key,value)
@@ -81,7 +128,7 @@ class SignupView(APIView):
             
         except Exception as e:
             print(str(e))
-            return HttpResponse('hi')
+            return HttpResponse(str(e))
 
 
 class TokenVerificationView(APIView):
@@ -95,7 +142,7 @@ class TokenVerificationView(APIView):
             profile.token = None
             profile.save()
 
-            return redirect('/login')
+            return redirect('/login?verified=True')
         
         except Exception as e:
             return HttpResponse(str(e))
@@ -222,7 +269,7 @@ class UserProfileView(APIView):
 
     def get(self,request):
         try:
-            addresses = UserAddresses.objects.filter(user = request.GET['user_id'])
+            addresses = UserAddress.objects.filter(user = request.GET['user_id'],is_active = True).order_by('-id')
             return render(request,'users/profile.html',{'addresses':addresses})
         except Exception as e:
             return Response(str(e))
@@ -234,9 +281,10 @@ class AdminDashboardView(APIView):
         products = Products.objects.count()
         categories = Categories.objects.count()
         brands = Brands.objects.count()
-        sellers = User.objects.filter(role__name = 'seller').count()
-        print(products,categories,brands,sellers)
-        return render(request,'users/dashboard.html',{"products":products,"categories":categories,'brands':brands,"sellers":sellers})
+        orders = UserOrders.objects.count()
+        properties = Properties.objects.count()
+        print(products,categories,brands,orders)
+        return render(request,'users/dashboard.html',{"products":products,"categories":categories,'brands':brands,"orders":orders,'properties':properties})
     
 
 class UpdateUserProfileView(APIView):
@@ -280,11 +328,14 @@ class AddUserAddressView(APIView):
             data = request.data
             serialiazer = UserAddressesSerialiazer(data = data)
             if serialiazer.is_valid():
+                print('hello')
                 serialiazer.save()
                 return redirect(f'/users/profile?user_id={data["user"]}')
             else:
+                print('byuee')
                 return Response(serialiazer.errors)
         except Exception as e:
+            print(str(e))
             return Response(str(e))
         
 
@@ -292,7 +343,7 @@ class UpdateUserAddressView(APIView):
 
     def get(self,request):
         try:
-            address = UserAddresses.objects.get(id = request.GET['address_id']) 
+            address = UserAddress.objects.get(id = request.GET['address_id']) 
             return render(request,'users/update_address.html',{'address':address})
         except Exception as e:
             return Response(str(e))
@@ -300,7 +351,7 @@ class UpdateUserAddressView(APIView):
     def post(self,request):
         try:
             data = request.data
-            address_instance = UserAddresses.objects.get(id = data['address_id'])
+            address_instance = UserAddress.objects.get(id = data['address_id'])
             serializer = UserAddressesSerialiazer(address_instance,data=data)
             if serializer.is_valid():
                 serializer.save()
@@ -315,8 +366,113 @@ class DeleteUserAddressView(APIView):
 
     def delete(self,request,address_id):
         try:
-            address = UserAddresses.objects.get(id = address_id)
-            address.delete()
+            address = UserAddress.objects.get(id = address_id)
+            address.is_active = False
+            address.save()
             return Response('Deleted Successfully')
         except Exception as e:
             return Response(str(e))
+        
+
+class ForgotPasswordView(APIView):
+
+    def get(self,request):
+        return render(request,'users/forgot_password.html')
+    
+    def post(self,request):
+        data = request.data
+        if User.objects.filter(username = data['email']):
+            user = User.objects.get(username = data['email'])
+            user.profile.generate_token()
+            token = user.profile.token
+            name = user.first_name
+            password_reset_mail(data['email'],token,name,config('URL'))
+            message = "check your mail to proceed further"
+        else:
+            message = 'This mail is not registered !'
+        return render(request,'users/forgot_password.html',{'message':message})
+    
+
+class ResetPasswordView(APIView):
+
+    def get(self,request,token):
+        if UserProfile.objects.filter(token = token):
+            return render(request,'users/reset_password.html')
+        else:
+            return render(request,'users/reset_password.html',{'expired':'token expired'})
+    
+    def post(self,request,token):
+        try:
+            data = request.data
+            if data['password1'] == data['password2']:
+                if len(data['password1']) < 5 :
+                    message = 'Please enter password of length 5 or greater '
+                else :
+                    user = User.objects.get(profile__token = token)
+                    user.set_password(data['password1'])
+                    print(user,data['password1'])
+                    user.save()
+                    profile = UserProfile.objects.get(token = token)
+                    profile.token = None
+                    profile.save()
+                    message = 'Password Changed Successfully'
+            else : 
+                message = "confirm password and password did not match"
+            print(data,token)
+            return render(request,'users/reset_password.html',{'message':message})
+        except Exception as e :
+            return HttpResponse(str(e))
+        
+
+class GetUserCartWishlishCount(APIView):
+
+    def get(self,request):
+        if request.user.id != None:
+            wishlist_count = UserWishlist.objects.filter(user = request.user).count()
+            cart_count = UserCart.objects.filter(user = request.user).count()
+            print(wishlist_count,cart_count)
+            return Response({'wishlist_count':wishlist_count,'cart_count':cart_count})
+        else:
+            return Response('Ok')
+
+        
+class AdminProfileView(APIView):
+
+    def get(self,request):
+        return render(request,'users/admin_profile.html')
+    
+
+class AdminProfileUpdateView(APIView):
+    
+    def get(self,request):
+        return render(request,'users/admin_profile_update.html')
+    
+    def post(self,request):
+        try:
+            data = request.data
+            print(data)
+            arranged_data = {
+                    'first_name' : data.get('first_name'),
+                    'last_name' : data.get('last_name'),
+                    'profile' : {
+                        'state' : data.get('state'),
+                        'city' : data.get('city'),
+                        'contact' : data.get('contact'),
+                        'profile_image' : data.get('image'),
+                    }
+                }
+            user_instance = User.objects.get(id = data['user_id'])
+            serializer = UpdateUserSerializer(user_instance,data = arranged_data)
+            if serializer.is_valid():
+                serializer.save()
+                return redirect(f"/admin_profile")
+            else:
+                return Response(serializer.errors)
+        except Exception as e:
+            return Response(str(e))
+        
+    
+class AboutUsView(APIView):
+
+    def get(self,request):
+        return render(request,'users/about_us.html')

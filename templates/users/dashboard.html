@@ -8,14 +8,14 @@
 .box-shadow{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 12px;
-    background-color: aliceblue;
     margin: 1% 6% 1% 5%;
 }
 
 .card{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 12px;
-    background: linear-gradient(90deg, rgba(98,98,98,1) 0%, rgba(235,238,241,1) 0%, rgba(204,222,241,1) 0%, rgba(128,177,227,1) 26%, rgba(202,136,236,1) 56%, rgba(221,124,144,1) 100%, rgba(14,104,198,1) 100%, rgba(62,145,232,1) 100%);
+    color: black;
+    font-size: 14px;
 }
 
 .card:hover{
@@ -28,18 +28,25 @@
 
 p{
     margin-top: 4%;
-    color:aliceblue;
+    font-weight: 300;
 }
 a{
     text-decoration: none;
     color: rgb(39, 224, 39);
 }
-h4{
-    color: aliceblue;
+.btn-primary{
+    font-size: 14px;
+    padding: 5px 15px 5px 15px;
+}
+.dash-icon{
+    color: #1d74f7;
+}
+.card-col{
+    margin-top: 25px;
 }
 </style>
 
-<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
+<div class="row p-2 box-shadow rowclass" style="margin-top: 3%;" >
     <div class="col-sm-4">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="margin: 0px; padding-top: 4px;">
@@ -51,58 +58,69 @@ h4{
     </div>
 </div>
 
-<div class="row p-3 box-shadow rowclass" style="margin-top: 3%;" >
-  <div class="col">
-    <div class="row p-4">
-        <div class="col-sm-6 p-4">
-            <div class="card">
-                <div class="card-body">
-                    <h4>Products  <i class='bx bx-collection'></i></h4>
-                    <p>Total : {{ products }}</p>
-                    <p style="margin-bottom: 0;"><a href="/products/">
-                        <button type="button" class="btn btn-primary">View</button>
-                    </a></p>
-                </div>
+<div class="row" style="margin: 2% 5% 2% 5%;">
+    <div class="col-sm-4 card-col">
+        <div class="card">
+            <div class="card-body">
+                <h5 style="font-weight: 400;">Products  <i class='bx bxs-data dash-icon'></i></h5>
+                <p>Total : {{ products }}</p>
+                <p style="margin-bottom: 0;"><a href="/products/">
+                    <button type="button" class="btn btn-primary">View</button>
+                </a></p>
             </div>
         </div>
-        <div class="col-sm-6 p-4">
+    </div>
+    <div class="col-sm-4 card-col">
+        <div class="card">
+            <div class="card-body">
+                <h5 style="font-weight: 400;">Brands <i class='bx bxs-category dash-icon' ></i></h5>
+                <p>Total : {{ brands }}</p>
+                <p style="margin-bottom: 0;"><a href="/products/brands">
+                    <button type="button" class="btn btn-primary">View</button>
+                </a></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4 card-col">
+        <div class="card">
+            <div class="card-body">
+                <h5 style="font-weight: 400;">Categories <i class='bx bx-category dash-icon' ></i></h5>
+                <p>Total : {{ categories }}</p>
+                <p style="margin-bottom: 0;"><a href="/products/categories">
+                    <button type="button" class="btn btn-primary">View</button>
+                </a></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4 card-col">
+        <div class="card">
             <div class="card">
                 <div class="card-body">
-                    <h4>Brands <i class='bx bxs-category' ></i></h4>
-                    <p>Total : {{ brands }}</p>
-                    <p style="margin-bottom: 0;"><a href="/products/brands">
+                    <h5 style="font-weight: 400;">Orders <i class='bx bx-sitemap dash-icon' ></i></h5>
+                    <p>Total : {{ orders }}</p>
+                    <p style="margin-bottom: 0;"><a href="/cart/orders">
                         <button type="button" class="btn btn-primary">View</button>
                     </a></p>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row p-4 pt-0">
-        <div class="col-sm-6 p-4">
+    <div class="col-sm-4 card-col">
+        <div class="card">
             <div class="card">
                 <div class="card-body">
-                    <h4>Categories <i class='bx bx-category' ></i></h4>
-                    <p>Total : {{ categories }}</p>
-                    <p style="margin-bottom: 0;"><a href="/products/categories">
-                        <button type="button" class="btn btn-primary">View</button>
-                    </a></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 p-4">
-            <div class="card">
-                <div class="card-body">
-                    <h4>Sellers <i class='bx bxs-user' ></i></h4>
-                    <p>Total : {{ sellers }}</p>
-                    <p style="margin-bottom: 0;"><a href="/sellers">
+                    <h5 style="font-weight: 400;">Properties <i class='bx bx-palette dash-icon' ></i></h5>
+                    <p>Total : {{ properties }}</p>
+                    <p style="margin-bottom: 0;"><a href="/products/properties">
                         <button type="button" class="btn btn-primary">View</button>
                     </a></p>
                 </div>
             </div>
         </div>
     </div>
-  </div>   
+    
 </div>
+
 
 
 {% endblock %}
